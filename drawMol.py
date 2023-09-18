@@ -1,4 +1,5 @@
 import math
+import random
 import pandas as pd
 from Box3d import Box3d
 from readWriteFiles import getElementData
@@ -33,6 +34,9 @@ def drawMol(struc, tol, dims, fromWall, numMol): # TODO add a way to account for
         return list(filledAtom)
 
     elif type(numMol) is int and numMol != 0:
+        num_x_shifts = math.ceil(numMol ** (1/3))
+        num_y_shifts = math.ceil(numMol / (num_x_shifts ** 2))
+        num_z_shifts = math.ceil(numMol / (num_x_shifts * num_y_shifts))
 
         filledAtom = shiftAtomsDefinite(numMol, tol, original_points, box, radii)
         
@@ -61,7 +65,9 @@ def is_overlap(new_atom, filled_atoms, radii):
         )
 
         if distance < (radii[new_atom[0]] + radii[atom[0]]):
+            #print(f'Fail: dist = {distance}, Radius = {radii[new_atom[0]] + radii[atom[0]]}')
             return True
+        #print(f'Pass: dist = {distance}, Radius = {radii[new_atom[0]] + radii[atom[0]]}')
     return False
 
 def shiftAtomsFill(x, y, z, tol, og, box, radii):
@@ -98,37 +104,40 @@ def shiftAtomsFill(x, y, z, tol, og, box, radii):
 
     return filledAtom
 
-def shiftAtomsDefinite(numMol, tol, og, box, radii): # NOTE Currently does not work as intended
+def shiftAtomsDefinite(numMol, tol, og, box, radii):
     filledAtom = []
     filledPositions = set()
 
-    for i in range(numMol):
-        for j in range(numMol):
-            for k in range(numMol):
-                for atom in og:
-                    # Calculate the shift for each tile and new point
-                    new_x = atom[1] + k*tol
-                    new_y = atom[2] + j*tol
-                    new_z = atom[3] + i*tol
+    attempts = 0
 
-                    # Adjust for atomic radiss
-                    new_x_min = new_x - radii[atom[0]]
-                    new_y_min = new_y - radii[atom[0]]
-                    new_z_min = new_z - radii[atom[0]]
-                    new_x_max = new_x + radii[atom[0]]
-                    new_y_max = new_y + radii[atom[0]]
-                    new_z_max = new_z + radii[atom[0]]
+    while len(filledAtom) < numMol and attempts < 10000:
+        attempts += 1
+        for atom in og:
 
-                    # Check if the new atom fits within the box
-                    if  (
-                        new_x_min >= box.x and new_x_max <= box.x + box.length and
-                        new_y_min >= box.y and new_y_max <= box.y + box.width and
-                        new_z_min >= box.z and new_z_max <= box.z + box.height
-                    ):
-                        new_atom = (atom[0], new_x, new_y, new_z)
+            # Calculate the shift for each tile and new point
+            new_x = atom[1] + random.uniform(0, box.length)
+            new_y = atom[2] + random.uniform(0, box.width)
+            new_z = atom[3] + random.uniform(0, box.height)
+
+            # Adjust for atomic radiss
+            new_x_min = new_x - radii[atom[0]]
+            new_y_min = new_y - radii[atom[0]]
+            new_z_min = new_z - radii[atom[0]]
+            new_x_max = new_x + radii[atom[0]]
+            new_y_max = new_y + radii[atom[0]]
+            new_z_max = new_z + radii[atom[0]]
+
+            # Check if the new atom fits within the box
+            if  (
+                new_x_min >= box.x and new_x_max <= box.x + box.length and
+                new_y_min >= box.y and new_y_max <= box.y + box.width and
+                new_z_min >= box.z and new_z_max <= box.z + box.height
+            ):
+                new_atom = (atom[0], new_x, new_y, new_z)
 
                 if not is_overlap(new_atom, filledAtom, radii):
                     filledAtom.append(new_atom)
                     filledPositions.add(new_atom)
 
-    return filledAtom
+
+    return list(filledAtom)

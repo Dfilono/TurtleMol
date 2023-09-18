@@ -1,7 +1,7 @@
 shape=Cube
-sideLength=5
-numMolecules=fill
+sideLength=10
+numMolecules=40
 structureFile=tests/Argon/argon.xyz
-fromWall=0.5
+fromWall=0.25
 outputFile=tests/Argon/out.xyz
-tol=0.5
+tol=1
