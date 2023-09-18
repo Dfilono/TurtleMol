@@ -1,0 +1,7 @@
+shape=Cube
+sideLength=5
+numMolecules=fill
+structureFile=tests/argon.xyz
+fromWall=0.5
+outputFile=tests/out.xyz
+tol = 0.5
