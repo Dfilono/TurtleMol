@@ -10,7 +10,7 @@ within the constraints of a the defined shape. A 'Fill' option was also added so
 and fill said space with provided structure as many times as it can fit.
 '''
 
-def drawMol(struc, tol, dims, fromWall, numMol): # TODO add a way to account for atomic radius of atoms
+def drawMol(struc, tol, dims, maxattempts, numMol):
     box = Box3d(0, 0, 0, dims[0], dims[1], dims[2])
     radii = setAtomicRadius()
 
@@ -38,7 +38,7 @@ def drawMol(struc, tol, dims, fromWall, numMol): # TODO add a way to account for
         num_y_shifts = math.ceil(numMol / (num_x_shifts ** 2))
         num_z_shifts = math.ceil(numMol / (num_x_shifts * num_y_shifts))
 
-        filledAtom = shiftAtomsDefinite(numMol, tol, original_points, box, radii)
+        filledAtom = shiftAtomsDefinite(numMol, maxattempts, original_points, box, radii)
         
         return list(filledAtom)
                         
@@ -104,13 +104,13 @@ def shiftAtomsFill(x, y, z, tol, og, box, radii):
 
     return filledAtom
 
-def shiftAtomsDefinite(numMol, tol, og, box, radii):
+def shiftAtomsDefinite(numMol, maxattempts, og, box, radii):
     filledAtom = []
     filledPositions = set()
 
     attempts = 0
 
-    while len(filledAtom) < numMol and attempts < 10000:
+    while len(filledAtom) < numMol and attempts < maxattempts:
         attempts += 1
         for atom in og:
 

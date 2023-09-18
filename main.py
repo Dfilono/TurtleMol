@@ -30,6 +30,7 @@ def defaultParams():
         'numMolecules' : 1,
         'tol' : 1.0,
         'fromWall' : 1.0,
+        'maxAttempts' : 10000
     }
 
     return params
@@ -48,6 +49,7 @@ def parseCommandLine(dparams):
     parser.add_argument('-n', '--numMolecules', type=int, help="Number of molecules", default=dparams['numMolecules'])
     parser.add_argument('-t', '--tol', type=float, help="Minimum distance between molecules", default=dparams['tol'])
     parser.add_argument('-w', '--fromWall', type=float, help="Minimum distance from wall", default=dparams['fromWall'])
+    parser.add_argument('-a', '--maxAttempts', type=int, help="Maximum iterations for finite sized systems", default=dparams['maxAttempts'])
     parser.add_argument('-out', '--outputFile', type=str, help="Path for output file if desired")
 
     return parser.parse_args()
@@ -85,7 +87,7 @@ def main():
     print(struc)
 
     # Generate the new structure
-    out_struc = drawMol(struc, float(iparams['tol']), dims, float(iparams['fromWall']), iparams['numMolecules'])
+    out_struc = drawMol(struc, float(iparams['tol']), dims, float(iparams['maxAttempts']), iparams['numMolecules'])
     print(len(out_struc))
 
     if iparams['outputFile']:
