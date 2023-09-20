@@ -1,7 +1,7 @@
 shape=Cube
-sideLength=10
-numMolecules=9
+sideLength=5
+numMolecules=fill
 structureFile=tests/Water/water.xyz
 fromWall=0.5
 outputFile=tests/Water/WaterOut.xyz
-tol = 0.5
+tol = 1.0

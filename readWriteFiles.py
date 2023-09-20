@@ -19,7 +19,12 @@ def readStrucFile(file_path):
     return pd.read_csv(file_path, delim_whitespace=True, skiprows=2, names=["Atom", "X", "Y", "Z"])
 
 def writeXYZ(data, filepath):
-    df = pd.DataFrame(data, columns=['Atom', 'X', 'Y', 'Z'])
+    columns = ['Atom', 'X', 'Y', 'Z']
+    df = pd.DataFrame(columns=['Atom', 'X', 'Y', 'Z'])
+
+    for mol in data:
+        for atom in mol:
+            df = df.append(pd.Series(atom, index=columns), ignore_index = True)
 
     with open(filepath, 'w') as f:
         f.write(str(len(df['Atom'])))
