@@ -22,11 +22,7 @@ def shiftAtomsFill(x, y, z, tol, og, box, radii):
                     new_z_max = new_z + radii[atom[0]]
 
                     # Check if the new atom fits within the box
-                    if  (
-                        new_x_min >= box.x and new_x_max <= box.x + box.length and
-                        new_y_min >= box.y and new_y_max <= box.y + box.width and
-                        new_z_min >= box.z and new_z_max <= box.z + box.height
-                    ):
+                    if  inBox(new_x_min, new_x_max, new_y_min, new_y_max, new_z_min, new_z_max, box):
                         new_atom = (atom[0], new_x, new_y, new_z)
 
                 if not is_overlap(new_atom, filledAtom, radii):
@@ -35,7 +31,7 @@ def shiftAtomsFill(x, y, z, tol, og, box, radii):
 
     return filledAtom
 
-def shiftAtomsDefinite(numMol, maxattempts, og, box, radii): # NOTE only works by randomly assigning atoms
+def shiftAtomsDefinite(numMol, maxattempts, og, box, radii, tol): # NOTE only works by randomly assigning atoms
     filledAtom = []
     filledPositions = set()
 
@@ -59,21 +55,17 @@ def shiftAtomsDefinite(numMol, maxattempts, og, box, radii): # NOTE only works b
             new_z_max = new_z + radii[atom[0]]
 
             # Check if the new atom fits within the box
-            if  (
-                new_x_min >= box.x and new_x_max <= box.x + box.length and
-                new_y_min >= box.y and new_y_max <= box.y + box.width and
-                new_z_min >= box.z and new_z_max <= box.z + box.height
-            ):
+            if  inBox(new_x_min, new_x_max, new_y_min, new_y_max, new_z_min, new_z_max, box):
                 new_atom = (atom[0], new_x, new_y, new_z)
 
-                if not is_overlap(new_atom, filledAtom, radii):
+                if not is_overlap(new_atom, filledAtom, radii, tol):
                     filledAtom.append(new_atom)
                     filledPositions.add(new_atom)
 
 
     return list(filledAtom)
 
-def is_overlap(new_atom, filled_atoms, radii):
+def is_overlap(new_atom, filled_atoms, radii, tol):
     for atom in filled_atoms:
         distance = math.sqrt(
             (new_atom[1] - atom[1])**2 +
@@ -81,8 +73,18 @@ def is_overlap(new_atom, filled_atoms, radii):
             (new_atom[3] - atom[3])**2
         )
 
-        if distance < (radii[new_atom[0]] + radii[atom[0]]):
+        if distance < (radii[new_atom[0]] + radii[atom[0]]) + tol:
             #print(f'Fail: dist = {distance}, Radius = {radii[new_atom[0]] + radii[atom[0]]}')
             return True
         #print(f'Pass: dist = {distance}, Radius = {radii[new_atom[0]] + radii[atom[0]]}')
     return False
+
+def inBox(xmin, xmax, ymin, ymax, zmin, zmax, box):
+    if (
+        xmin >= box.x and xmax <= box.x + box.length and
+        ymin >= box.y and ymax <= box.y + box.width and
+        zmin >= box.z and zmax <= box.z + box.height
+    ):
+        return True
+    else:
+        return False

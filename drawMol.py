@@ -18,10 +18,10 @@ def drawMol(struc, tol, dims, maxattempts, numMol):
 
     atoms = struc['Atom'].values.tolist()
     ogX = struc['X'].values.tolist()
-    ogY = struc['X'].values.tolist()
-    ogZ = struc['X'].values.tolist()
+    ogY = struc['Y'].values.tolist()
+    ogZ = struc['Z'].values.tolist()
 
-    original_points = [(atoms[i], ogX[i] + radii[atoms[i]], ogY[i] + radii[atoms[i]], ogZ[i] + radii[atoms[i]]) for i in range(len(atoms))]
+    original_points = [(atoms[i], ogX[i], ogY[i], ogZ[i]) for i in range(len(atoms))]
 
     if type(numMol) is not int and str(numMol).lower() != "fill":
         numMol = int(numMol)
@@ -32,10 +32,10 @@ def drawMol(struc, tol, dims, maxattempts, numMol):
         num_z_shifts = math.ceil(box.width / tol)
 
         # Check if structure is monatomic or molecule
-        if len(original_points[0]) == 1:
+        if len(original_points) == 1:
             filledAtom = shiftAtomsFill(num_x_shifts, num_y_shifts, num_z_shifts, tol, original_points, box, radii)
 
-        elif len(original_points[0]) > 1:
+        elif len(original_points) > 1:
             filledAtom = shiftMoleculesFill(num_x_shifts, num_y_shifts, num_z_shifts, tol, original_points, box, radii)
 
         else:
@@ -50,11 +50,11 @@ def drawMol(struc, tol, dims, maxattempts, numMol):
         num_z_shifts = math.ceil(numMol / (num_x_shifts * num_y_shifts))
 
         # Check if structure is monatomic or molecule
-        if len(original_points[0]) == 1:
-            filledAtom = shiftAtomsDefinite(numMol, maxattempts, original_points, box, radii)
+        if len(original_points) == 1:
+            filledAtom = shiftAtomsDefinite(numMol, maxattempts, original_points, box, radii, tol)
 
-        elif len(original_points[0]) > 1:
-            filledAtom = shiftMoleculesDefinite(numMol, maxattempts, original_points, box, radii)
+        elif len(original_points) > 1:
+            filledAtom = shiftMoleculesDefinite(numMol, maxattempts, original_points, box, radii, tol)
 
         else:
             print('No atoms found')
