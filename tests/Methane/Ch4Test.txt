@@ -1,0 +1,7 @@
+shape=Cube
+sideLength=10
+numMolecules=fill
+structureFile=tests/Methane/ch4.xyz
+fromWall=0.5
+outputFile=tests/Methane/Ch4Out.xyz
+tol = 1.0

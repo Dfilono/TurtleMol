@@ -1,5 +1,5 @@
 shape=Cube
-sideLength=5
+sideLength=10
 numMolecules=fill
 structureFile=tests/Water/water.xyz
 fromWall=0.5
