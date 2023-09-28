@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "moleculeBuilder"
+version = "0.0.1"
+authors = [
+    {name = "Dominick Filonowich", email = "filonoiwchd74@gmail.com"},
+]
+dependencies = [
+    "pandas",
+]
