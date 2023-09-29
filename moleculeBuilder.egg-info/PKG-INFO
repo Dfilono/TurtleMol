@@ -1,5 +1,0 @@
-Metadata-Version: 2.1
-Name: moleculeBuilder
-Version: 0.0.1
-Author-email: Dominick Filonowich <filonoiwchd74@gmail.com>
-Requires-Dist: pandas
