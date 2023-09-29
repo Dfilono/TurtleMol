@@ -25,9 +25,9 @@ def AtomsFillBox(x, y, z, tol, og, box, radii):
                     if  inBox(new_x_min, new_x_max, new_y_min, new_y_max, new_z_min, new_z_max, box):
                         new_atom = (atom[0], new_x, new_y, new_z)
 
-                if not is_overlap_atom(new_atom, filledAtom, radii, tol):
-                    filledAtom.append(new_atom)
-                    filledPositions.add(new_atom)
+                        if not is_overlap_atom(new_atom, filledAtom, radii, tol):
+                            filledAtom.append(new_atom)
+                            filledPositions.add(new_atom)
 
     return filledAtom
 
@@ -65,7 +65,7 @@ def AtomsDefiniteBox(numMol, maxattempts, og, box, radii, tol): # NOTE only work
 
     return list(filledAtom)
 
-def MoleculesFillBox(x, y, z, tol, og, box, radii): # NOTE currently does not maintain relative position
+def MoleculesFillBox(x, y, z, tol, og, box, radii): 
     filledAtom = []
     filledPositions = set()
 
@@ -78,9 +78,9 @@ def MoleculesFillBox(x, y, z, tol, og, box, radii): # NOTE currently does not ma
                 for i, atom in enumerate(og):
                     #print(atom)
                     # Calculate the shift for each tile and new point
-                    new_x = box.x + atom[1] + xshift * tol
-                    new_y = box.y + atom[2] + yshift * tol
-                    new_z = box.z + atom[3] + zshift * tol
+                    new_x = box.x + atom[1] + xshift
+                    new_y = box.y + atom[2] + yshift
+                    new_z = box.z + atom[3] + zshift
 
                     # Adjust for atomic radiss
                     new_x_min = new_x - radii[atom[0]]
@@ -103,7 +103,7 @@ def MoleculesFillBox(x, y, z, tol, og, box, radii): # NOTE currently does not ma
 
     return filledAtom
 
-def MoleculesDefiniteBox(numMol, maxattempts, og, box, radii, tol): # NOTE DOES NOT WORK
+def MoleculesDefiniteBox(numMol, maxattempts, og, box, radii, tol): 
     filledAtom = []
     filledPositions = set()
 
@@ -112,12 +112,18 @@ def MoleculesDefiniteBox(numMol, maxattempts, og, box, radii, tol): # NOTE DOES 
     while len(filledAtom) < numMol and attempts < maxattempts:
         attempts += 1
         new_mol = []
+        any_atom_outside = False
+
+        xshift = random.uniform(0, box.length)
+        yshift = random.uniform(0, box.width)
+        zshift = random.uniform(0, box.height)
+
         for atom in og:
 
             # Calculate the shift for each tile and new point
-            new_x = atom[1] + random.uniform(0, box.length)
-            new_y = atom[2] + random.uniform(0, box.width)
-            new_z = atom[3] + random.uniform(0, box.height)
+            new_x = atom[1] + xshift
+            new_y = atom[2] + yshift
+            new_z = atom[3] + zshift
 
             # Adjust for atomic radiss
             new_x_min = new_x - radii[atom[0]]

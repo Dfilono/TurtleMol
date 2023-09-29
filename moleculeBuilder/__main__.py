@@ -92,7 +92,7 @@ def main():
         print(dims)
 
         # Generate the new structure
-        out_struc = drawMolBox(struc, float(iparams['tol']), dims, float(iparams['maxAttempts']), iparams['numMolecules'])
+        out_struc, strucType = drawMolBox(struc, float(iparams['tol']), dims, float(iparams['maxAttempts']), iparams['numMolecules'])
         print(len(out_struc))
     
     elif iparams['shape'].lower() == 'sphere':
@@ -101,10 +101,10 @@ def main():
         radius = iparams['radius']
 
         # Generate the new structure
-        out_struc = drawMolSphere(struc, float(iparams['tol']), float(radius), center, float(iparams['maxAttempts']), iparams['numMolecules'])
+        out_struc, strucType = drawMolSphere(struc, float(iparams['tol']), float(radius), center, float(iparams['maxAttempts']), iparams['numMolecules'])
 
     if iparams['outputFile']:
-        writeXYZ(out_struc, iparams['outputFile'])
+        writeXYZ(out_struc, iparams['outputFile'], strucType)
 
 
 if __name__ == "__main__":

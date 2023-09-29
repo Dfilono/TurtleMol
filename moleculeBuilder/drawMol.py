@@ -35,9 +35,11 @@ def drawMolBox(struc, tol, dims, maxattempts, numMol):
         # Check if structure is monatomic or molecule
         if len(original_points) == 1:
             filledAtom = AtomsFillBox(num_x_shifts, num_y_shifts, num_z_shifts, tol, original_points, box, radii)
-
+            return list(filledAtom), "atom"
+        
         elif len(original_points) > 1:
             filledAtom = MoleculesFillBox(num_x_shifts, num_y_shifts, num_z_shifts, tol, original_points, box, radii)
+            return list(filledAtom), "molecule"
 
         else:
             print('No atoms found')
@@ -53,15 +55,15 @@ def drawMolBox(struc, tol, dims, maxattempts, numMol):
         # Check if structure is monatomic or molecule
         if len(original_points) == 1:
             filledAtom = AtomsDefiniteBox(numMol, maxattempts, original_points, box, radii, tol)
+            return list(filledAtom), "atom"
 
         elif len(original_points) > 1:
             filledAtom = MoleculesDefiniteBox(numMol, maxattempts, original_points, box, radii, tol)
+            return list(filledAtom), "molecule"
 
         else:
             print('No atoms found')
             sys.exit()
-        
-        return list(filledAtom)
 
 def drawMolSphere(struc, tol, radius, center, maxattempts, numMol):
     sphere = Sphere3d(float(center[0]), float(center[1]), float(center[2]), radius)
@@ -78,32 +80,34 @@ def drawMolSphere(struc, tol, radius, center, maxattempts, numMol):
         numMol = int(numMol)
 
     if str(numMol).lower() == 'fill':
+        num_shifts = math.ceil(2*sphere.radius / tol)
+
         # Check if structure is monatomic or molecule
         if len(original_points) == 1:
-            filledAtom = AtomFillSphere(sphere, original_points, radii, maxattempts, tol)
+            filledAtom = AtomFillSphere(num_shifts, sphere, original_points, radii, tol)
+            return list(filledAtom), "atom"
 
         elif len(original_points) > 1:
-            filledAtom = MoleculeFillSphere(sphere, original_points, radii, maxattempts, tol)
+            filledAtom = MoleculeFillSphere(num_shifts, sphere, original_points, radii, tol)
+            return list(filledAtom), "molecule"
 
         else:
             print('No atoms found')
             sys.exit()
-        
-        return list(filledAtom)
     
     elif type(numMol) is int and numMol != 0:
         # Check if structure is monatomic or molecule
         if len(original_points) == 1:
-            filledAtom = AtomDefiniteSphere()
+            filledAtom = AtomDefiniteSphere(numMol, maxattempts, original_points, sphere, radii, tol)
+            return list(filledAtom), "atom"
 
         elif len(original_points) > 1:
-            filledAtom = MoleculeDefiniteSphere()
+            filledAtom = MoleculeDefiniteSphere(numMol, maxattempts, original_points, sphere, radii, tol)
+            return list(filledAtom), "molecule"
 
         else:
             print('No atoms found')
             sys.exit()
-        
-        return list(filledAtom)
 
 def setAtomicRadius():
     radii = {}

@@ -1,6 +1,6 @@
-shape=Sphere
+shape=sphere
 sideLength=10
-numMolecules=fill
+numMolecules=30
 structureFile=moleculeBuilder/tests/Water/water.xyz
 radius = 10
 fromWall=0.5

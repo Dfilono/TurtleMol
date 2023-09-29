@@ -1,8 +1,8 @@
-shape=Sphere
+shape=sphere
 sideLength=10
-numMolecules=fill
+numMolecules=20
 structureFile=moleculeBuilder/tests/Argon/argon.xyz
 radius = 10
 fromWall=0.25
 outputFile=moleculeBuilder/tests/Argon/out.xyz
-tol=1
+tol=0.5

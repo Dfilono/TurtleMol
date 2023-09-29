@@ -19,18 +19,26 @@ def getInput(file_path):
 def readStrucFile(file_path):
     return pd.read_csv(file_path, delim_whitespace=True, skiprows=2, names=["Atom", "X", "Y", "Z"])
 
-def writeXYZ(data, filepath):
-    columns = ['Atom', 'X', 'Y', 'Z']
-    df = pd.DataFrame(columns=['Atom', 'X', 'Y', 'Z'])
+def writeXYZ(data, filepath, strucType):
+    if strucType == 'molecule':
+        columns = ['Atom', 'X', 'Y', 'Z']
+        df = pd.DataFrame(columns=['Atom', 'X', 'Y', 'Z'])
 
-    for mol in data:
-        for atom in mol:
-            df = df.append(pd.Series(atom, index=columns), ignore_index = True)
+        for mol in data:
+            for atom in mol:
+                df = df._append(pd.Series(atom, index=columns), ignore_index = True)
 
-    with open(filepath, 'w') as f:
-        f.write(str(len(df['Atom'])))
-        f.write('\n\n')
-        f.write(df.to_string(header=False, index=False))
+        with open(filepath, 'w') as f:
+            f.write(str(len(df['Atom'])))
+            f.write('\n\n')
+            f.write(df.to_string(header=False, index=False))
+    
+    else:
+        df = pd.DataFrame(data, columns=['Atom', 'X', 'Y', 'X'])
+        with open(filepath, 'w') as f:
+            f.write(str(len(df['Atom'])))
+            f.write('\n\n')
+            f.write(df.to_string(header=False, index=False))
 
 def getElementData(param):
     # Import Atomic Data
