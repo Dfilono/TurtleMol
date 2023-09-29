@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 '''
 This module is for reading and writing files as needed. Since both the input and output files are optional, these functions can be avoided.
@@ -39,7 +40,10 @@ def getElementData(param):
     # Ionization Energy Units = kJ/mol, Electron Affinity Units = kJ/mol
     # Data From: https://github.com/Bluegrams/periodic-table-data
 
-    elements = pd.read_csv("data/ElementData.csv", delimiter=",", header=0)
+    dirname = os.path.dirname(__file__)
+    filename = os.path.join(dirname, 'data/ElementData.csv')
+
+    elements = pd.read_csv(filename, delimiter=",", header=0)
     columnsToRemove = ["DiscoveredBy", "Discovery", "AbundanceCrust", "AbundanceUniverse"]
     elements = elements.drop(labels=columnsToRemove, axis = 1)
 

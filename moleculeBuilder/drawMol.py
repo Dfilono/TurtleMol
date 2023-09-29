@@ -2,17 +2,18 @@ import math
 import sys
 import pandas as pd
 from Box3d import Box3d
-from shiftAtoms import shiftAtomsFill, shiftAtomsDefinite
-from shiftMols import shiftMoleculesFill, shiftMoleculesDefinite
+from Sphere3D import Sphere3d
+from shiftBox import AtomsFillBox, AtomsDefiniteBox, MoleculesFillBox, MoleculesDefiniteBox
+from shiftSphere import AtomFillSphere, AtomDefiniteSphere, MoleculeDefiniteSphere, MoleculeFillSphere
 from readWriteFiles import getElementData
 
 '''
-This function is used to repeat a pattern of a given molecule or molecules. The goal is to repeat the pattern exactly the specified number of times
+These functions are used to repeat a pattern of a given molecule or molecules. The goal is to repeat the pattern exactly the specified number of times
 within the constraints of a the defined shape. A 'Fill' option was also added so that one could just define a space,
 and fill said space with provided structure as many times as it can fit.
 '''
 
-def drawMol(struc, tol, dims, maxattempts, numMol):
+def drawMolBox(struc, tol, dims, maxattempts, numMol):
     box = Box3d(0, 0, 0, dims[0], dims[1], dims[2])
     radii = setAtomicRadius()
 
@@ -33,10 +34,10 @@ def drawMol(struc, tol, dims, maxattempts, numMol):
 
         # Check if structure is monatomic or molecule
         if len(original_points) == 1:
-            filledAtom = shiftAtomsFill(num_x_shifts, num_y_shifts, num_z_shifts, tol, original_points, box, radii)
+            filledAtom = AtomsFillBox(num_x_shifts, num_y_shifts, num_z_shifts, tol, original_points, box, radii)
 
         elif len(original_points) > 1:
-            filledAtom = shiftMoleculesFill(num_x_shifts, num_y_shifts, num_z_shifts, tol, original_points, box, radii)
+            filledAtom = MoleculesFillBox(num_x_shifts, num_y_shifts, num_z_shifts, tol, original_points, box, radii)
 
         else:
             print('No atoms found')
@@ -51,17 +52,59 @@ def drawMol(struc, tol, dims, maxattempts, numMol):
 
         # Check if structure is monatomic or molecule
         if len(original_points) == 1:
-            filledAtom = shiftAtomsDefinite(numMol, maxattempts, original_points, box, radii, tol)
+            filledAtom = AtomsDefiniteBox(numMol, maxattempts, original_points, box, radii, tol)
 
         elif len(original_points) > 1:
-            filledAtom = shiftMoleculesDefinite(numMol, maxattempts, original_points, box, radii, tol)
+            filledAtom = MoleculesDefiniteBox(numMol, maxattempts, original_points, box, radii, tol)
 
         else:
             print('No atoms found')
             sys.exit()
         
         return list(filledAtom)
-                        
+
+def drawMolSphere(struc, tol, radius, center, maxattempts, numMol):
+    sphere = Sphere3d(float(center[0]), float(center[1]), float(center[2]), radius)
+    radii = setAtomicRadius()
+
+    atoms = struc['Atom'].values.tolist()
+    ogX = struc['X'].values.tolist()
+    ogY = struc['Y'].values.tolist()
+    ogZ = struc['Z'].values.tolist()
+
+    original_points = [(atoms[i], ogX[i], ogY[i], ogZ[i]) for i in range(len(atoms))]
+
+    if type(numMol) is not int and str(numMol).lower() != "fill":
+        numMol = int(numMol)
+
+    if str(numMol).lower() == 'fill':
+        # Check if structure is monatomic or molecule
+        if len(original_points) == 1:
+            filledAtom = AtomFillSphere(sphere, original_points, radii, maxattempts, tol)
+
+        elif len(original_points) > 1:
+            filledAtom = MoleculeFillSphere(sphere, original_points, radii, maxattempts, tol)
+
+        else:
+            print('No atoms found')
+            sys.exit()
+        
+        return list(filledAtom)
+    
+    elif type(numMol) is int and numMol != 0:
+        # Check if structure is monatomic or molecule
+        if len(original_points) == 1:
+            filledAtom = AtomDefiniteSphere()
+
+        elif len(original_points) > 1:
+            filledAtom = MoleculeDefiniteSphere()
+
+        else:
+            print('No atoms found')
+            sys.exit()
+        
+        return list(filledAtom)
+
 def setAtomicRadius():
     radii = {}
 

@@ -1,7 +1,7 @@
 import sys
 import argparse
 from Box3d import drawBox
-from drawMol import drawMol
+from drawMol import drawMolBox, drawMolSphere
 from readWriteFiles import *
 
 '''
@@ -27,6 +27,8 @@ def defaultParams():
         'Xlen' : 1.0,
         'Ylen' : 1.0,
         'Zlen' : 1.0,
+        'sphereCenter' : [0, 0, 0],
+        'radius' : 1.0,
         'numMolecules' : 1,
         'tol' : 1.0,
         'fromWall' : 1.0,
@@ -46,6 +48,8 @@ def parseCommandLine(dparams):
     parser.add_argument('-xl', '--Xlen', type=float, help="X dimension of a box in Angstroms", default=dparams['Xlen'])
     parser.add_argument('-yl', '--Ylen', type=float, help="Y dimension of a box in Angstroms", default=dparams['Ylen'])
     parser.add_argument('-zl', '--Zlen', type=float, help="Z dimension of a box in Angstroms", default=dparams['Zlen'])
+    parser.add_argument('-r', '--radius', type=float, help="Radius of a spehere in Angstroms", default=dparams['radius'])
+    parser.add_argument('-center', '--center', nargs='+', type=float, help="X, Y, Z coordinates of the center of a sphere", default=dparams['sphereCenter'])
     parser.add_argument('-n', '--numMolecules', type=int, help="Number of molecules", default=dparams['numMolecules'])
     parser.add_argument('-t', '--tol', type=float, help="Minimum distance between molecules", default=dparams['tol'])
     parser.add_argument('-w', '--fromWall', type=float, help="Minimum distance from wall", default=dparams['fromWall'])
@@ -78,17 +82,26 @@ def main():
     
     print(iparams)
 
-    # Define the box
-    dims = drawBox(iparams)
-    print(dims)
-
     # Get structure
     struc = readStrucFile(iparams['structureFile'])
     print(struc)
 
-    # Generate the new structure
-    out_struc = drawMol(struc, float(iparams['tol']), dims, float(iparams['maxAttempts']), iparams['numMolecules'])
-    print(len(out_struc))
+    if iparams['shape'].lower() == 'box' or iparams['shape'].lower() == 'cube':
+        # Define the box
+        dims = drawBox(iparams)
+        print(dims)
+
+        # Generate the new structure
+        out_struc = drawMolBox(struc, float(iparams['tol']), dims, float(iparams['maxAttempts']), iparams['numMolecules'])
+        print(len(out_struc))
+    
+    elif iparams['shape'].lower() == 'sphere':
+        # Define Sphere
+        center = iparams['sphereCenter']
+        radius = iparams['radius']
+
+        # Generate the new structure
+        out_struc = drawMolSphere(struc, float(iparams['tol']), float(radius), center, float(iparams['maxAttempts']), iparams['numMolecules'])
 
     if iparams['outputFile']:
         writeXYZ(out_struc, iparams['outputFile'])

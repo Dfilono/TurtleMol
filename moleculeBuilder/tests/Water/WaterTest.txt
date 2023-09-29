@@ -1,7 +1,8 @@
-shape=Cube
+shape=Sphere
 sideLength=10
 numMolecules=fill
-structureFile=tests/Water/water.xyz
+structureFile=moleculeBuilder/tests/Water/water.xyz
+radius = 10
 fromWall=0.5
-outputFile=tests/Water/WaterOut.xyz
+outputFile=moleculeBuilder/tests/Water/WaterOut.xyz
 tol = 1.0
