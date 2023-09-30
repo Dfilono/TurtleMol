@@ -25,6 +25,6 @@ class Sphere3d:
     def contains_points(self, xCoord, yCoord, zCoord, atomRadius):
         '''Returns if the distance between points is greater than the radius'''
         distance = math.sqrt((xCoord - self.xCoord)**2 + 
-                             (yCoord - self.yCoor)**2 + 
+                             (yCoord - self.yCoord)**2 + 
                              (zCoord - self.zCoord)**2)
         return distance <= (self.radius + atomRadius)
