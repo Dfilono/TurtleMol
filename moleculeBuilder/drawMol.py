@@ -14,7 +14,7 @@ and fill said space with provided structure as many times as it can fit.
 '''
 
 def drawMolBox(struc, tol, dims, maxattempts, numMol):
-    box = Box3d(0, 0, 0, dims[0], dims[1], dims[2])
+    box = Box3d(0, 0, 0, dims)
     radii = setAtomicRadius()
 
     atoms = struc['Atom'].values.tolist()

@@ -9,9 +9,9 @@ def AtomsFillBox(x, y, z, tol, og, box, radii):
             for xshift in range(x):
                 for atom in og:
                     # Calculate the shift for each tile and new point
-                    new_x = atom[1] + xshift
-                    new_y = atom[2] + yshift
-                    new_z = atom[3] + zshift
+                    new_x = box.xCoord + atom[1] + xshift
+                    new_y = box.yCoord + atom[2] + yshift
+                    new_z = box.zCoord + atom[3] + zshift
 
                     # Adjust for atomic radiss
                     new_x_min = new_x - radii[atom[0]]
@@ -78,9 +78,9 @@ def MoleculesFillBox(x, y, z, tol, og, box, radii):
                 for i, atom in enumerate(og):
                     #print(atom)
                     # Calculate the shift for each tile and new point
-                    new_x = box.x + atom[1] + xshift
-                    new_y = box.y + atom[2] + yshift
-                    new_z = box.z + atom[3] + zshift
+                    new_x = box.xCoord + atom[1] + xshift
+                    new_y = box.yCoord + atom[2] + yshift
+                    new_z = box.zCoord + atom[3] + zshift
 
                     # Adjust for atomic radiss
                     new_x_min = new_x - radii[atom[0]]
@@ -177,9 +177,9 @@ def is_overlap_atom(new_atom, filled_atoms, radii, tol):
 
 def inBox(xmin, xmax, ymin, ymax, zmin, zmax, box):
     if (
-        xmin >= box.x and xmax <= box.x + box.length and
-        ymin >= box.y and ymax <= box.y + box.width and
-        zmin >= box.z and zmax <= box.z + box.height
+        xmin >= box.xCoord and xmax <= box.xCoord + box.length and
+        ymin >= box.yCoord and ymax <= box.yCoord + box.width and
+        zmin >= box.zCoord and zmax <= box.zCoord + box.height
     ):
         return True
     else:

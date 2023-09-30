@@ -3,23 +3,24 @@ This module handles a 3d box/cube to be filled, and checks if atoms are still wi
 once they have been duplicated.
 '''
 
-import sys
-
 class Box3d:
-    def __init__(self, x, y, z, length, width, height):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.length = length
-        self.width = width
-        self.height = height
+    '''
+    Defines the 3D Box object
+    '''
+    def __init__(self, xCoord, yCoord, zCoord, dims):
+        self.xCoord = xCoord
+        self.yCoord = yCoord
+        self.zCoord = zCoord
+        self.length = dims[0]
+        self.width = dims[1]
+        self.height = dims[2]
 
-'''
-Function sets the array that describes the dimensions of the box based on if the box is a cube or not
-'''
 def drawBox(params):
+    '''
+    Function sets the array that describes the dimensions of the box based on if the box is a cube or not
+    '''
     if params['shape'].lower() == 'cube':
-        return [float(params['sideLength']), float(params['sideLength']), 
+        return [float(params['sideLength']), float(params['sideLength']),
                 float(params['sideLength'])]
 
     if params['shape'].lower() == 'box':
