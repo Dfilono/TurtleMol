@@ -18,9 +18,9 @@ def AtomFillSphere(numshifts, sphere, og, radii, tol):
                     atom_type = atom[0]
 
                     # Calculate the coordiantes within the sphere
-                    x = (sphere.x - sphere.radius) + rel_x + xshifts
-                    y = (sphere.y - sphere.radius) + rel_y + yshifts
-                    z = (sphere.z - sphere.radius) + rel_z + zshifts
+                    x = (sphere.xCoord - sphere.radius) + rel_x + xshifts
+                    y = (sphere.yCoord - sphere.radius) + rel_y + yshifts
+                    z = (sphere.zCoord - sphere.radius) + rel_z + zshifts
 
                     # Adjust for atomic radii
                     atom_radius = radii.get(atom_type, 0.0) # Get the radius for the atom type
@@ -43,9 +43,9 @@ def AtomDefiniteSphere(numMol, maxattempts, og, sphere, radii, tol):
         for atom in og:
 
             # Calculate the shift for each tile and new point
-            new_x = atom[1] + random.uniform((sphere.x - sphere.radius), (sphere.x + sphere.radius))
-            new_y = atom[2] + random.uniform((sphere.y - sphere.radius), (sphere.y + sphere.radius))
-            new_z = atom[3] + random.uniform((sphere.z - sphere.radius), (sphere.z + sphere.radius))
+            new_x = atom[1] + random.uniform((sphere.xCoord - sphere.radius), (sphere.xCoord + sphere.radius))
+            new_y = atom[2] + random.uniform((sphere.yCoord - sphere.radius), (sphere.yCoord + sphere.radius))
+            new_z = atom[3] + random.uniform((sphere.zCoord - sphere.radius), (sphere.zCoord + sphere.radius))
             atom_type = atom[0]
 
             # Adjust for atomic radii
@@ -79,9 +79,9 @@ def MoleculeFillSphere(numshifts, sphere, og, radii, tol):
                     atom_type = atom[0]
 
                     # Calculate the coordiantes within the sphere
-                    x = (sphere.x - sphere.radius) + rel_x + xshifts
-                    y = (sphere.y - sphere.radius) + rel_y + yshifts
-                    z = (sphere.z - sphere.radius) + rel_z + zshifts
+                    x = (sphere.xCoord - sphere.radius) + rel_x + xshifts
+                    y = (sphere.yCoord - sphere.radius) + rel_y + yshifts
+                    z = (sphere.zCoord - sphere.radius) + rel_z + zshifts
 
                     # Adjust for atomic radii
                     atom_radius = radii.get(atom_type, 0.0) # Get the radius for the atom type
@@ -106,9 +106,9 @@ def MoleculeDefiniteSphere(numMol, maxattempts, og, sphere, radii, tol):
 
     while len(filled) < numMol and attempts <= maxattempts:
         new_mol = []
-        shiftx = random.uniform((sphere.x - sphere.radius), (sphere.x + sphere.radius))
-        shifty = random.uniform((sphere.y - sphere.radius), (sphere.y + sphere.radius))
-        shiftz = random.uniform((sphere.z - sphere.radius), (sphere.z + sphere.radius))
+        shiftx = random.uniform((sphere.xCoord - sphere.radius), (sphere.xCoord + sphere.radius))
+        shifty = random.uniform((sphere.yCoord - sphere.radius), (sphere.yCoord + sphere.radius))
+        shiftz = random.uniform((sphere.zCoord - sphere.radius), (sphere.zCoord + sphere.radius))
 
         for atom in og:
 
