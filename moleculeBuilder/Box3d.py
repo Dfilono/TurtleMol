@@ -1,6 +1,5 @@
 '''
-This module handles a 3d box/cube to be filled, and checks if atoms are still within the box
-once they have been duplicated.
+This module handles a 3d box/cube to be filled
 '''
 
 class Box3d:
@@ -15,9 +14,22 @@ class Box3d:
         self.width = dims[1]
         self.height = dims[2]
 
+    def volume(self):
+        '''Returns the volume of a box'''
+        return self.length * self.width * self.height
+
+    def surfaceArea(self):
+        '''Returns the surface area of a box'''
+        face1 = 2 * self.length * self.width
+        face2 = 2 * self.length * self.height
+        face3 = 2 * self.width * self.height
+
+        return face1 + face2 + face3 
+
 def drawBox(params):
     '''
-    Function sets the array that describes the dimensions of the box based on if the box is a cube or not
+    Function sets the array that describes the dimensions of the box
+    based on if the box is a cube or not
     '''
     if params['shape'].lower() == 'cube':
         return [float(params['sideLength']), float(params['sideLength']),

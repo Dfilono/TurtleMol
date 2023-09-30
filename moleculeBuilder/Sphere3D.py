@@ -1,18 +1,30 @@
+'''
+This module handles a 3d sphere to be filled
+'''
+
 import math
 
 class Sphere3d:
-    def __init__(self, x, y, z, radius):
-        self.x = x
-        self.y = y
-        self.z = z
+    '''
+    Defines the 3D Sphere object
+    '''
+    def __init__(self, xCoord, yCoord, zCoord, radius):
+        self.xCoord = xCoord
+        self.yCoord = yCoord
+        self.zCoord = zCoord
         self.radius = radius
 
     def volume(self):
+        '''Returns the volume of a Sphere'''
         return (4/3) * math.pi * self.radius**3
-    
-    def surface_area(self):
+
+    def surfaceArea(self):
+        '''Returns the surface area of a Sphere'''
         return 4 * math.pi * self.radius**2
-    
-    def contains_points(self, x, y, z, atom_radius):
-        distance = math.sqrt((x - self.x)**2 + (y - self.y)**2 + (z - self.z)**2)
-        return distance <= (self.radius + atom_radius)
+
+    def contains_points(self, xCoord, yCoord, zCoord, atomRadius):
+        '''Returns if the distance between points is greater than the radius'''
+        distance = math.sqrt((xCoord - self.xCoord)**2 + 
+                             (yCoord - self.yCoor)**2 + 
+                             (zCoord - self.zCoord)**2)
+        return distance <= (self.radius + atomRadius)

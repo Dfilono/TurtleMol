@@ -1,7 +1,10 @@
-import math
+'''Module places molecules in a sphere'''
+
 import random
+from isOverlap import isOverlapAtom, isOverlapMolecule
 
 def AtomFillSphere(numshifts, sphere, og, radii, tol):
+    '''Fills sphere with single atoms'''
     filled = []
 
     for zshifts in range(numshifts):
@@ -26,12 +29,13 @@ def AtomFillSphere(numshifts, sphere, og, radii, tol):
                     if sphere.contains_points(x, y, z, atom_radius):
                         new_atom = (atom_type, x, y, z)
 
-                        if not is_overlap_atom(new_atom, filled, radii, tol):
+                        if not isOverlapAtom(new_atom, filled, radii, tol):
                             filled.append(new_atom)
 
     return filled
 
 def AtomDefiniteSphere(numMol, maxattempts, og, sphere, radii, tol):
+    '''Places a defined number of atoms in a sphere'''
     filled = []
     attempts = 0
 
@@ -45,19 +49,21 @@ def AtomDefiniteSphere(numMol, maxattempts, og, sphere, radii, tol):
             atom_type = atom[0]
 
             # Adjust for atomic radii
-            atom_radius = radii.get(atom_type, 0.0) # Get the radius for the atom typ
+            atom_radius = radii.get(atom_type, 0.0) # Get the radius for the atom type
+
             # Check if the new atom fits within the sphere
             if sphere.contains_points(new_x, new_y, new_z, atom_radius):
                 new_atom = (atom_type, new_x, new_y, new_z)
 
-                if not is_overlap_atom(new_atom, filled, radii, tol):
+                if not isOverlapAtom(new_atom, filled, radii, tol):
                     filled.append(new_atom)
-            
+
         attempts += 1
 
     return list(filled)
 
 def MoleculeFillSphere(numshifts, sphere, og, radii, tol):
+    '''Fills sphere with molecules'''
     filled = []
 
     for zshifts in range(numshifts):
@@ -87,13 +93,14 @@ def MoleculeFillSphere(numshifts, sphere, og, radii, tol):
                     else:
                         break # If any atom doesn't fit, discard the whol molecule
 
-                if not is_overlap_molecule(new_mol, filled, radii, tol):
+                if not isOverlapMolecule(new_mol, filled, radii, tol):
                     if len(new_mol) == len(og):
                         filled.append(new_mol)
 
     return filled
 
 def MoleculeDefiniteSphere(numMol, maxattempts, og, sphere, radii, tol):
+    '''Places a defined number of molecules in a sphere'''
     filled = []
     attempts = 0
 
@@ -109,51 +116,21 @@ def MoleculeDefiniteSphere(numMol, maxattempts, og, sphere, radii, tol):
             new_x = atom[1] + shiftx
             new_y = atom[2] + shifty
             new_z = atom[3] + shiftz
-            atom_type = atom[0]            
+            atom_type = atom[0]
 
             # Adjust for atomic radii
-            atom_radius = radii.get(atom_type, 0.0) # Get the radius for the atom typ
+            atom_radius = radii.get(atom_type, 0.0) # Get the radius for the atom type
             # Check if the new atom fits within the sphere
             if sphere.contains_points(new_x, new_y, new_z, atom_radius):
                 new_atom = (atom_type, new_x, new_y, new_z)
                 new_mol.append(new_atom)
             else:
                 break # If any atom doesn't fit, discard the whol molecule
-        
-        if not is_overlap_molecule(new_mol, filled, radii, tol):
+
+        if not isOverlapMolecule(new_mol, filled, radii, tol):
             if len(new_mol) == len(og):
                 filled.append(new_mol)
 
         attempts += 1
 
     return list(filled)
-
-def is_overlap_molecule(new_atom, filled_atoms, radii, tol):
-    #print(new_atom)
-    for molecule in filled_atoms:
-        for atom1, atom2 in zip(new_atom, molecule):
-            distance = math.sqrt(
-                (atom1[1] - atom2[1])**2 +
-                (atom1[2] - atom2[2])**2 +
-                (atom1[3] - atom2[3])**2
-            )
-
-            if distance < (radii[atom1[0]] + radii[atom2[0]]) + tol:
-                #print(f'Fail: dist = {distance}, Radius = {radii[new_atom[0]] + radii[atom[0]]}')
-                return True
-        #print(f'Pass: dist = {distance}, Radius = {radii[new_atom[0]] + radii[atom[0]]}')
-    return False
-
-def is_overlap_atom(new_atom, filled_atoms, radii, tol):
-    for atom in filled_atoms:
-        distance = math.sqrt(
-            (new_atom[1] - atom[1])**2 +
-            (new_atom[2] - atom[2])**2 +
-            (new_atom[3] - atom[3])**2
-        )
-
-        if distance < (radii[new_atom[0]] + radii[atom[0]]) + tol:
-            #print(f'Fail: dist = {distance}, Radius = {radii[new_atom[0]] + radii[atom[0]]}')
-            return True
-        #print(f'Pass: dist = {distance}, Radius = {radii[new_atom[0]] + radii[atom[0]]}')
-    return False

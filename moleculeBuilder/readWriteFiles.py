@@ -1,11 +1,12 @@
-import pandas as pd
-import os
-
 '''
-This module is for reading and writing files as needed. Since both the input and output files are optional, these functions can be avoided.
+This module is for reading and writing files as needed. 
+Since both the input and output files are optional, these functions can be avoided.
 The structure file is required however, and currently the only supported format is xyz files.
 Data on elements is also imported and searchable. Primary use at this time is for the atomic radius
 '''
+
+import os
+import pandas as pd
 
 def getInput(file_path):
     params = {}
@@ -13,7 +14,7 @@ def getInput(file_path):
         for line in f:
             key, value = line.strip().split('=')
             params[key.strip()] = value.strip()
-    
+
     return params
 
 def readStrucFile(file_path):
@@ -28,14 +29,14 @@ def writeXYZ(data, filepath, strucType):
             for atom in mol:
                 df = df._append(pd.Series(atom, index=columns), ignore_index = True)
 
-        with open(filepath, 'w') as f:
+        with open(filepath, 'w', encoding = 'utf-8') as f:
             f.write(str(len(df['Atom'])))
             f.write('\n\n')
             f.write(df.to_string(header=False, index=False))
-    
+
     else:
         df = pd.DataFrame(data, columns=['Atom', 'X', 'Y', 'X'])
-        with open(filepath, 'w') as f:
+        with open(filepath, 'w', encoding = 'utf-8') as f:
             f.write(str(len(df['Atom'])))
             f.write('\n\n')
             f.write(df.to_string(header=False, index=False))

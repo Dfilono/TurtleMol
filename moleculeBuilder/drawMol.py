@@ -1,19 +1,22 @@
+'''
+These functions are used to repeat a pattern of a given molecule or molecules. 
+The goal is to repeat the pattern exactly the specified number of times
+within the constraints of a the defined shape. 
+A 'Fill' option was also added so that one could just define a space,
+and fill said space with provided structure as many times as it can fit.
+'''
+
 import math
 import sys
 import pandas as pd
-from Box3d import Box3d
+from Box3D import Box3d
 from Sphere3D import Sphere3d
 from shiftBox import AtomsFillBox, AtomsDefiniteBox, MoleculesFillBox, MoleculesDefiniteBox
 from shiftSphere import AtomFillSphere, AtomDefiniteSphere, MoleculeDefiniteSphere, MoleculeFillSphere
 from readWriteFiles import getElementData
 
-'''
-These functions are used to repeat a pattern of a given molecule or molecules. The goal is to repeat the pattern exactly the specified number of times
-within the constraints of a the defined shape. A 'Fill' option was also added so that one could just define a space,
-and fill said space with provided structure as many times as it can fit.
-'''
-
 def drawMolBox(struc, tol, dims, maxattempts, numMol):
+    '''Utilized to place molecules in a box'''
     box = Box3d(0, 0, 0, dims)
     radii = setAtomicRadius()
 
@@ -28,29 +31,29 @@ def drawMolBox(struc, tol, dims, maxattempts, numMol):
         numMol = int(numMol)
 
     if str(numMol).lower() == "fill":
-        num_x_shifts = math.ceil(box.length / tol)
-        num_y_shifts = math.ceil(box.height / tol)
-        num_z_shifts = math.ceil(box.width / tol)
+        numXShifts = math.ceil(box.length / tol)
+        numYShifts = math.ceil(box.height / tol)
+        numZShifts = math.ceil(box.width / tol)
 
         # Check if structure is monatomic or molecule
         if len(original_points) == 1:
-            filledAtom = AtomsFillBox(num_x_shifts, num_y_shifts, num_z_shifts, tol, original_points, box, radii)
+            filledAtom = AtomsFillBox(numXShifts, numYShifts, numZShifts, tol, original_points, box, radii)
             return list(filledAtom), "atom"
-        
+
         elif len(original_points) > 1:
-            filledAtom = MoleculesFillBox(num_x_shifts, num_y_shifts, num_z_shifts, tol, original_points, box, radii)
+            filledAtom = MoleculesFillBox(numXShifts, numYShifts, numZShifts, tol, original_points, box, radii)
             return list(filledAtom), "molecule"
 
         else:
             print('No atoms found')
             sys.exit()
-        
+
         return list(filledAtom)
 
     elif type(numMol) is int and numMol != 0:
-        num_x_shifts = math.ceil(numMol ** (1/3))
-        num_y_shifts = math.ceil(numMol / (num_x_shifts ** 2))
-        num_z_shifts = math.ceil(numMol / (num_x_shifts * num_y_shifts))
+        numXShifts = math.ceil(numMol ** (1/3))
+        numYShifts = math.ceil(numMol / (numXShifts ** 2))
+        numZShifts = math.ceil(numMol / (numXShifts * numYShifts))
 
         # Check if structure is monatomic or molecule
         if len(original_points) == 1:
@@ -66,6 +69,7 @@ def drawMolBox(struc, tol, dims, maxattempts, numMol):
             sys.exit()
 
 def drawMolSphere(struc, tol, radius, center, maxattempts, numMol):
+    '''Utilized to place molecules in a sphere'''
     sphere = Sphere3d(float(center[0]), float(center[1]), float(center[2]), radius)
     radii = setAtomicRadius()
 
@@ -94,7 +98,7 @@ def drawMolSphere(struc, tol, radius, center, maxattempts, numMol):
         else:
             print('No atoms found')
             sys.exit()
-    
+
     elif type(numMol) is int and numMol != 0:
         # Check if structure is monatomic or molecule
         if len(original_points) == 1:
@@ -110,6 +114,7 @@ def drawMolSphere(struc, tol, radius, center, maxattempts, numMol):
             sys.exit()
 
 def setAtomicRadius():
+    '''Defines the dataframe to fnd th atomic radius'''
     radii = {}
 
     ele = getElementData('AtomicRadius')
@@ -122,8 +127,3 @@ def setAtomicRadius():
             radii[k] = v * 0.01
 
     return radii
-
-
-
-
-
