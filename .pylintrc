@@ -1,0 +1,5 @@
+[FORMAT]
+
+# Naming style for variables and functions (camelCase)
+variable-rgx=[a-z][a-zA-Z0-9]*$
+function-rgx=[a-z][a-zA-Z0-9]*$
