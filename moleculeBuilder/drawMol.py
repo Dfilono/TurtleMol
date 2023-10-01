@@ -7,7 +7,6 @@ and fill said space with provided structure as many times as it can fit.
 '''
 
 import math
-import sys
 import pandas as pd
 from Box3D import Box3d
 from Sphere3D import Sphere3d

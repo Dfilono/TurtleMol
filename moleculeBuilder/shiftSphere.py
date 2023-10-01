@@ -43,9 +43,12 @@ def atomDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol):
         for atom in og:
 
             # Calculate the shift for each tile and new point
-            newX = atom[1] + random.uniform((sphere.xCoord - sphere.radius), (sphere.xCoord + sphere.radius))
-            newY = atom[2] + random.uniform((sphere.yCoord - sphere.radius), (sphere.yCoord + sphere.radius))
-            newZ = atom[3] + random.uniform((sphere.zCoord - sphere.radius), (sphere.zCoord + sphere.radius))
+            newX = atom[1] + random.uniform((sphere.xCoord - sphere.radius),
+                                            (sphere.xCoord + sphere.radius))
+            newY = atom[2] + random.uniform((sphere.yCoord - sphere.radius),
+                                            (sphere.yCoord + sphere.radius))
+            newZ = atom[3] + random.uniform((sphere.zCoord - sphere.radius),
+                                            (sphere.zCoord + sphere.radius))
             atomType = atom[0]
 
             # Adjust for atomic radii
@@ -106,9 +109,12 @@ def moleculeDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol):
 
     while len(filled) < numMol and attempts <= maxAttempts:
         newMol = []
-        shiftx = random.uniform((sphere.xCoord - sphere.radius), (sphere.xCoord + sphere.radius))
-        shifty = random.uniform((sphere.yCoord - sphere.radius), (sphere.yCoord + sphere.radius))
-        shiftz = random.uniform((sphere.zCoord - sphere.radius), (sphere.zCoord + sphere.radius))
+        shiftx = random.uniform((sphere.xCoord - sphere.radius),
+                                (sphere.xCoord + sphere.radius))
+        shifty = random.uniform((sphere.yCoord - sphere.radius),
+                                (sphere.yCoord + sphere.radius))
+        shiftz = random.uniform((sphere.zCoord - sphere.radius),
+                                (sphere.zCoord + sphere.radius))
 
         for atom in og:
 
