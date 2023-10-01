@@ -8,9 +8,9 @@ function-rgx=[a-z][a-zA-Z0-9]*$
 class-rgx=[A-Z][a-zA-Z0-9]*$
 attr-rgx=[a-z][a-zA-Z0-9]*$
 
-# Naming style for function/method arguments (camelCase)
+# Naming style for function/method arguments (camelCase or snake_case)
 argument-rgx=[a-z][a-zA-Z0-9]*$
-method-rgx=[a-z][a-zA-Z0-9]*$
+method-rgx=(([a-z][a-zA-Z0-9]*)|([A-Z][a-zA-Z0-9]+))$
 
 # Naming style for modules (camelCase or snake_case)
-module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
+module-rgx=(([a-z][a-z0-9]*)|([A-Z][a-zA-Z0-9]+))$

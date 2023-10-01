@@ -49,7 +49,7 @@ def parseCommandLine(dparams):
                         help='Path to structure file')
     parser.add_argument('-s', '--shape', type=str,
                         help="Shape (Box or Cube)", default=dparams['shape'])
-    parser.add_argument('-sl', '--sideLength', type=float, 
+    parser.add_argument('-sl', '--sideLength', type=float,
                         help="Dimensions of a cube in Angstroms", default=dparams['sideLength'])
     parser.add_argument('-xl', '--Xlen', type=float,
                         help="X dimension of a box in Angstroms", default=dparams['Xlen'])
@@ -60,7 +60,8 @@ def parseCommandLine(dparams):
     parser.add_argument('-r', '--radius', type=float,
                         help="Radius of a spehere in Angstroms", default=dparams['radius'])
     parser.add_argument('-center', '--center', nargs='+', type=float,
-                        help="X, Y, Z coordinates of the center of a sphere", default=dparams['sphereCenter'])
+                        help="X, Y, Z coordinates of the center of a sphere",
+                        default=dparams['sphereCenter'])
     parser.add_argument('-n', '--numMolecules', type=int,
                         help="Number of molecules", default=dparams['numMolecules'])
     parser.add_argument('-t', '--tol', type=float,
@@ -68,7 +69,8 @@ def parseCommandLine(dparams):
     parser.add_argument('-w', '--fromWall', type=float,
                         help="Minimum distance from wall", default=dparams['fromWall'])
     parser.add_argument('-a', '--maxAttempts', type=int,
-                        help="Maximum iterations for finite sized systems", default=dparams['maxAttempts'])
+                        help="Maximum iterations for finite sized systems",
+                        default=dparams['maxAttempts'])
     parser.add_argument('-out', '--outputFile', type=str,
                         help="Path for output file if desired")
 
@@ -86,8 +88,8 @@ def main():
     if args.inputFile:
         iparams = getInput(args.inputFile)
     else:
-        for arg_name in vars(args):
-            iparams[arg_name] = getattr(args, arg_name)
+        for argName in vars(args):
+            iparams[argName] = getattr(args, argName)
 
     for name in dparams:
         if name not in iparams:
@@ -109,9 +111,9 @@ def main():
         print(dims)
 
         # Generate the new structure
-        out_struc, strucType = drawMolBox(struc, float(iparams['tol']), dims,
+        outStruc, strucType = drawMolBox(struc, float(iparams['tol']), dims,
                                           float(iparams['maxAttempts']), iparams['numMolecules'])
-        print(len(out_struc))
+        print(len(outStruc))
 
     elif iparams['shape'].lower() == 'sphere':
         # Define Sphere
@@ -119,11 +121,12 @@ def main():
         radius = iparams['radius']
 
         # Generate the new structure
-        out_struc, strucType = drawMolSphere(struc, float(iparams['tol']), float(radius),
-                                             center, float(iparams['maxAttempts']), iparams['numMolecules'])
+        outStruc, strucType = drawMolSphere(struc, float(iparams['tol']), float(radius),
+                                             center, float(iparams['maxAttempts']),
+                                             iparams['numMolecules'])
 
     if iparams['outputFile']:
-        writeXYZ(out_struc, iparams['outputFile'], strucType)
+        writeXYZ(outStruc, iparams['outputFile'], strucType)
 
 if __name__ == "__main__":
     main()

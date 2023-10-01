@@ -22,9 +22,9 @@ class Sphere3d:
         '''Returns the surface area of a Sphere'''
         return 4 * math.pi * self.radius**2
 
-    def contains_points(self, xCoord, yCoord, zCoord, atomRadius):
+    def containsPoints(self, xCoord, yCoord, zCoord, atomRadius):
         '''Returns if the distance between points is greater than the radius'''
-        distance = math.sqrt((xCoord - self.xCoord)**2 + 
-                             (yCoord - self.yCoord)**2 + 
+        distance = math.sqrt((xCoord - self.xCoord)**2 +
+                             (yCoord - self.yCoord)**2 +
                              (zCoord - self.zCoord)**2)
         return distance <= (self.radius + atomRadius)

@@ -3,109 +3,109 @@
 import random
 from isOverlap import isOverlapAtom, isOverlapMolecule
 
-def AtomFillSphere(numshifts, sphere, og, radii, tol):
+def atomFillSphere(numShifts, sphere, og, radii, tol):
     '''Fills sphere with single atoms'''
     filled = []
 
-    for zshifts in range(numshifts):
-        for yshifts in range(numshifts):
-            for xshifts in range(numshifts):
+    for zShifts in range(numShifts):
+        for yShifts in range(numShifts):
+            for xShifts in range(numShifts):
                 for atom in og:
                     # Calculate the relative position of each atom within the molecule
-                    rel_x = atom[1]
-                    rel_y = atom[2]
-                    rel_z = atom[3]
-                    atom_type = atom[0]
+                    relX = atom[1]
+                    relY = atom[2]
+                    relZ = atom[3]
+                    atomType = atom[0]
 
                     # Calculate the coordiantes within the sphere
-                    x = (sphere.xCoord - sphere.radius) + rel_x + xshifts
-                    y = (sphere.yCoord - sphere.radius) + rel_y + yshifts
-                    z = (sphere.zCoord - sphere.radius) + rel_z + zshifts
+                    x = (sphere.xCoord - sphere.radius) + relX + xShifts
+                    y = (sphere.yCoord - sphere.radius) + relY + yShifts
+                    z = (sphere.zCoord - sphere.radius) + relZ + zShifts
 
                     # Adjust for atomic radii
-                    atom_radius = radii.get(atom_type, 0.0) # Get the radius for the atom type
+                    atomRadius = radii.get(atomType, 0.0) # Get the radius for the atom type
 
                     # Check if the new atom fits within the sphere
-                    if sphere.contains_points(x, y, z, atom_radius):
-                        new_atom = (atom_type, x, y, z)
+                    if sphere.containsPoints(x, y, z, atomRadius):
+                        newAtom = (atomType, x, y, z)
 
-                        if not isOverlapAtom(new_atom, filled, radii, tol):
-                            filled.append(new_atom)
+                        if not isOverlapAtom(newAtom, filled, radii, tol):
+                            filled.append(newAtom)
 
     return filled
 
-def AtomDefiniteSphere(numMol, maxattempts, og, sphere, radii, tol):
+def atomDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol):
     '''Places a defined number of atoms in a sphere'''
     filled = []
     attempts = 0
 
-    while len(filled) < numMol and attempts <= maxattempts:
+    while len(filled) < numMol and attempts <= maxAttempts:
         for atom in og:
 
             # Calculate the shift for each tile and new point
-            new_x = atom[1] + random.uniform((sphere.xCoord - sphere.radius), (sphere.xCoord + sphere.radius))
-            new_y = atom[2] + random.uniform((sphere.yCoord - sphere.radius), (sphere.yCoord + sphere.radius))
-            new_z = atom[3] + random.uniform((sphere.zCoord - sphere.radius), (sphere.zCoord + sphere.radius))
-            atom_type = atom[0]
+            newX = atom[1] + random.uniform((sphere.xCoord - sphere.radius), (sphere.xCoord + sphere.radius))
+            newY = atom[2] + random.uniform((sphere.yCoord - sphere.radius), (sphere.yCoord + sphere.radius))
+            newZ = atom[3] + random.uniform((sphere.zCoord - sphere.radius), (sphere.zCoord + sphere.radius))
+            atomType = atom[0]
 
             # Adjust for atomic radii
-            atom_radius = radii.get(atom_type, 0.0) # Get the radius for the atom type
+            atomRadius = radii.get(atomType, 0.0) # Get the radius for the atom type
 
             # Check if the new atom fits within the sphere
-            if sphere.contains_points(new_x, new_y, new_z, atom_radius):
-                new_atom = (atom_type, new_x, new_y, new_z)
+            if sphere.containsPoints(newX, newY, newZ, atomRadius):
+                newAtom = (atomType, newX, newY, newZ)
 
-                if not isOverlapAtom(new_atom, filled, radii, tol):
-                    filled.append(new_atom)
+                if not isOverlapAtom(newAtom, filled, radii, tol):
+                    filled.append(newAtom)
 
         attempts += 1
 
     return list(filled)
 
-def MoleculeFillSphere(numshifts, sphere, og, radii, tol):
+def moleculeFillSphere(numShifts, sphere, og, radii, tol):
     '''Fills sphere with molecules'''
     filled = []
 
-    for zshifts in range(numshifts):
-        for yshifts in range(numshifts):
-            for xshifts in range(numshifts):
-                new_mol = []
+    for zShifts in range(numShifts):
+        for yShifts in range(numShifts):
+            for xShifts in range(numShifts):
+                newMol = []
 
                 for i, atom in enumerate(og):
                     # Calculate the relative position of each atom within the molecule
-                    rel_x = atom[1]
-                    rel_y = atom[2]
-                    rel_z = atom[3]
-                    atom_type = atom[0]
+                    relX = atom[1]
+                    relY = atom[2]
+                    relZ = atom[3]
+                    atomType = atom[0]
 
                     # Calculate the coordiantes within the sphere
-                    x = (sphere.xCoord - sphere.radius) + rel_x + xshifts
-                    y = (sphere.yCoord - sphere.radius) + rel_y + yshifts
-                    z = (sphere.zCoord - sphere.radius) + rel_z + zshifts
+                    x = (sphere.xCoord - sphere.radius) + relX + xShifts
+                    y = (sphere.yCoord - sphere.radius) + relY + yShifts
+                    z = (sphere.zCoord - sphere.radius) + relZ + zShifts
 
                     # Adjust for atomic radii
-                    atom_radius = radii.get(atom_type, 0.0) # Get the radius for the atom type
+                    atomRadius = radii.get(atomType, 0.0) # Get the radius for the atom type
 
                     # Check if the new atom fits within the sphere
-                    if sphere.contains_points(x, y, z, atom_radius):
-                        new_atom = (atom_type, x, y, z)
-                        new_mol.append(new_atom)
+                    if sphere.containsPoints(x, y, z, atomRadius):
+                        newAtom = (atomType, x, y, z)
+                        newMol.append(newAtom)
                     else:
                         break # If any atom doesn't fit, discard the whol molecule
 
-                if not isOverlapMolecule(new_mol, filled, radii, tol):
-                    if len(new_mol) == len(og):
-                        filled.append(new_mol)
+                if not isOverlapMolecule(newMol, filled, radii, tol):
+                    if len(newMol) == len(og):
+                        filled.append(newMol)
 
     return filled
 
-def MoleculeDefiniteSphere(numMol, maxattempts, og, sphere, radii, tol):
+def moleculeDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol):
     '''Places a defined number of molecules in a sphere'''
     filled = []
     attempts = 0
 
-    while len(filled) < numMol and attempts <= maxattempts:
-        new_mol = []
+    while len(filled) < numMol and attempts <= maxAttempts:
+        newMol = []
         shiftx = random.uniform((sphere.xCoord - sphere.radius), (sphere.xCoord + sphere.radius))
         shifty = random.uniform((sphere.yCoord - sphere.radius), (sphere.yCoord + sphere.radius))
         shiftz = random.uniform((sphere.zCoord - sphere.radius), (sphere.zCoord + sphere.radius))
@@ -113,23 +113,23 @@ def MoleculeDefiniteSphere(numMol, maxattempts, og, sphere, radii, tol):
         for atom in og:
 
             # Calculate the shift for each tile and new point
-            new_x = atom[1] + shiftx
-            new_y = atom[2] + shifty
-            new_z = atom[3] + shiftz
-            atom_type = atom[0]
+            newX = atom[1] + shiftx
+            newY = atom[2] + shifty
+            newZ = atom[3] + shiftz
+            atomType = atom[0]
 
             # Adjust for atomic radii
-            atom_radius = radii.get(atom_type, 0.0) # Get the radius for the atom type
+            atomRadius = radii.get(atomType, 0.0) # Get the radius for the atom type
             # Check if the new atom fits within the sphere
-            if sphere.contains_points(new_x, new_y, new_z, atom_radius):
-                new_atom = (atom_type, new_x, new_y, new_z)
-                new_mol.append(new_atom)
+            if sphere.containsPoints(newX, newY, newZ, atomRadius):
+                newAtom = (atomType, newX, newY, newZ)
+                newMol.append(newAtom)
             else:
                 break # If any atom doesn't fit, discard the whol molecule
 
-        if not isOverlapMolecule(new_mol, filled, radii, tol):
-            if len(new_mol) == len(og):
-                filled.append(new_mol)
+        if not isOverlapMolecule(newMol, filled, radii, tol):
+            if len(newMol) == len(og):
+                filled.append(newMol)
 
         attempts += 1
 

@@ -24,7 +24,7 @@ class Box3d:
         face2 = 2 * self.length * self.height
         face3 = 2 * self.width * self.height
 
-        return face1 + face2 + face3 
+        return face1 + face2 + face3
 
 def drawBox(params):
     '''
@@ -37,3 +37,5 @@ def drawBox(params):
 
     if params['shape'].lower() == 'box':
         return [float(params['Xlen']), float(params['Ylen']), float(params['Zlen'])]
+
+    return 'ERROR: Shape not found\n'

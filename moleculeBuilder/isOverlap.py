@@ -5,10 +5,10 @@ or if two different molecules overlap
 
 import math
 
-def isOverlapMolecule(new_atom, filled_atoms, radii, tol):
+def isOverlapMolecule(newAtom, filledAtoms, radii, tol):
     '''Checks if two molecules overlap'''
-    for molecule in filled_atoms:
-        for atom1, atom2 in zip(new_atom, molecule):
+    for molecule in filledAtoms:
+        for atom1, atom2 in zip(newAtom, molecule):
             distance = math.sqrt(
                 (atom1[1] - atom2[1])**2 +
                 (atom1[2] - atom2[2])**2 +
@@ -19,9 +19,9 @@ def isOverlapMolecule(new_atom, filled_atoms, radii, tol):
                 return True
     return False
 
-def isOverlapAtom(new_atom, filled_atoms, radii, tol):
+def isOverlapAtom(new_atom, filledAtoms, radii, tol):
     '''Checks if two atoms overlap'''
-    for atom in filled_atoms:
+    for atom in filledAtoms:
         distance = math.sqrt(
             (new_atom[1] - atom[1])**2 +
             (new_atom[2] - atom[2])**2 +
