@@ -2,7 +2,7 @@
 
 import random
 from isOverlap import isOverlapAtom, isOverlapMolecule
-from makeStruc import makeBase, reCenter
+from makeStruc import makeBase, reCenter, randReorient
 
 def atomFillSphere(numShifts, sphere, og, radii, tol):
     '''Fills sphere with single atoms'''
@@ -66,7 +66,8 @@ def atomDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol):
 
     return list(filled)
 
-def moleculeFillSphere(numShifts, sphere, og, radii, tol, baseStruc):
+def moleculeFillSphere(numShifts, sphere, og, radii, tol,
+                       baseStruc, randOrient):
     '''Fills sphere with molecules'''
     filled = []
 
@@ -103,12 +104,17 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol, baseStruc):
                     else:
                         break # If any atom doesn't fit, discard the whol molecule
 
+                if randOrient:
+                    #newMol = randReorient(newMol)
+                    pass
+
                 if not isOverlapMolecule(newMol, filled, radii, tol):
                     if len(newMol) == len(og):
                         filled.append(newMol)
     return filled
 
-def moleculeDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol, baseStruc):
+def moleculeDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol,
+                           baseStruc, randOrient):
     '''Places a defined number of molecules in a sphere'''
     filled = []
     attempts = 0
@@ -142,6 +148,10 @@ def moleculeDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol, baseStru
                 newMol.append(newAtom)
             else:
                 break # If any atom doesn't fit, discard the whol molecule
+
+        if randOrient:
+            #newMol = randReorient(newMol)
+            pass
 
         if not isOverlapMolecule(newMol, filled, radii, tol):
             if len(newMol) == len(og):

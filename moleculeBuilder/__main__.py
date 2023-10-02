@@ -25,6 +25,8 @@ Keywords:
         not deuplicated
     baseStrucCenter = coordinates to place the geometric
         center of the base structure
+    randomizeOrient = Boolean to randomize orientation of
+        molecules
 
 '''
     params = {
@@ -40,7 +42,8 @@ Keywords:
         'fromWall' : 1.0,
         'maxAttempts' : 10000,
         'baseStrucCenter' : [0, 0, 0],
-        'baseStrucFile' : None
+        'baseStrucFile' : None,
+        'randomizeOrient' : False,
     }
 
     return params
@@ -67,6 +70,8 @@ def parseCommandLine(dparams):
                         help="Z dimension of a box in Angstroms", default=dparams['Zlen'])
     parser.add_argument('-r', '--radius', type=float,
                         help="Radius of a spehere in Angstroms", default=dparams['radius'])
+    parser.add_argument('-rand', '--randomizeOrient', type=bool,
+                        help="Randomize the orientation or not", default=dparams['randomizeOrient'])
     parser.add_argument('-center', '--center', nargs='+', type=float,
                         help="X, Y, Z coordinates of the center of a sphere",
                         default=dparams['sphereCenter'])
@@ -129,7 +134,8 @@ def main():
         # Generate the new structure
         outStruc, strucType = drawMolBox(struc, float(iparams['tol']), dims,
                                           float(iparams['maxAttempts']),
-                                          iparams['numMolecules'], baseStruc)
+                                          iparams['numMolecules'], baseStruc,
+                                          iparams['randomizeOrient'])
         print(len(outStruc))
 
     elif iparams['shape'].lower() == 'sphere':
@@ -140,7 +146,8 @@ def main():
         # Generate the new structure
         outStruc, strucType = drawMolSphere(struc, float(iparams['tol']), float(radius),
                                              center, float(iparams['maxAttempts']),
-                                             iparams['numMolecules'], baseStruc)
+                                             iparams['numMolecules'], baseStruc,
+                                             iparams['randomizeOrient'])
 
     if iparams['outputFile']:
         writeXYZ(outStruc, iparams['outputFile'], strucType)

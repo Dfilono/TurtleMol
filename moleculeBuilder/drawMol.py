@@ -14,10 +14,10 @@ from shiftBox import atomsFillBox, atomsDefiniteBox, \
                      moleculesFillBox, moleculesDefiniteBox
 from shiftSphere import atomFillSphere, atomDefiniteSphere, \
                         moleculeDefiniteSphere, moleculeFillSphere
-from readWriteFiles import getElementData
+from setAtomProp import setAtomicRadius
 from makeStruc import makeBase
 
-def drawMolBox(struc, tol, dims, maxattempts, numMol, baseStruc):
+def drawMolBox(struc, tol, dims, maxattempts, numMol, baseStruc, randOrient):
     '''Utilized to place molecules in a box'''
     box = Box3d(0, 0, 0, dims)
     radii = setAtomicRadius()
@@ -40,7 +40,8 @@ def drawMolBox(struc, tol, dims, maxattempts, numMol, baseStruc):
 
         if len(originalPoints) > 1:
             filledAtom = moleculesFillBox(numXShifts, numYShifts, numZShifts,
-                                          tol, originalPoints, box, radii, baseStruc)
+                                          tol, originalPoints, box, radii, baseStruc,
+                                          randOrient)
             return list(filledAtom), "molecule"
 
     if isinstance(numMol, int) and numMol != 0:
@@ -56,12 +57,13 @@ def drawMolBox(struc, tol, dims, maxattempts, numMol, baseStruc):
 
         if len(originalPoints) > 1:
             filledAtom = moleculesDefiniteBox(numMol, maxattempts,
-                                              originalPoints, box, radii, tol, baseStruc)
+                                              originalPoints, box, radii, tol, baseStruc,
+                                              randOrient)
             return list(filledAtom), "molecule"
 
     return "ERROR: No atoms found"
 
-def drawMolSphere(struc, tol, radius, center, maxattempts, numMol, baseStruc):
+def drawMolSphere(struc, tol, radius, center, maxattempts, numMol, baseStruc, randOrient):
     '''Utilized to place molecules in a sphere'''
     sphere = Sphere3d(float(center[0]), float(center[1]), float(center[2]), radius)
     radii = setAtomicRadius()
@@ -82,7 +84,8 @@ def drawMolSphere(struc, tol, radius, center, maxattempts, numMol, baseStruc):
 
         if len(originalPoints) > 1:
             filledAtom = moleculeFillSphere(numShifts, sphere,
-                                            originalPoints, radii, tol, baseStruc)
+                                            originalPoints, radii, tol, baseStruc,
+                                            randOrient)
             return list(filledAtom), "molecule"
 
     if isinstance(numMol, int) and numMol != 0:
@@ -94,22 +97,8 @@ def drawMolSphere(struc, tol, radius, center, maxattempts, numMol, baseStruc):
 
         if len(originalPoints) > 1:
             filledAtom = moleculeDefiniteSphere(numMol, maxattempts,
-                                                originalPoints, sphere, radii, tol, baseStruc)
+                                                originalPoints, sphere, radii, tol, baseStruc,
+                                                randOrient)
             return list(filledAtom), "molecule"
 
     return "ERROR: No atoms found"
-
-def setAtomicRadius():
-    '''Defines the dataframe to find the atomic radius'''
-    radii = {}
-
-    ele = getElementData('AtomicRadius')
-    
-    radii = pd.Series(ele.AtomicRadius.values, index=ele.Symbol).to_dict()
-
-    # Convert radii to Angstroms
-    for k, v in radii.items():
-        if v != 'nan':
-            radii[k] = v * 0.01
-
-    return radii

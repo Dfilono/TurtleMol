@@ -1,5 +1,8 @@
 '''Sets up the structure files'''
 
+import numpy as np
+from scipy.spatial.transform import Rotation
+
 def makeBase(baseStruc):
     '''Convert dataframe to list of points'''
     atomBase = baseStruc['Atom'].values.tolist()
@@ -30,6 +33,30 @@ def reCenter(struc, shape):
         shapeCenter[1] - currentCenter[1],
         shapeCenter[2] - currentCenter[2]
     )
-    newCoords = [(coord[0], coord[1] + displacement[0], coord[2] + displacement[1], coord[3] + displacement[2]) for coord in struc]
+    newCoords = [(coord[0], coord[1] + displacement[0], coord[2] + displacement[1],
+                  coord[3] + displacement[2]) for coord in struc]
 
     return newCoords
+
+def randReorient(mol): # NOTE Currently does not work and is disabled
+    '''Randomly reorients a molecule around geometric center'''
+    if not mol:
+        return mol
+
+    center = np.asarray(calcCenter(mol))
+    pointsToRotate = []
+    for i in mol:
+        pointsToRotate.append(i[1:])
+    print(pointsToRotate)
+    randomRotation = Rotation.random()
+
+    rotatedPoints = []
+    for i in pointsToRotate:
+        rotatedPoints.append(randomRotation.apply(i - center) + center)
+    print(rotatedPoints)
+    rotatedMol = []
+    for i in mol:
+        rotatedMol.append((i[0], rotatedPoints[0], rotatedPoints[1], rotatedPoints[2]))
+    print(f"Center: {center}, Mol: {mol}, Rotated Mol: {rotatedMol}\n")
+
+    return rotatedMol

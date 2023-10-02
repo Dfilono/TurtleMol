@@ -2,7 +2,7 @@
 
 import random
 from isOverlap import isOverlapAtom, isOverlapMolecule
-from makeStruc import makeBase, reCenter
+from makeStruc import makeBase, reCenter, randReorient
 
 def atomsFillBox(x, y, z, tol, og, box, radii):
     '''Fills box with single atoms'''
@@ -70,7 +70,8 @@ def atomsDefiniteBox(numMol, maxAttempts, og, box, radii, tol):
 
     return list(filledAtom)
 
-def moleculesFillBox(x, y, z, tol, og, box, radii, baseStruc):
+def moleculesFillBox(x, y, z, tol, og, box, radii,
+                     baseStruc, randOrient):
     '''Fills box with molecules'''
     filledAtom = []
 
@@ -84,7 +85,7 @@ def moleculesFillBox(x, y, z, tol, og, box, radii, baseStruc):
                 newMol = []
                 anyAtomOutside = False
 
-                for i, atom in enumerate(og):
+                for atom in og:
                     #print(atom)
                     # Calculate the shift for each tile and new point
                     newX = box.xCoord + atom[1] + xShift
@@ -108,6 +109,10 @@ def moleculesFillBox(x, y, z, tol, og, box, radii, baseStruc):
                     else:
                         anyAtomOutside = True
 
+                if randOrient:
+                    #newMol = randReorient(newMol)
+                    pass
+
                 if (not isOverlapMolecule(newMol, filledAtom, radii, tol) and
                     not anyAtomOutside):
 
@@ -115,7 +120,8 @@ def moleculesFillBox(x, y, z, tol, og, box, radii, baseStruc):
 
     return filledAtom
 
-def moleculesDefiniteBox(numMol, maxAttempts, og, box, radii, tol, baseStruc):
+def moleculesDefiniteBox(numMol, maxAttempts, og, box, radii, tol,
+                         baseStruc, randOrient):
     '''Places a defined number of molecules in box'''
     filledAtom = []
 
@@ -156,6 +162,10 @@ def moleculesDefiniteBox(numMol, maxAttempts, og, box, radii, tol, baseStruc):
 
             else:
                 anyAtomOutside = True
+
+        if randOrient:
+            #newMol = randReorient(newMol)
+            pass
 
         if not isOverlapMolecule(newMol, filledAtom, radii, tol) and not anyAtomOutside:
             filledAtom.append(newMol)
