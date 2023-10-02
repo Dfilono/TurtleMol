@@ -2,6 +2,7 @@
 
 import random
 from isOverlap import isOverlapAtom, isOverlapMolecule
+from makeStruc import makeBase, reCenter
 
 def atomsFillBox(x, y, z, tol, og, box, radii):
     '''Fills box with single atoms'''
@@ -69,9 +70,13 @@ def atomsDefiniteBox(numMol, maxAttempts, og, box, radii, tol):
 
     return list(filledAtom)
 
-def moleculesFillBox(x, y, z, tol, og, box, radii):
+def moleculesFillBox(x, y, z, tol, og, box, radii, baseStruc):
     '''Fills box with molecules'''
     filledAtom = []
+
+    if baseStruc is not None:
+        base = makeBase(baseStruc)
+        filledAtom.append(reCenter(base, box))
 
     for zShift in range(z):
         for yShift in range(y):
@@ -107,15 +112,18 @@ def moleculesFillBox(x, y, z, tol, og, box, radii):
                     not anyAtomOutside):
 
                     filledAtom.append(newMol)
-                    print("Added molecule:", newMol)
 
     return filledAtom
 
-def moleculesDefiniteBox(numMol, maxAttempts, og, box, radii, tol):
+def moleculesDefiniteBox(numMol, maxAttempts, og, box, radii, tol, baseStruc):
     '''Places a defined number of molecules in box'''
     filledAtom = []
 
     attempts = 0
+
+    if baseStruc is not None:
+        base = makeBase(baseStruc)
+        filledAtom.append(reCenter(base, box))
 
     while len(filledAtom) < numMol and attempts < maxAttempts:
         attempts += 1
@@ -151,7 +159,6 @@ def moleculesDefiniteBox(numMol, maxAttempts, og, box, radii, tol):
 
         if not isOverlapMolecule(newMol, filledAtom, radii, tol) and not anyAtomOutside:
             filledAtom.append(newMol)
-            print("Added molecule:", newMol)
 
     return list(filledAtom)
 

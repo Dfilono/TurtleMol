@@ -21,6 +21,10 @@ Keywords:
     structureFile = Path to the structure file being used. 
         Required for usage. Only the xyz format is currently supported
     outputFile = Path to output file if desired
+    baseStrucFile = Path to file for a structure that is present, but
+        not deuplicated
+    baseStrucCenter = coordinates to place the geometric
+        center of the base structure
 
 '''
     params = {
@@ -34,7 +38,9 @@ Keywords:
         'numMolecules' : 1,
         'tol' : 1.0,
         'fromWall' : 1.0,
-        'maxAttempts' : 10000
+        'maxAttempts' : 10000,
+        'baseStrucCenter' : [0, 0, 0],
+        'baseStrucFile' : None
     }
 
     return params
@@ -47,6 +53,8 @@ def parseCommandLine(dparams):
     parser.add_argument('-i', '--inputFile', type=str, help="Path to input file")
     parser.add_argument('-struc', '--structureFile', type=str,
                         help='Path to structure file')
+    parser.add_argument('-baseStruc', '--baseStrucFile', type=str,
+                        help='Path to base structure file', default=dparams['baseStrucFile'])
     parser.add_argument('-s', '--shape', type=str,
                         help="Shape (Box or Cube)", default=dparams['shape'])
     parser.add_argument('-sl', '--sideLength', type=float,
@@ -62,6 +70,9 @@ def parseCommandLine(dparams):
     parser.add_argument('-center', '--center', nargs='+', type=float,
                         help="X, Y, Z coordinates of the center of a sphere",
                         default=dparams['sphereCenter'])
+    parser.add_argument('-baseCenter', '--baseStrucCenter', nargs='+', type=float,
+                        help="X, Y, Z coordinates of the center of the base structure",
+                        default=dparams['baseStrucCenter'])
     parser.add_argument('-n', '--numMolecules', type=int,
                         help="Number of molecules", default=dparams['numMolecules'])
     parser.add_argument('-t', '--tol', type=float,
@@ -105,6 +116,11 @@ def main():
     struc = readStrucFile(iparams['structureFile'])
     print(struc)
 
+    if iparams['baseStrucFile']:
+        baseStruc = readStrucFile(iparams['baseStrucFile'])
+    else:
+        baseStruc = None
+
     if iparams['shape'].lower() == 'box' or iparams['shape'].lower() == 'cube':
         # Define the box
         dims = drawBox(iparams)
@@ -112,7 +128,8 @@ def main():
 
         # Generate the new structure
         outStruc, strucType = drawMolBox(struc, float(iparams['tol']), dims,
-                                          float(iparams['maxAttempts']), iparams['numMolecules'])
+                                          float(iparams['maxAttempts']),
+                                          iparams['numMolecules'], baseStruc)
         print(len(outStruc))
 
     elif iparams['shape'].lower() == 'sphere':
@@ -123,7 +140,7 @@ def main():
         # Generate the new structure
         outStruc, strucType = drawMolSphere(struc, float(iparams['tol']), float(radius),
                                              center, float(iparams['maxAttempts']),
-                                             iparams['numMolecules'])
+                                             iparams['numMolecules'], baseStruc)
 
     if iparams['outputFile']:
         writeXYZ(outStruc, iparams['outputFile'], strucType)

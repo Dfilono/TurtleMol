@@ -25,6 +25,16 @@ class Box3d:
         face3 = 2 * self.width * self.height
 
         return face1 + face2 + face3
+    
+    def findCenter(self):
+        corner1 = [self.xCoord, self.yCoord, self.zCoord]
+        corner2 = [self.length, self.width, self.height]
+
+        centerX = (corner1[0] + corner2[0]) / 2
+        centerY = (corner1[1] + corner2[1]) / 2
+        centerZ = (corner1[2] + corner2[2]) / 2
+
+        return (centerX, centerY, centerZ)
 
 def drawBox(params):
     '''

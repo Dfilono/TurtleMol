@@ -2,6 +2,7 @@
 
 import random
 from isOverlap import isOverlapAtom, isOverlapMolecule
+from makeStruc import makeBase, reCenter
 
 def atomFillSphere(numShifts, sphere, og, radii, tol):
     '''Fills sphere with single atoms'''
@@ -65,16 +66,22 @@ def atomDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol):
 
     return list(filled)
 
-def moleculeFillSphere(numShifts, sphere, og, radii, tol):
+def moleculeFillSphere(numShifts, sphere, og, radii, tol, baseStruc):
     '''Fills sphere with molecules'''
     filled = []
+
+    if baseStruc is not None:
+        base = makeBase(baseStruc)
+        filled.append(reCenter(base, sphere))
+
+    print(filled)
 
     for zShifts in range(numShifts):
         for yShifts in range(numShifts):
             for xShifts in range(numShifts):
                 newMol = []
 
-                for i, atom in enumerate(og):
+                for atom in og:
                     # Calculate the relative position of each atom within the molecule
                     relX = atom[1]
                     relY = atom[2]
@@ -99,13 +106,16 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol):
                 if not isOverlapMolecule(newMol, filled, radii, tol):
                     if len(newMol) == len(og):
                         filled.append(newMol)
-
     return filled
 
-def moleculeDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol):
+def moleculeDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol, baseStruc):
     '''Places a defined number of molecules in a sphere'''
     filled = []
     attempts = 0
+
+    if baseStruc is not None:
+        base = makeBase(baseStruc)
+        filled.append(reCenter(base, sphere))
 
     while len(filled) < numMol and attempts <= maxAttempts:
         newMol = []
