@@ -1,0 +1,8 @@
+shape=sphere
+sideLength=10
+numMolecules=fill
+structureFile=moleculeBuilder/tests/Benzene/Benzene.xyz
+radius = 5
+fromWall=0.5
+outputFile=moleculeBuilder/tests/Benzene/out.xyz
+tol = 1.0

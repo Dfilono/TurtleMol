@@ -7,9 +7,9 @@ def setAtomicRadius():
     '''Defines the dataframe to find the atomic radius'''
     radii = {}
 
-    ele = getElementData('AtomicRadius')
+    ele = getElementData('VanDerWaalsRadius')
     
-    radii = pd.Series(ele.AtomicRadius.values, index=ele.Symbol).to_dict()
+    radii = pd.Series(ele.VanDerWaalsRadius.values, index=ele.Symbol).to_dict()
 
     # Convert radii to Angstroms
     for k, v in radii.items():
