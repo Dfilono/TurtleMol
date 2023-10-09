@@ -20,8 +20,9 @@ def getInput(filePath):
 
 def readStrucFile(filePath):
     '''Reads structure file if an xyz'''
-    return pd.read_csv(filePath, delim_whitespace=True,
-                       skiprows=2, names=["Atom", "X", "Y", "Z"])
+    if filePath[-3:] == 'xyz':
+        return pd.read_csv(filePath, delim_whitespace=True,
+                           skiprows=2, names=["Atom", "X", "Y", "Z"])
 
 def writeXYZ(data, filePath, strucType):
     '''Writes an xyz file from results'''

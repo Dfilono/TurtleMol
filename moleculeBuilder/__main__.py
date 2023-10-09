@@ -30,6 +30,8 @@ Keywords:
     randFill = When placing a set number of molecules, place them randomly
     desnity = total mass of molecules over the total volume
         of the system in g/mL
+    atomRadius = Choose whether to use the AtomicRadius, CovalentRadius,
+        or VanDerWaalsRadius
 
 '''
     params = {
@@ -42,13 +44,13 @@ Keywords:
         'radius' : 1.0,
         'numMolecules' : 1,
         'tol' : 1.0,
-        'fromWall' : 1.0,
         'maxAttempts' : 10000,
         'baseStrucCenter' : [0, 0, 0],
         'baseStrucFile' : None,
         'randomizeOrient' : False,
         'randFill' : False,
         'density' : None,
+        'atomRadius' : 'AtomicRadius',
     }
 
     return params
@@ -74,7 +76,7 @@ def parseCommandLine(dparams):
     parser.add_argument('-zl', '--Zlen', type=float,
                         help="Z dimension of a box in Angstroms", default=dparams['Zlen'])
     parser.add_argument('-r', '--radius', type=float,
-                        help="Radius of a spehere in Angstroms", default=dparams['radius'])
+                        help="Radius of a sphere in Angstroms", default=dparams['radius'])
     parser.add_argument('-rand', '--randomizeOrient', type=bool,
                         help="Randomize the orientation or not", default=dparams['randomizeOrient'])
     parser.add_argument('-randFill', '--randFill', type=bool,
@@ -90,13 +92,14 @@ def parseCommandLine(dparams):
                         help="Number of molecules", default=dparams['numMolecules'])
     parser.add_argument('-t', '--tol', type=float,
                         help="Minimum distance between molecules", default=dparams['tol'])
-    parser.add_argument('-w', '--fromWall', type=float,
-                        help="Minimum distance from wall", default=dparams['fromWall'])
     parser.add_argument('-rho', '--denisty', type=float,
                         help="Density in g/mL", default=dparams['density'])
     parser.add_argument('-a', '--maxAttempts', type=int,
                         help="Maximum iterations for finite sized systems",
                         default=dparams['maxAttempts'])
+    parser.add_argument('-ar', '--atomRadius', type=str,
+                        help="What radius type to be used for atoms",
+                        default=dparams['atomRadius'])
     parser.add_argument('-out', '--outputFile', type=str,
                         help="Path for output file if desired")
 
@@ -137,16 +140,8 @@ def main():
         baseStruc = None
 
     if iparams['shape'].lower() == 'box' or iparams['shape'].lower() == 'cube':
-        # Define the box
-        dims = drawBox(iparams)
-        print(dims)
-
         # Generate the new structure
-        outStruc, strucType = drawMolBox(struc, float(iparams['tol']), dims,
-                                          float(iparams['maxAttempts']),
-                                          iparams['numMolecules'], baseStruc,
-                                          iparams['randomizeOrient'], iparams['density'],
-                                          iparams['randFill'])
+        outStruc, strucType = drawMolBox(struc, baseStruc, iparams)
         print(len(outStruc))
 
     elif iparams['shape'].lower() == 'sphere':
@@ -155,11 +150,7 @@ def main():
         radius = iparams['radius']
 
         # Generate the new structure
-        outStruc, strucType = drawMolSphere(struc, float(iparams['tol']), float(radius),
-                                             center, float(iparams['maxAttempts']),
-                                             iparams['numMolecules'], baseStruc,
-                                             iparams['randomizeOrient'], iparams['density'],
-                                             iparams['randFill'])
+        outStruc, strucType = drawMolSphere(struc, baseStruc, iparams)
 
     if iparams['outputFile']:
         writeXYZ(outStruc, iparams['outputFile'], strucType)

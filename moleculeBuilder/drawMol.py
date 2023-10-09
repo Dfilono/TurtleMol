@@ -7,7 +7,7 @@ and fill said space with provided structure as many times as it can fit.
 '''
 
 import math
-from Box3D import Box3d
+from Box3D import Box3d, drawBox
 from Sphere3D import Sphere3d
 from shiftBox import atomsFillBox, atomsRandBox, \
                      moleculesFillBox, moleculesRandBox
@@ -16,22 +16,23 @@ from shiftSphere import atomFillSphere, atomRandSphere, \
 from setAtomProp import setAtomicRadius
 from makeStruc import makeBase, calcNumMol
 
-def drawMolBox(struc, tol, dims, maxattempts, numMol, baseStruc,
-               randOrient, density, randFill):
+def drawMolBox(struc, baseStruc, iparams):
     '''Utilized to place molecules in a box'''
+    dims = drawBox(iparams)
     box = Box3d(0, 0, 0, dims)
-    radii = setAtomicRadius()
-    print(randFill)
+    radii = setAtomicRadius(iparams['atomRadius'])
+    numMol = iparams['numMolecules']
+    tol = float(iparams['tol'])
 
     originalPoints = makeBase(struc)
 
-    if density:
-        numMol = calcNumMol(box, originalPoints, density)
+    if iparams['density']:
+        numMol = calcNumMol(box, originalPoints, iparams['density'])
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
         numMol = int(numMol)
 
-    if randFill == 'False' or randFill == False:
+    if iparams['randFill'] == 'False' or iparams['randFill'] == False:
         numXShifts = math.ceil(box.length / tol)
         numYShifts = math.ceil(box.height / tol)
         numZShifts = math.ceil(box.width / tol)
@@ -45,40 +46,42 @@ def drawMolBox(struc, tol, dims, maxattempts, numMol, baseStruc,
         if len(originalPoints) > 1:
             filledAtom = moleculesFillBox(numXShifts, numYShifts, numZShifts,
                                           tol, originalPoints, box, radii, baseStruc,
-                                          randOrient, numMol)
+                                          iparams['randomizeOrient'], numMol)
             return list(filledAtom), "molecule"
 
-    elif randFill == 'True' or randFill is True:
+    elif iparams['randFill'] == 'True' or iparams['randFill'] is True:
         # Check if structure is monatomic or molecule
         if len(originalPoints) == 1:
-            filledAtom = atomsRandBox(numMol, maxattempts,
+            filledAtom = atomsRandBox(numMol, iparams['maxAttempts'],
                                           originalPoints, box, radii, tol)
             return list(filledAtom), "atom"
 
         if len(originalPoints) > 1:
-            filledAtom = moleculesRandBox(numMol, maxattempts,
+            filledAtom = moleculesRandBox(numMol, iparams['maxAttempts'],
                                               originalPoints, box, radii, tol, baseStruc,
-                                              randOrient)
+                                              iparams['randomizeOrient'])
             return list(filledAtom), "molecule"
 
     return "ERROR", "No atoms found"
 
-def drawMolSphere(struc, tol, radius, center, maxattempts, numMol, baseStruc,
-                  randOrient, density, randFill):
+def drawMolSphere(struc, baseStruc, iparams):
     '''Utilized to place molecules in a sphere'''
-    sphere = Sphere3d(float(center[0]), float(center[1]), float(center[2]), radius)
-    radii = setAtomicRadius()
+    sphere = Sphere3d(float(iparams['sphereCenter'][0]), float(iparams['sphereCenter'][1]),
+                      float(iparams['sphereCenter'][2]), float(iparams['radius']))
+    radii = setAtomicRadius(iparams['atomRadius'])
+    numMol = iparams['numMolecules']
+    tol = float(iparams['tol'])
 
     originalPoints = makeBase(struc)
 
-    if density:
-        numMol = calcNumMol(sphere, originalPoints, density)
+    if iparams['density']:
+        numMol = calcNumMol(sphere, originalPoints, iparams['density'])
         print(numMol)
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
         numMol = int(numMol)
 
-    if randFill == 'False' or randFill is False:
+    if iparams['randFill'] == 'False' or iparams['randFill'] is False:
         numShifts = math.ceil(2*sphere.radius / tol)
 
         # Check if structure is monatomic or molecule
@@ -91,20 +94,20 @@ def drawMolSphere(struc, tol, radius, center, maxattempts, numMol, baseStruc,
         if len(originalPoints) > 1:
             filledAtom = moleculeFillSphere(numShifts, sphere,
                                             originalPoints, radii, tol, baseStruc,
-                                            randOrient, numMol)
+                                            iparams['randomizeOrient'], numMol)
             return list(filledAtom), "molecule"
 
-    elif randFill == 'True' or randFill == True:
+    elif iparams['randFill'] == 'True' or iparams['randFill'] == True:
         # Check if structure is monatomic or molecule
         if len(originalPoints) == 1:
-            filledAtom = atomRandSphere(numMol, maxattempts,
+            filledAtom = atomRandSphere(numMol, iparams['maxAttempts'],
                                             originalPoints, sphere, radii, tol)
             return list(filledAtom), "atom"
 
         if len(originalPoints) > 1:
-            filledAtom = moleculeRandSphere(numMol, maxattempts,
+            filledAtom = moleculeRandSphere(numMol, iparams['maxAttempts'],
                                                 originalPoints, sphere, radii, tol, baseStruc,
-                                                randOrient)
+                                                iparams['randomizeOrient'])
             return list(filledAtom), "molecule"
 
     return "ERROR: No atoms found"

@@ -3,13 +3,13 @@
 import pandas as pd
 from readWriteFiles import getElementData
 
-def setAtomicRadius():
+def setAtomicRadius(atomRadius):
     '''Defines the dataframe to find the atomic radius'''
     radii = {}
 
-    ele = getElementData('VanDerWaalsRadius')
-
-    radii = pd.Series(ele.VanDerWaalsRadius.values, index=ele.Symbol).to_dict()
+    ele = getElementData(atomRadius)
+    
+    radii = pd.Series(ele[atomRadius].values, index=ele.Symbol).to_dict()
 
     # Convert radii to Angstroms
     for k, v in radii.items():

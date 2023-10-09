@@ -1,0 +1,8 @@
+shape=sphere
+sideLength=10
+numMolecules=fill
+structureFile=moleculeBuilder/tests/Iron/iron.xyz
+radius = 10
+fromWall=0.5
+outputFile=moleculeBuilder/tests/Iron/out.xyz
+tol = 0.1
