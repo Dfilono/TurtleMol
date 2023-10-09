@@ -78,7 +78,8 @@ def parseCommandLine(dparams):
     parser.add_argument('-rand', '--randomizeOrient', type=bool,
                         help="Randomize the orientation or not", default=dparams['randomizeOrient'])
     parser.add_argument('-randFill', '--randFill', type=bool,
-                        help="Randomize place molecules when placing a set number", default=dparams['randFill'])
+                        help="Randomize place molecules when placing a set number",
+                        default=dparams['randFill'])
     parser.add_argument('-center', '--center', nargs='+', type=float,
                         help="X, Y, Z coordinates of the center of a sphere",
                         default=dparams['sphereCenter'])

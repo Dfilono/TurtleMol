@@ -7,7 +7,6 @@ and fill said space with provided structure as many times as it can fit.
 '''
 
 import math
-import pandas as pd
 from Box3D import Box3d
 from Sphere3D import Sphere3d
 from shiftBox import atomsFillBox, atomsRandBox, \
@@ -49,7 +48,7 @@ def drawMolBox(struc, tol, dims, maxattempts, numMol, baseStruc,
                                           randOrient, numMol)
             return list(filledAtom), "molecule"
 
-    elif randFill == 'True' or randFill == True:
+    elif randFill == 'True' or randFill is True:
         # Check if structure is monatomic or molecule
         if len(originalPoints) == 1:
             filledAtom = atomsRandBox(numMol, maxattempts,
@@ -79,7 +78,7 @@ def drawMolSphere(struc, tol, radius, center, maxattempts, numMol, baseStruc,
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
         numMol = int(numMol)
 
-    if randFill == 'False' or randFill == False:
+    if randFill == 'False' or randFill is False:
         numShifts = math.ceil(2*sphere.radius / tol)
 
         # Check if structure is monatomic or molecule

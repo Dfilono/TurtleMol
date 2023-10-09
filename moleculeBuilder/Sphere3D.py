@@ -28,6 +28,7 @@ class Sphere3d:
                              (yCoord - self.yCoord)**2 +
                              (zCoord - self.zCoord)**2)
         return distance <= (self.radius + atomRadius)
-    
+
     def findCenter(self):
+        '''Find the center of the sphere'''
         return (self.xCoord, self.yCoord, self.zCoord)

@@ -137,7 +137,7 @@ def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
         shiftX = 0
         shiftY = 0
         shiftZ = 0
-        
+
         shiftX = random.uniform((sphere.xCoord - sphere.radius),
                                 (sphere.xCoord + sphere.radius))
         shiftY = random.uniform((sphere.yCoord - sphere.radius),

@@ -25,8 +25,9 @@ class Box3d:
         face3 = 2 * self.width * self.height
 
         return face1 + face2 + face3
-    
+
     def findCenter(self):
+        '''Finds the center point of the Box'''
         corner1 = [self.xCoord, self.yCoord, self.zCoord]
         corner2 = [self.length, self.width, self.height]
 

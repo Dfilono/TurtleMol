@@ -43,6 +43,8 @@ def atomsRandBox(numMol, maxAttempts, og, box,
     '''Places a defined number of single atoms in box'''
     filledAtom = []
 
+    attempts = 0
+
     while len(filledAtom) < numMol and attempts < maxAttempts:
         for atom in og:
             # Calculate the shift for each tile and new point
@@ -61,8 +63,8 @@ def atomsRandBox(numMol, maxAttempts, og, box,
                 newAtom = (atom[0], newX, newY, newZ)
                 if not isOverlapAtom(newAtom, filledAtom, radii, tol):
                     filledAtom.append(newAtom)
- 
-        attempts += 1            
+
+        attempts += 1
 
     return list(filledAtom)
 

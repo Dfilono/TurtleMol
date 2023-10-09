@@ -23,7 +23,7 @@ def calcCenter(coords):
     centerY = sum(coord[2] for coord in coords) / numCoords
     centerZ = sum(coord[3] for coord in coords) / numCoords
 
-    return (centerX, centerY, centerZ)    
+    return (centerX, centerY, centerZ)
 
 def reCenter(struc, shape):
     '''Set center structure coordiantes to center of shape'''
@@ -35,7 +35,7 @@ def reCenter(struc, shape):
         shapeCenter[2] - currentCenter[2]
     )
     newCoords = [(coord[0], coord[1] + displacement[0], coord[2] + displacement[1],
-                  coord[3] + displacement[2]) for coord in struc]
+                coord[3] + displacement[2]) for coord in struc]
 
     return newCoords
 
