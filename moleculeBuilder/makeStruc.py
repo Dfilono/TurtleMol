@@ -2,6 +2,7 @@
 
 import numpy as np
 from scipy.spatial.transform import Rotation
+from setAtomProp import setAtomicMass
 
 def makeBase(baseStruc):
     '''Convert dataframe to list of points'''
@@ -60,3 +61,35 @@ def randReorient(mol): # NOTE Currently does not work and is disabled
     print(f"Center: {center}, Mol: {mol}, Rotated Mol: {rotatedMol}\n")
 
     return rotatedMol
+
+def calcDensity(shape, mol):
+    '''Calculates the density of a given structure'''
+    vol = shape.volume() * 1.0e-24 # mL
+    mass = 0
+    atomicMass = setAtomicMass() # g/mol
+
+    for atom in mol:
+        mass += atomicMass[atom[0]]
+
+    return mass/vol # g/mol/mL
+
+def calcNumMol(shape, mol, denisty):
+    '''
+    Calulates the number of molecules needed in a box to match
+    the defined density based off of the defined volume
+    '''
+    vol = shape.volume() # mL
+    massGoal = vol * float(denisty)
+    print(massGoal)
+    mass = 0
+    atomicMass = setAtomicMass() # g/mol
+
+    for atom in mol:
+        mass += atomicMass[atom[0]]
+
+    numMol = 1
+    while mass < massGoal:
+        mass += mass
+        numMol += 1
+
+    return int(numMol)

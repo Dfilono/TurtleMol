@@ -4,9 +4,12 @@ import random
 from isOverlap import isOverlapAtom, isOverlapMolecule
 from makeStruc import makeBase, reCenter, randReorient
 
-def atomFillSphere(numShifts, sphere, og, radii, tol):
+def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
     '''Fills sphere with single atoms'''
     filled = []
+
+    if str(numMol).lower() == 'fill':
+        numMol = 10000000000000
 
     for zShifts in range(numShifts):
         for yShifts in range(numShifts):
@@ -30,12 +33,13 @@ def atomFillSphere(numShifts, sphere, og, radii, tol):
                     if sphere.containsPoints(x, y, z, atomRadius):
                         newAtom = (atomType, x, y, z)
 
-                        if not isOverlapAtom(newAtom, filled, radii, tol):
+                        if not isOverlapAtom(newAtom, filled, radii, tol) and \
+                            numMol > len(filled):
                             filled.append(newAtom)
 
     return filled
 
-def atomDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol):
+def atomRandSphere(numMol, maxAttempts, og, sphere, radii, tol):
     '''Places a defined number of atoms in a sphere'''
     filled = []
     attempts = 0
@@ -49,7 +53,7 @@ def atomDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol):
             newY = atom[2] + random.uniform((sphere.yCoord - sphere.radius),
                                             (sphere.yCoord + sphere.radius))
             newZ = atom[3] + random.uniform((sphere.zCoord - sphere.radius),
-                                            (sphere.zCoord + sphere.radius))
+                                                (sphere.zCoord + sphere.radius))
             atomType = atom[0]
 
             # Adjust for atomic radii
@@ -67,9 +71,12 @@ def atomDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol):
     return list(filled)
 
 def moleculeFillSphere(numShifts, sphere, og, radii, tol,
-                       baseStruc, randOrient):
+                       baseStruc, randOrient, numMol):
     '''Fills sphere with molecules'''
     filled = []
+
+    if str(numMol).lower() == 'fill':
+        numMol = 10000000000000
 
     if baseStruc is not None:
         base = makeBase(baseStruc)
@@ -108,12 +115,13 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
                     #newMol = randReorient(newMol)
                     pass
 
-                if not isOverlapMolecule(newMol, filled, radii, tol):
+                if not isOverlapMolecule(newMol, filled, radii, tol) and \
+                    numMol > len(filled):
                     if len(newMol) == len(og):
                         filled.append(newMol)
     return filled
 
-def moleculeDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol,
+def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
                            baseStruc, randOrient):
     '''Places a defined number of molecules in a sphere'''
     filled = []
@@ -125,19 +133,23 @@ def moleculeDefiniteSphere(numMol, maxAttempts, og, sphere, radii, tol,
 
     while len(filled) < numMol and attempts <= maxAttempts:
         newMol = []
-        shiftx = random.uniform((sphere.xCoord - sphere.radius),
-                                (sphere.xCoord + sphere.radius))
-        shifty = random.uniform((sphere.yCoord - sphere.radius),
-                                (sphere.yCoord + sphere.radius))
-        shiftz = random.uniform((sphere.zCoord - sphere.radius),
-                                (sphere.zCoord + sphere.radius))
 
+        shiftX = 0
+        shiftY = 0
+        shiftZ = 0
+        
+        shiftX = random.uniform((sphere.xCoord - sphere.radius),
+                                (sphere.xCoord + sphere.radius))
+        shiftY = random.uniform((sphere.yCoord - sphere.radius),
+                                (sphere.yCoord + sphere.radius))
+        shiftZ = random.uniform((sphere.zCoord - sphere.radius),
+                                    (sphere.zCoord + sphere.radius))
         for atom in og:
 
             # Calculate the shift for each tile and new point
-            newX = atom[1] + shiftx
-            newY = atom[2] + shifty
-            newZ = atom[3] + shiftz
+            newX = atom[1] + shiftX
+            newY = atom[2] + shiftY
+            newZ = atom[3] + shiftZ
             atomType = atom[0]
 
             # Adjust for atomic radii

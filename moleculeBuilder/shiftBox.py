@@ -4,10 +4,12 @@ import random
 from isOverlap import isOverlapAtom, isOverlapMolecule
 from makeStruc import makeBase, reCenter, randReorient
 
-def atomsFillBox(x, y, z, tol, og, box, radii):
+def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
     '''Fills box with single atoms'''
+    if str(numMol).lower() == 'fill':
+        numMol = 10000000000000
+
     filledAtom = []
-    filledPositions = set()
 
     for zShift in range(z):
         for yShift in range(y):
@@ -30,28 +32,23 @@ def atomsFillBox(x, y, z, tol, og, box, radii):
                     if inBox(newXMin, newXMax, newYMin, newYMax, newZMin, newZMax, box):
                         newAtom = (atom[0], newX, newY, newZ)
 
-                        if not isOverlapAtom(newAtom, filledAtom, radii, tol):
+                        if not isOverlapAtom(newAtom, filledAtom, radii, tol) and \
+                            numMol > len(filledAtom):
                             filledAtom.append(newAtom)
-                            filledPositions.add(newAtom)
 
     return filledAtom
 
-def atomsDefiniteBox(numMol, maxAttempts, og, box, radii, tol):
+def atomsRandBox(numMol, maxAttempts, og, box,
+                     radii, tol):
     '''Places a defined number of single atoms in box'''
     filledAtom = []
-    filledPositions = set()
-
-    attempts = 0
 
     while len(filledAtom) < numMol and attempts < maxAttempts:
-        attempts += 1
         for atom in og:
-
             # Calculate the shift for each tile and new point
             newX = atom[1] + random.uniform(0, box.length)
             newY = atom[2] + random.uniform(0, box.width)
             newZ = atom[3] + random.uniform(0, box.height)
-
             # Adjust for atomic radiss
             newXMin = newX - radii[atom[0]]
             newYMin = newY - radii[atom[0]]
@@ -59,21 +56,23 @@ def atomsDefiniteBox(numMol, maxAttempts, og, box, radii, tol):
             newXMax = newX + radii[atom[0]]
             newYMax = newY + radii[atom[0]]
             newZMax = newZ + radii[atom[0]]
-
             # Check if the new atom fits within the box
             if  inBox(newXMin, newXMax, newYMin, newYMax, newZMin, newZMax, box):
                 newAtom = (atom[0], newX, newY, newZ)
-
                 if not isOverlapAtom(newAtom, filledAtom, radii, tol):
                     filledAtom.append(newAtom)
-                    filledPositions.add(newAtom)
+ 
+        attempts += 1            
 
     return list(filledAtom)
 
 def moleculesFillBox(x, y, z, tol, og, box, radii,
-                     baseStruc, randOrient):
+                     baseStruc, randOrient, numMol):
     '''Fills box with molecules'''
     filledAtom = []
+
+    if str(numMol).lower() == 'fill':
+        numMol = 10000000000000
 
     if baseStruc is not None:
         base = makeBase(baseStruc)
@@ -114,13 +113,13 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
                     pass
 
                 if (not isOverlapMolecule(newMol, filledAtom, radii, tol) and
-                    not anyAtomOutside):
+                    not anyAtomOutside and numMol > len(filledAtom)):
 
                     filledAtom.append(newMol)
 
     return filledAtom
 
-def moleculesDefiniteBox(numMol, maxAttempts, og, box, radii, tol,
+def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
                          baseStruc, randOrient):
     '''Places a defined number of molecules in box'''
     filledAtom = []
@@ -132,21 +131,16 @@ def moleculesDefiniteBox(numMol, maxAttempts, og, box, radii, tol,
         filledAtom.append(reCenter(base, box))
 
     while len(filledAtom) < numMol and attempts < maxAttempts:
-        attempts += 1
         newMol = []
         anyAtomOutside = False
-
         xShift = random.uniform(0, box.length)
         yShift = random.uniform(0, box.width)
         zShift = random.uniform(0, box.height)
-
         for atom in og:
-
             # Calculate the shift for each tile and new point
             newX = atom[1] + xShift
             newY = atom[2] + yShift
             newZ = atom[3] + zShift
-
             # Adjust for atomic radiss
             newXMin = newX - radii[atom[0]]
             newYMin = newY - radii[atom[0]]
@@ -154,21 +148,18 @@ def moleculesDefiniteBox(numMol, maxAttempts, og, box, radii, tol,
             newXMax = newX + radii[atom[0]]
             newYMax = newY + radii[atom[0]]
             newZMax = newZ + radii[atom[0]]
-
             # Check if the new atom fits within the box
             if  inBox(newXMin, newXMax, newYMin, newYMax, newZMin, newZMax, box):
                 newAtom = (atom[0], newX, newY, newZ)
                 newMol.append(newAtom)
-
             else:
                 anyAtomOutside = True
-
         if randOrient:
             #newMol = randReorient(newMol)
             pass
-
         if not isOverlapMolecule(newMol, filledAtom, radii, tol) and not anyAtomOutside:
             filledAtom.append(newMol)
+        attempts += 1
 
     return list(filledAtom)
 

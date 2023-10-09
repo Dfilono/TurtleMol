@@ -50,6 +50,7 @@ def getElementData(param):
     '''
     Import Atomic Data
     Database Information
+    Mass: g/mol
     Denisty Units: g/mL, Temp Units: Kelvin, Heat Capacity Units: J/(g*K),
     Heat of Vaporization/Fusion Units = kJ/mol
     Molar Volume Units: mL, Thermal Conductivty Units: Watts/(m * K),

@@ -27,6 +27,9 @@ Keywords:
         center of the base structure
     randomizeOrient = Boolean to randomize orientation of
         molecules
+    randFill = When placing a set number of molecules, place them randomly
+    desnity = total mass of molecules over the total volume
+        of the system in g/mL
 
 '''
     params = {
@@ -44,6 +47,8 @@ Keywords:
         'baseStrucCenter' : [0, 0, 0],
         'baseStrucFile' : None,
         'randomizeOrient' : False,
+        'randFill' : False,
+        'density' : None,
     }
 
     return params
@@ -72,6 +77,8 @@ def parseCommandLine(dparams):
                         help="Radius of a spehere in Angstroms", default=dparams['radius'])
     parser.add_argument('-rand', '--randomizeOrient', type=bool,
                         help="Randomize the orientation or not", default=dparams['randomizeOrient'])
+    parser.add_argument('-randFill', '--randFill', type=bool,
+                        help="Randomize place molecules when placing a set number", default=dparams['randFill'])
     parser.add_argument('-center', '--center', nargs='+', type=float,
                         help="X, Y, Z coordinates of the center of a sphere",
                         default=dparams['sphereCenter'])
@@ -84,6 +91,8 @@ def parseCommandLine(dparams):
                         help="Minimum distance between molecules", default=dparams['tol'])
     parser.add_argument('-w', '--fromWall', type=float,
                         help="Minimum distance from wall", default=dparams['fromWall'])
+    parser.add_argument('-rho', '--denisty', type=float,
+                        help="Density in g/mL", default=dparams['density'])
     parser.add_argument('-a', '--maxAttempts', type=int,
                         help="Maximum iterations for finite sized systems",
                         default=dparams['maxAttempts'])
@@ -135,7 +144,8 @@ def main():
         outStruc, strucType = drawMolBox(struc, float(iparams['tol']), dims,
                                           float(iparams['maxAttempts']),
                                           iparams['numMolecules'], baseStruc,
-                                          iparams['randomizeOrient'])
+                                          iparams['randomizeOrient'], iparams['density'],
+                                          iparams['randFill'])
         print(len(outStruc))
 
     elif iparams['shape'].lower() == 'sphere':
@@ -147,7 +157,8 @@ def main():
         outStruc, strucType = drawMolSphere(struc, float(iparams['tol']), float(radius),
                                              center, float(iparams['maxAttempts']),
                                              iparams['numMolecules'], baseStruc,
-                                             iparams['randomizeOrient'])
+                                             iparams['randomizeOrient'], iparams['density'],
+                                             iparams['randFill'])
 
     if iparams['outputFile']:
         writeXYZ(outStruc, iparams['outputFile'], strucType)
