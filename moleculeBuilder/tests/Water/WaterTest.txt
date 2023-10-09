@@ -1,10 +1,10 @@
 shape=sphere
 sideLength=10
-numMolecules=fill
+density = 10
 structureFile=moleculeBuilder/tests/Water/water.xyz
 radius = 10
 fromWall=0.5
 randomizeOrient=True
-randFill=False
+randFill=True
 outputFile=moleculeBuilder/tests/Water/WaterOut.xyz
 tol = 1.0

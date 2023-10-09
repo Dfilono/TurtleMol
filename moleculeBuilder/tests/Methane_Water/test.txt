@@ -1,9 +1,8 @@
 shape=sphere
-sideLength=10
 numMolecules=fill
 structureFile=moleculeBuilder/tests/Methane_Water/water.xyz
 baseStrucFile=moleculeBuilder/tests/Methane_Water/ch4.xyz
-radius = 5
+radius = 10
 fromWall=0.5
 outputFile=moleculeBuilder/tests/Methane_Water/out.xyz
 tol = 1.0
