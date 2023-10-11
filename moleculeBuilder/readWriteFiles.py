@@ -19,10 +19,60 @@ def getInput(filePath):
     return params
 
 def readStrucFile(filePath):
-    '''Reads structure file if an xyz'''
+    '''Reads structure file'''
+    # Reads XYZ
     if filePath[-3:] == 'xyz':
         return pd.read_csv(filePath, delim_whitespace=True,
                            skiprows=2, names=["Atom", "X", "Y", "Z"])
+    # Reads PDB
+    elif filePath[-3:] == 'pdb':
+        return readPdb(filePath)
+
+def readPdb(filePath):
+    '''Reads structure file if a pdb'''
+    atoms = []
+    residues = []
+
+    with open(filePath, 'r') as pdbFile:
+        for line in pdbFile:
+            if line.startswith('ATOM') or line.startswith('HETATM'):
+                # Parse relevant fields from the PDB format
+                atomName = line[12:16].strip()
+                x = float(line[30:38])
+                y = float(line[38:46])
+                z = float(line[46:54])
+                residue = line[17:20].strip()
+
+                atoms.append([atomName, x, y, z])
+                residues.append(residue)
+
+    df = pd.DataFrame(atoms, columns=['Atom', 'X', 'Y', 'Z'])
+    df['Residue'] = residues
+
+    return df
+
+def writeOutput(data, filePath, strucType):
+    # Writes XYZ
+    if filePath[-3:] == 'xyz':
+        writeXYZ(data, filePath, strucType)
+    # Writes PDB
+    elif filePath[-3:] == 'pdb':
+        writePdb(data, filePath)
+
+def writePdb(data, filePath):
+    '''Writes a pdb file from results'''
+    with open(filePath, 'w') as pdbFile:
+        for atom in data:
+            # Extract information for each atom
+            atomName = atom[0]
+            x = atom[1]
+            y = atom[2]
+            z = atom[3]
+            residue = atom[4]
+
+            # Format the line in PDB format
+            line = f"ATOM  {atomName:<4} {residue:<3}   1    {x:8.3f}{y:8.3f}{z:8.3f}\n"
+            pdbFile.write(line)
 
 def writeXYZ(data, filePath, strucType):
     '''Writes an xyz file from results'''

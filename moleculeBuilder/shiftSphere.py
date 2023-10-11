@@ -31,7 +31,10 @@ def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
 
                     # Check if the new atom fits within the sphere
                     if sphere.containsPoints(x, y, z, atomRadius):
-                        newAtom = (atomType, x, y, z)
+                        if not atom[4]:
+                            newAtom = (atom[0], x, y, z)
+                        else:
+                            newAtom = (atom[0], x, y, z, atom[4])
 
                         if not isOverlapAtom(newAtom, filled, radii, tol) and \
                             numMol > len(filled):
@@ -61,7 +64,10 @@ def atomRandSphere(numMol, maxAttempts, og, sphere, radii, tol):
 
             # Check if the new atom fits within the sphere
             if sphere.containsPoints(newX, newY, newZ, atomRadius):
-                newAtom = (atomType, newX, newY, newZ)
+                if not atom[4]:
+                    newAtom = (atom[0], newX, newY, newZ)
+                else:
+                    newAtom = (atom[0], newX, newY, newZ, atom[4])
 
                 if not isOverlapAtom(newAtom, filled, radii, tol):
                     filled.append(newAtom)
@@ -106,7 +112,10 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
 
                     # Check if the new atom fits within the sphere
                     if sphere.containsPoints(x, y, z, atomRadius):
-                        newAtom = (atomType, x, y, z)
+                        if not atom[4]:
+                            newAtom = (atom[0], x, y, z)
+                        else:
+                            newAtom = (atom[0], x, y, z, atom[4])
                         newMol.append(newAtom)
                     else:
                         break # If any atom doesn't fit, discard the whol molecule
@@ -156,7 +165,10 @@ def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
             atomRadius = radii.get(atomType, 0.0) # Get the radius for the atom type
             # Check if the new atom fits within the sphere
             if sphere.containsPoints(newX, newY, newZ, atomRadius):
-                newAtom = (atomType, newX, newY, newZ)
+                if not atom[4]:
+                    newAtom = (atom[0], newX, newY, newZ)
+                else:
+                    newAtom = (atom[0], newX, newY, newZ, atom[4])
                 newMol.append(newAtom)
             else:
                 break # If any atom doesn't fit, discard the whol molecule

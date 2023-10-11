@@ -11,7 +11,11 @@ def makeBase(baseStruc):
     yBase = baseStruc['Y'].values.tolist()
     zBase = baseStruc['Z'].values.tolist()
 
-    return [(atomBase[i], xBase[i], yBase[i], zBase[i]) for i in range(len(atomBase))]
+    if not baseStruc['Residue']:
+        return [(atomBase[i], xBase[i], yBase[i], zBase[i]) for i in range(len(atomBase))]
+
+    residue = baseStruc['Residue'].values.tolist()
+    return [(atomBase[i], xBase[i], yBase[i], zBase[i], residue[i]) for i in range(len(atomBase))]
 
 def calcCenter(coords):
     '''Calculate geometric center'''

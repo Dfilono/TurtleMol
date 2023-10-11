@@ -4,7 +4,7 @@ import sys
 import argparse
 from Box3D import drawBox
 from drawMol import drawMolBox, drawMolSphere
-from readWriteFiles import writeXYZ, getInput, readStrucFile
+from readWriteFiles import writeOutput, getInput, readStrucFile
 
 def defaultParams():
     '''
@@ -153,7 +153,7 @@ def main():
         outStruc, strucType = drawMolSphere(struc, baseStruc, iparams)
 
     if iparams['outputFile']:
-        writeXYZ(outStruc, iparams['outputFile'], strucType)
+        writeOutput(outStruc, iparams['outputFile'], strucType)
 
 if __name__ == "__main__":
     main()
