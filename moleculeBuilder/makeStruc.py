@@ -11,7 +11,7 @@ def makeBase(baseStruc):
     yBase = baseStruc['Y'].values.tolist()
     zBase = baseStruc['Z'].values.tolist()
 
-    if not baseStruc['Residue']:
+    if not baseStruc['Residue'][0]:
         return [(atomBase[i], xBase[i], yBase[i], zBase[i]) for i in range(len(atomBase))]
 
     residue = baseStruc['Residue'].values.tolist()

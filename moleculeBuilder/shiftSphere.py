@@ -88,8 +88,6 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
         base = makeBase(baseStruc)
         filled.append(reCenter(base, sphere))
 
-    print(filled)
-
     for zShifts in range(numShifts):
         for yShifts in range(numShifts):
             for xShifts in range(numShifts):

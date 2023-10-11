@@ -62,17 +62,23 @@ def writeOutput(data, filePath, strucType):
 def writePdb(data, filePath):
     '''Writes a pdb file from results'''
     with open(filePath, 'w') as pdbFile:
-        for atom in data:
-            # Extract information for each atom
-            atomName = atom[0]
-            x = atom[1]
-            y = atom[2]
-            z = atom[3]
-            residue = atom[4]
+        molNum = 0
+        resNum = 1
+        for mol in data:
+            for atom in mol:
+                # Extract information for each atom
+                atomName = atom[0]
+                x = atom[1]
+                y = atom[2]
+                z = atom[3]
+                residue = atom[4]
 
-            # Format the line in PDB format
-            line = f"ATOM  {atomName:<4} {residue:<3}   1    {x:8.3f}{y:8.3f}{z:8.3f}\n"
-            pdbFile.write(line)
+                # Format the line in PDB format
+                line = f"ATOM  {(atomName + str(molNum)):<4} {(residue + str(molNum)):<3}   " + str(resNum) + f"    {x:8.3f}{y:8.3f}{z:8.3f}\n"
+                pdbFile.write(line)
+            molNum += 1
+            resNum += 1
+        pdbFile.write("TER\n")
 
 def writeXYZ(data, filePath, strucType):
     '''Writes an xyz file from results'''
