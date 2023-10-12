@@ -65,14 +65,15 @@ def readPdb(filePath):
 
 def writeOutput(data, filePath, strucType):
     '''Writes data to output file'''
-    # Writes XYZ
-    if filePath[-3:] == 'xyz':
-        writeXYZ(data, filePath, strucType)
-    # Writes PDB
-    elif filePath[-3:] == 'pdb':
-        writePdb(data, filePath)
-    else:
-        return f"ERROR: Filetype {filePath[-3:]} not supported"
+    try:
+        # Writes XYZ
+        if filePath[-3:] == 'xyz':
+            writeXYZ(data, filePath, strucType)
+        # Writes PDB
+        elif filePath[-3:] == 'pdb':
+            writePdb(data, filePath)
+    except KeyError:
+        return f"Filetype {filePath[-3:]} not supported\n"
 
 def writePdb(data, filePath):
     '''Writes a pdb file from results'''
