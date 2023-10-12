@@ -2,7 +2,6 @@
 
 import sys
 import argparse
-from Box3D import drawBox
 from drawMol import drawMolBox, drawMolSphere
 from readWriteFiles import writeOutput, getInput, readStrucFile
 

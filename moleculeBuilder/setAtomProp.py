@@ -8,7 +8,7 @@ def setAtomicRadius(atomRadius):
     radii = {}
 
     ele = getElementData(atomRadius)
-    
+
     radii = pd.Series(ele[atomRadius].values, index=ele.Symbol).to_dict()
 
     # Convert radii to Angstroms

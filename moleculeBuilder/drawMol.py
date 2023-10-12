@@ -32,7 +32,7 @@ def drawMolBox(struc, baseStruc, iparams):
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
         numMol = int(numMol)
 
-    if iparams['randFill'] == 'False' or iparams['randFill'] == False:
+    if iparams['randFill'] == 'False' or iparams['randFill'] is False:
         numXShifts = math.ceil(box.length / tol)
         numYShifts = math.ceil(box.height / tol)
         numZShifts = math.ceil(box.width / tol)
@@ -97,7 +97,7 @@ def drawMolSphere(struc, baseStruc, iparams):
                                             iparams['randomizeOrient'], numMol)
             return list(filledAtom), "molecule"
 
-    elif iparams['randFill'] == 'True' or iparams['randFill'] == True:
+    elif iparams['randFill'] == 'True' or iparams['randFill'] is True:
         # Check if structure is monatomic or molecule
         if len(originalPoints) == 1:
             filledAtom = atomRandSphere(numMol, iparams['maxAttempts'],

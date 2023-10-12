@@ -25,8 +25,10 @@ def readStrucFile(filePath):
         return pd.read_csv(filePath, delim_whitespace=True,
                            skiprows=2, names=["Atom", "X", "Y", "Z"])
     # Reads PDB
-    elif filePath[-3:] == 'pdb':
+    if filePath[-3:] == 'pdb':
         return readPdb(filePath)
+    
+    return f"ERROR: Issue generating file to {filePath}"
 
 def readPdb(filePath):
     '''Reads structure file if a pdb'''
@@ -52,16 +54,19 @@ def readPdb(filePath):
     return df
 
 def writeOutput(data, filePath, strucType):
+    '''Writes data to output file'''
     # Writes XYZ
     if filePath[-3:] == 'xyz':
         writeXYZ(data, filePath, strucType)
     # Writes PDB
-    elif filePath[-3:] == 'pdb':
+    if filePath[-3:] == 'pdb':
         writePdb(data, filePath)
+    else:
+        return f"ERROR: Filetype {filePath[-3:]} not supported"
 
 def writePdb(data, filePath):
     '''Writes a pdb file from results'''
-    with open(filePath, 'w') as pdbFile:
+    with open(filePath, 'w', encoding = 'utf-8') as pdbFile:
         molNum = 0
         resNum = 1
         for mol in data:
@@ -74,7 +79,8 @@ def writePdb(data, filePath):
                 residue = atom[4]
 
                 # Format the line in PDB format
-                line = f"ATOM  {(atomName + str(molNum)):<4} {(residue + str(molNum)):<3}   " + str(resNum) + f"    {x:8.3f}{y:8.3f}{z:8.3f}\n"
+                line = f"ATOM  {(atomName + str(molNum)):<4} {(residue + str(molNum)):<3}   " \
+                + str(resNum) + f"    {x:8.3f}{y:8.3f}{z:8.3f}\n"
                 pdbFile.write(line)
             molNum += 1
             resNum += 1
