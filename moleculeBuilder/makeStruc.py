@@ -54,25 +54,25 @@ def shiftPoints(points, shape):
         pointRes = None
 
     # Determine the bounds of the points
-    min_x_points = np.min(coords[:, 0])
-    min_y_points = np.min(coords[:, 1])
-    min_z_points = np.min(coords[:, 2])
+    minXPoints = np.min(coords[:, 0])
+    minYPoints = np.min(coords[:, 1])
+    minZPoints = np.min(coords[:, 2])
 
     # Calculate the translation required
     translation = np.array([
-        shape.leftCorner()[0] - min_x_points,
-        shape.leftCorner()[1] - min_y_points,
-        shape.leftCorner()[2] - min_z_points,
+        shape.leftCorner()[0] - minXPoints,
+        shape.leftCorner()[1] - minYPoints,
+        shape.leftCorner()[2] - minZPoints,
     ])
 
     # Shift the points
     shiftedCoords = coords + translation
     if pointRes:
-        shiftedPoints = [[name] + coord.tolist() + [residue] 
-                         for name, coord, residue in 
+        shiftedPoints = [[name] + coord.tolist() + [residue]
+                         for name, coord, residue in
                          zip(pointNames, shiftedCoords, pointRes)]
     else:
-        shiftedPoints = [[name] + coord.tolist() 
+        shiftedPoints = [[name] + coord.tolist()
                          for name, coord in zip(pointNames, shiftedCoords)]
 
     return shiftedPoints
