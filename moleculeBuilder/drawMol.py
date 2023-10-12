@@ -14,7 +14,7 @@ from shiftBox import atomsFillBox, atomsRandBox, \
 from shiftSphere import atomFillSphere, atomRandSphere, \
                         moleculeRandSphere, moleculeFillSphere
 from setAtomProp import setAtomicRadius
-from makeStruc import makeBase, calcNumMol
+from makeStruc import makeBase, calcNumMol, shiftPoints
 
 def drawMolBox(struc, baseStruc, iparams):
     '''Utilized to place molecules in a box'''
@@ -25,6 +25,8 @@ def drawMolBox(struc, baseStruc, iparams):
     tol = float(iparams['tol'])
 
     originalPoints = makeBase(struc)
+
+    originalPoints = shiftPoints(originalPoints, box)
 
     if iparams['density']:
         numMol = calcNumMol(box, originalPoints, iparams['density'])
@@ -73,6 +75,7 @@ def drawMolSphere(struc, baseStruc, iparams):
     tol = float(iparams['tol'])
 
     originalPoints = makeBase(struc)
+    originalPoints = shiftPoints(originalPoints, sphere)
 
     if iparams['density']:
         numMol = calcNumMol(sphere, originalPoints, iparams['density'])

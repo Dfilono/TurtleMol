@@ -45,9 +45,6 @@ def readPdb(filePath):
                 if element not in symbols['Symbol']:
                     element = atomName
 
-                    if atomName not in symbols['Symbol']:
-                        return KeyError
-
                 try:
                     x = float(line[30:38])
                     y = float(line[38:46])

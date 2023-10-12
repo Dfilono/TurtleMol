@@ -36,6 +36,10 @@ class Box3d:
         centerZ = (corner1[2] + corner2[2]) / 2
 
         return (centerX, centerY, centerZ)
+    
+    def leftCorner(self):
+        '''Find the bottom corner of the box'''
+        return (self.xCoord, self.yCoord, self.zCoord)
 
 def drawBox(params):
     '''

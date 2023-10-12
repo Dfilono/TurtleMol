@@ -43,6 +43,40 @@ def reCenter(struc, shape):
 
     return newCoords
 
+def shiftPoints(points, shape):
+    '''Sifts points to the bottom-left front corner of a 3D shape'''
+    pointNames = [point[0] for point in points]
+    coords = np.array([point[1:4] for point in points], dtype=float)
+
+    if len(points[0]) == 5:
+        pointRes = [point[4] for point in points]
+    else:
+        pointRes = None
+
+    # Determine the bounds of the points
+    min_x_points = np.min(coords[:, 0])
+    min_y_points = np.min(coords[:, 1])
+    min_z_points = np.min(coords[:, 2])
+
+    # Calculate the translation required
+    translation = np.array([
+        shape.leftCorner()[0] - min_x_points,
+        shape.leftCorner()[1] - min_y_points,
+        shape.leftCorner()[2] - min_z_points,
+    ])
+
+    # Shift the points
+    shiftedCoords = coords + translation
+    if pointRes:
+        shiftedPoints = [[name] + coord.tolist() + [residue] 
+                         for name, coord, residue in 
+                         zip(pointNames, shiftedCoords, pointRes)]
+    else:
+        shiftedPoints = [[name] + coord.tolist() 
+                         for name, coord in zip(pointNames, shiftedCoords)]
+
+    return shiftedPoints
+
 def randReorient(mol): # NOTE Currently does not work and is disabled
     '''Randomly reorients a molecule around geometric center'''
     if not mol:
