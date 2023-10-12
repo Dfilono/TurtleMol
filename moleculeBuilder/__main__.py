@@ -144,10 +144,6 @@ def main():
         print(len(outStruc))
 
     elif iparams['shape'].lower() == 'sphere':
-        # Define Sphere
-        center = iparams['sphereCenter']
-        radius = iparams['radius']
-
         # Generate the new structure
         outStruc, strucType = drawMolSphere(struc, baseStruc, iparams)
 

@@ -27,7 +27,7 @@ def readStrucFile(filePath):
     # Reads PDB
     if filePath[-3:] == 'pdb':
         return readPdb(filePath)
-    
+
     return f"ERROR: Issue generating file to {filePath}"
 
 def readPdb(filePath):
@@ -44,7 +44,10 @@ def readPdb(filePath):
 
                 if element not in symbols['Symbol']:
                     element = atomName
-                
+
+                    if atomName not in symbols['Symbol']:
+                        return KeyError
+
                 try:
                     x = float(line[30:38])
                     y = float(line[38:46])
@@ -66,7 +69,7 @@ def writeOutput(data, filePath, strucType):
     if filePath[-3:] == 'xyz':
         writeXYZ(data, filePath, strucType)
     # Writes PDB
-    if filePath[-3:] == 'pdb':
+    elif filePath[-3:] == 'pdb':
         writePdb(data, filePath)
     else:
         return f"ERROR: Filetype {filePath[-3:]} not supported"
@@ -99,8 +102,6 @@ def writePdb(data, filePath):
                 atomNum += 1
             resNum += 1
         pdbFile.write("END\n")
-        
-
 
 def writeXYZ(data, filePath, strucType):
     '''Writes an xyz file from results'''
