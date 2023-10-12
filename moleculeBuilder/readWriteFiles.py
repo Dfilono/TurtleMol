@@ -32,24 +32,31 @@ def readStrucFile(filePath):
 
 def readPdb(filePath):
     '''Reads structure file if a pdb'''
-    atoms = []
-    residues = []
+    data = []
+    symbols = getElementData('AtomicMass')
 
-    with open(filePath, 'r') as pdbFile:
+    with open(filePath, 'r', encoding = 'utf-8') as pdbFile:
         for line in pdbFile:
             if line.startswith('ATOM') or line.startswith('HETATM'):
                 # Parse relevant fields from the PDB format
                 atomName = line[12:16].strip()
-                x = float(line[30:38])
-                y = float(line[38:46])
-                z = float(line[46:54])
-                residue = line[17:20].strip()
+                element = line[76:78].strip()
 
-                atoms.append([atomName, x, y, z])
-                residues.append(residue)
+                if element not in symbols['Symbol']:
+                    element = atomName
+                
+                try:
+                    x = float(line[30:38])
+                    y = float(line[38:46])
+                    z = float(line[46:54])
+                except ValueError:
+                    continue # Skip line if coordinates are invalid
+                residueName = line[17:20].strip()
+                residueSeq = int(line[22:26].strip())
 
-    df = pd.DataFrame(atoms, columns=['Atom', 'X', 'Y', 'Z'])
-    df['Residue'] = residues
+                data.append([element, x, y, z, residueName, residueSeq])
+
+    df = pd.DataFrame(data, columns=['Atom', 'X', 'Y', 'Z', 'Residue', 'ResidueSeq'])
 
     return df
 
@@ -66,25 +73,34 @@ def writeOutput(data, filePath, strucType):
 
 def writePdb(data, filePath):
     '''Writes a pdb file from results'''
+    template = (
+        "HETATM{atomNum:5d} {atomType:^4}{residueName:<4} A{resNum:4d}"
+        "    {x:8.3f}{y:8.3f}{z:8.3f}{occupancy:6.2f}{tempFactor:6.2f}\n"
+        )
+
     with open(filePath, 'w', encoding = 'utf-8') as pdbFile:
-        molNum = 0
+        atomNum = 1
         resNum = 1
+
         for mol in data:
             for atom in mol:
-                # Extract information for each atom
-                atomName = atom[0]
-                x = atom[1]
-                y = atom[2]
-                z = atom[3]
-                residue = atom[4]
+                pdbFile.write(template.format(
+                   atomNum = atomNum,
+                   atomType = atom[0],
+                   residueName = atom[4],
+                   resNum = resNum,
+                   x = atom[1],
+                   y = atom[2],
+                   z = atom[3],
+                   occupancy = 1.00, # Default value
+                   tempFactor = 0.00, # Default value
+                ))
 
-                # Format the line in PDB format
-                line = f"ATOM  {(atomName + str(molNum)):<4} {(residue + str(molNum)):<3}   " \
-                + str(resNum) + f"    {x:8.3f}{y:8.3f}{z:8.3f}\n"
-                pdbFile.write(line)
-            molNum += 1
+                atomNum += 1
             resNum += 1
-        pdbFile.write("TER\n")
+        pdbFile.write("END\n")
+        
+
 
 def writeXYZ(data, filePath, strucType):
     '''Writes an xyz file from results'''

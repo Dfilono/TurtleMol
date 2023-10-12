@@ -1,5 +1,5 @@
-shape=sphere
-sideLength=10
+shape=cube
+sideLength=20
 numMolecules=fill
 structureFile=moleculeBuilder/tests/Water/water.pdb
 radius = 6

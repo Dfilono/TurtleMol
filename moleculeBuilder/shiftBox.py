@@ -30,10 +30,10 @@ def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
 
                     # Check if the new atom fits within the box
                     if inBox(newXMin, newXMax, newYMin, newYMax, newZMin, newZMax, box):
-                        if not atom[4]:
-                            newAtom = (atom[0], newX, newY, newZ)
-                        else:
+                        if len(atom) == 5:
                             newAtom = (atom[0], newX, newY, newZ, atom[4])
+                        else:
+                            newAtom = (atom[0], newX, newY, newZ)
 
                         if not isOverlapAtom(newAtom, filledAtom, radii, tol) and \
                             numMol > len(filledAtom):
@@ -63,10 +63,10 @@ def atomsRandBox(numMol, maxAttempts, og, box,
             newZMax = newZ + radii[atom[0]]
             # Check if the new atom fits within the box
             if  inBox(newXMin, newXMax, newYMin, newYMax, newZMin, newZMax, box):
-                if not atom[4]:
-                    newAtom = (atom[0], newX, newY, newZ)
-                else:
+                if len(atom) == 5:
                     newAtom = (atom[0], newX, newY, newZ, atom[4])
+                else:
+                    newAtom = (atom[0], newX, newY, newZ)
 
                 if not isOverlapAtom(newAtom, filledAtom, radii, tol):
                     filledAtom.append(newAtom)
@@ -111,10 +111,10 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
                     # Check if the new atom fits within the box
                     if  inBox(newXMin, newXMax, newYMin, newYMax, newZMin,
                               newZMax, box):
-                        if not atom[4]:
-                            newAtom = (atom[0], newX, newY, newZ)
-                        else:
+                        if len(atom) == 5:
                             newAtom = (atom[0], newX, newY, newZ, atom[4])
+                        else:
+                            newAtom = (atom[0], newX, newY, newZ)
                         newMol.append(newAtom)
 
                     else:
@@ -162,10 +162,10 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
             newZMax = newZ + radii[atom[0]]
             # Check if the new atom fits within the box
             if  inBox(newXMin, newXMax, newYMin, newYMax, newZMin, newZMax, box):
-                if not atom[4]:
-                    newAtom = (atom[0], newX, newY, newZ)
-                else:
+                if len(atom) == 5:
                     newAtom = (atom[0], newX, newY, newZ, atom[4])
+                else:
+                    newAtom = (atom[0], newX, newY, newZ)
                 newMol.append(newAtom)
             else:
                 anyAtomOutside = True
