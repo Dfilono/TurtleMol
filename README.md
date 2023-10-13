@@ -19,7 +19,7 @@
 
 This project is under development and is a work in progress in its early stages. Please note that while it is available for basic use, bugs and errors are expected, as well as regular updates that may drastically change or break the current build.
 
-## Current Feautres
+## Current Features
 
 - Generates molecules in a two basic shapes of a box or sphere
 - Reads both XYZ and PDB files for initial input structures
