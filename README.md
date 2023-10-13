@@ -1,6 +1,9 @@
 # Easing the Generation of Complex Molecular Structures
 
 <p align="center">
+    <a href="https://github.com/Dfilono/Molecule-Builder/actions/workflows/python-package.yml">
+        <img src="https://github.com/Dfilono/Molecule-Builder/actions/workflows/python-package.yml/badge.svg" alt="Build Status ">
+    </a>
     <a href="https://github.com/Dfilono/Molecule-Builder/blob/main/LICENSE" target="_blank">
         <img src="https://img.shields.io/github/license/Dfilono/Molecule-Builder" alt="License">
     </a>
