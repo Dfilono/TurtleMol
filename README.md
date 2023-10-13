@@ -1,5 +1,20 @@
 # Easing the Generation of Complex Molecular Structures
 
+<p align="center">
+    <a href="https://github.com/Dfilono/Molecule-Builder/blob/main/LICENSE" target="_blank">
+        <img src="https://img.shields.io/github/license/Dfilono/Molecule-Builder" alt="License">
+    </a>
+    <a href="https://github.com/Dfilono/Molecule-Builder" target="_blank">
+        <img src="https://img.shields.io/github/repo-size/Dfilono/Molecule-Builder" alt="Repo size">
+    </a>
+    <a href="https://github.com/psf/black" target="_blank">
+        <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Black style">
+    </a>
+    <a href="https://github.com/PyCQA/pylint" target="_blank">
+        <img src="https://img.shields.io/badge/linting-pylint-yellowgreen" alt="Black style">
+    </a>
+</p>
+
 ## Introduction
 
 This project is under development and is a work in progress in its early stages. Please note that while it is available for basic use, bugs and errors are expected, as well as regular updates that may drastically change or break the current build.
