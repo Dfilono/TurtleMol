@@ -4,6 +4,9 @@
     <a href="https://github.com/Dfilono/Molecule-Builder/actions/workflows/python-package.yml">
         <img src="https://github.com/Dfilono/Molecule-Builder/actions/workflows/python-package.yml/badge.svg" alt="Build Status ">
     </a>
+    <a href="https://codecov.io/gh/Dfilono/Molecule-Builder">
+        <img src="https://codecov.io/gh/Dfilono/Molecule-Builder/branch/main/graph/badge.svg?token=P643JEUWZC" alt="Codecov">
+    </a>
     <a href="https://github.com/Dfilono/Molecule-Builder/blob/main/LICENSE" target="_blank">
         <img src="https://img.shields.io/github/license/Dfilono/Molecule-Builder" alt="License">
     </a>
