@@ -33,7 +33,7 @@ Motivation
 
 The Toolkit for Universial Reconstruction of Theoreticl Lattice Environments (TURTLE) goal is to ease the process of
 generating unique and complex molecular structures for computational chemistry. Available as a standalone python-package,
-or as a plugin for `Avogadro2 <https://www.openchemistry.org/projects/avogadro2/>`, TURTLE aims to quickly generate
+or as a plugin for `Avogadro2 <https://www.openchemistry.org/projects/avogadro2/>`__, TURTLE aims to quickly generate
 the intial state of molecular strcutres that are ready for optimization via quamtum or classical calculations!
 
 Generating intial strcutre files for calculations can be a tedious process, one that TURTLE aims to fix. 
@@ -60,7 +60,7 @@ Features
 Installation
 ============
 
-You can install the latest development version of TURTLE from the `Github Repository <https://github.com/Dfilono/Molecule-Builder>`
+You can install the latest development version of TURTLE from the `Github Repository <https://github.com/Dfilono/Molecule-Builder>`__
 
 .. code-block:: bash
 
