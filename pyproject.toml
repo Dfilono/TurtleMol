@@ -16,7 +16,7 @@ description = "Design, create, and generate unique, complex molecular structures
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: MIT License",
+    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 
