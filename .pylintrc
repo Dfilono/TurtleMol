@@ -14,3 +14,6 @@ method-rgx=(([a-z][a-zA-Z0-9]*)|([A-Z][a-zA-Z0-9]+))$
 
 # Naming style for modules (camelCase or snake_case)
 module-rgx=(([a-z][a-z0-9]*)|([A-Z][a-zA-Z0-9]+))$
+
+[MASTER]
+ignore-patterns=(.)*_test\.py,test_(.)*\.py
