@@ -2,17 +2,17 @@
 
 # pylin: skip-file
 
-from moleculeBuilder.drawMol import moleculeFillSphere, moleculesFillBox
+from moleculeBuilder.drawMol import drawMolBox, drawMolSphere
 from moleculeBuilder.readWriteFiles import readStrucFile
 from moleculeBuilder.defaultParams import defaultParams
 
-def testAtomFill():
+def testRandOrient():
     iparamsSphere = {
         'shape' : 'sphere',
         'radius' : 5.0,
         'numMolecules' : 'fill',
         'randomizeOrient' : True,
-        'structureFile' : "../examples/Water/water.xyz"
+        'structureFile' : "moleculeBuilder/examples/Water/water.xyz"
     }
 
     iparamsCube = {
@@ -20,7 +20,7 @@ def testAtomFill():
         'sideLength' : 10.0,
         'numMolecules' : 'fill',
         'randomizeOrient' : True,
-        'structureFile' : "../examples/Water/water.xyz"
+        'structureFile' : "moleculeBuilder/examples/Water/water.xyz"
     }
 
     dparams = defaultParams()
@@ -39,10 +39,10 @@ def testAtomFill():
     else:
         baseStruc = None
 
-    outStrucCube, strucTypeCube = moleculesFillBox(struc, baseStruc, iparamsCube)
+    outStrucCube, strucTypeCube = drawMolBox(struc, baseStruc, iparamsCube)
     assert len(outStrucCube) != 0, "Output structure should have some length"
     assert strucTypeCube == "molecule", "Structure type should be an atom"
 
-    outStrucSphere, strucTypeSphere = moleculeFillSphere(struc, baseStruc, iparamsSphere)
+    outStrucSphere, strucTypeSphere = drawMolSphere(struc, baseStruc, iparamsSphere)
     assert len(outStrucSphere) != 0, "Output structure should have some length"
     assert strucTypeSphere == "molecule", "Structure type should be an atom"

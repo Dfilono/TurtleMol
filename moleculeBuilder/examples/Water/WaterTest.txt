@@ -1,10 +1,10 @@
 shape=sphere
 sideLength=20
-numMolecules=fill
-structureFile=moleculeBuilder/tests/Water/water.pdb
+numMolecules=20
+structureFile=moleculeBuilder/examples/Water/water.pdb
 radius = 5
 fromWall=0.5
 randomizeOrient=True
-randFill=False
-outputFile=moleculeBuilder/tests/Water/WaterOut.pdb
+randFill=True
+outputFile=moleculeBuilder/examples/Water/WaterOut.pdb
 tol = 1.0

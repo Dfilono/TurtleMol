@@ -2,25 +2,25 @@
 
 # pylin: skip-file
 
-from moleculeBuilder.drawMol import moleculeFillSphere, moleculesFillBox
+from moleculeBuilder.drawMol import drawMolBox, drawMolSphere
 from moleculeBuilder.readWriteFiles import readStrucFile
 from moleculeBuilder.defaultParams import defaultParams
 
-def testAtomFill():
+def testBaseStruc():
     iparamsSphere = {
         'shape' : 'sphere',
         'radius' : 5.0,
         'numMolecules' : 'fill',
-        'structureFile' : "../examples/Methane_Water/water.xyz",
-        'baseStrucFile' : "../examples/Methane_Water/methane.xyz"
+        'structureFile' : "moleculeBuilder/examples/Methane_Water/water.xyz",
+        'baseStrucFile' : "moleculeBuilder/examples/Methane_Water/ch4.xyz"
     }
 
     iparamsCube = {
         'shape' : 'cube',
         'sideLength' : 10.0,
         'numMolecules' : 'fill',
-        'structureFile' : "../examples/Water/water.xyz",
-        'baseStrucFile' : "../examples/Methane_Water/methane.xyz"
+        'structureFile' : "moleculeBuilder/examples/Methane_Water/water.xyz",
+        'baseStrucFile' : "moleculeBuilder/examples/Methane_Water/ch4.xyz"
     }
 
     dparams = defaultParams()
@@ -39,10 +39,10 @@ def testAtomFill():
     else:
         baseStruc = None
 
-    outStrucCube, strucTypeCube = moleculesFillBox(struc, baseStruc, iparamsCube)
+    outStrucCube, strucTypeCube = drawMolBox(struc, baseStruc, iparamsCube)
     assert len(outStrucCube) != 0, "Output structure should have some length"
     assert strucTypeCube == "molecule", "Structure type should be an atom"
 
-    outStrucSphere, strucTypeSphere = moleculeFillSphere(struc, baseStruc, iparamsSphere)
+    outStrucSphere, strucTypeSphere = drawMolSphere(struc, baseStruc, iparamsSphere)
     assert len(outStrucSphere) != 0, "Output structure should have some length"
     assert strucTypeSphere == "molecule", "Structure type should be an atom"

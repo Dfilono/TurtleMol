@@ -2,23 +2,23 @@
 
 # pylin: skip-file
 
-from moleculeBuilder.drawMol import moleculeFillSphere, moleculesFillBox
+from moleculeBuilder.drawMol import drawMolBox, drawMolSphere
 from moleculeBuilder.readWriteFiles import readStrucFile
 from moleculeBuilder.defaultParams import defaultParams
 
-def testAtomFill():
+def testReadWritePDB():
     iparamsSphere = {
         'shape' : 'sphere',
         'radius' : 5.0,
         'numMolecules' : 'fill',
-        'structureFile' : "../examples/Water/water.pdb"
+        'structureFile' : "moleculeBuilder/examples/Water/water.pdb"
     }
 
     iparamsCube = {
         'shape' : 'cube',
         'sideLength' : 10.0,
         'numMolecules' : 'fill',
-        'structureFile' : "../examples/Water/water.pdb"
+        'structureFile' : "moleculeBuilder/examples/Water/water.pdb"
     }
 
     dparams = defaultParams()
@@ -37,12 +37,12 @@ def testAtomFill():
     else:
         baseStruc = None
 
-    outStrucCube, strucTypeCube = moleculesFillBox(struc, baseStruc, iparamsCube)
+    outStrucCube, strucTypeCube = drawMolBox(struc, baseStruc, iparamsCube)
     assert len(outStrucCube) != 0, "Output structure should have some length"
     assert strucTypeCube == "molecule", "Structure type should be an atom"
-    assert isinstance(outStrucCube[0][-1], str), 'Final place should be residue ID'
+    assert isinstance(outStrucCube[0][0][-1], str), 'Final place should be residue ID'
 
-    outStrucSphere, strucTypeSphere = moleculeFillSphere(struc, baseStruc, iparamsSphere)
+    outStrucSphere, strucTypeSphere = drawMolSphere(struc, baseStruc, iparamsSphere)
     assert len(outStrucSphere) != 0, "Output structure should have some length"
     assert strucTypeSphere == "molecule", "Structure type should be an atom"
-    assert isinstance(outStrucSphere[0][-1], str), 'Final place should be residue ID'
+    assert isinstance(outStrucSphere[0][0][-1], str), 'Final place should be residue ID'
