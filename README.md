@@ -79,3 +79,5 @@ Distributed under the MIT License. See [LICENSE](https://github.com/Dfilono/Mole
 ## Documentation
 
 Documentation is in progress.
+
+<img src="https://github.com/Dfilono/Molecule-Builder/blob/main/docs/images/logo.png">
