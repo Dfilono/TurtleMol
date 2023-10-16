@@ -6,9 +6,11 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'T.U.R.T.L.E.'
+project = 'TURTLE'
 copyright = '2023, Dominick Filonowich'
 author = 'Dominick Filonowich'
+html_title = 'TURTLE'
+html_logo = './images/logo.png'
 release = '0.1.0'
 
 # -- General configuration ---------------------------------------------------
