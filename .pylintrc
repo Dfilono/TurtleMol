@@ -16,4 +16,4 @@ method-rgx=(([a-z][a-zA-Z0-9]*)|([A-Z][a-zA-Z0-9]+))$
 module-rgx=(([a-z][a-z0-9]*)|([A-Z][a-zA-Z0-9]+))$
 
 [MASTER]
-pylint myproject --ignore-patterns=test_.*?py
+ignore-patterns=(.)*_test\.py,test_(.)*\.py
