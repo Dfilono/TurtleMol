@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "TURTLE"
+name = "TURTLE_Chem"
 version = "0.1.0"
 authors = [
     {name = "Dominick Filonowich", email = "filonoiwchd74@gmail.com"},
