@@ -33,10 +33,10 @@ This project is under development and is a work in progress in its early stages.
 - Can fill a volume, place a specified amount in a volume, or calculate the amount of molecules placed in a given volume based on density
 - Molecules can be placed randomly or in a grid
 - Writes data to an output file in XYZ or PDB formats
+- Randomly reorient molecules in space to get closer to equilibrium position
 
 ## Features in Progress
 
-- Randomly reorient molecules in space to get closer to equilibrium position
 - Generate structures based on meshes defined from outside software/packagaes such as Blender
 
 ## Documentation
