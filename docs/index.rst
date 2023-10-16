@@ -46,7 +46,7 @@ Approach
 TURTLE takes an input molecules (or molecules) and copies them into a grid filling out a user defined volume.
 The number of molecules in the volume can be specially defined, calculated via a desired density, or for filling space.
 The orientation of the molecules can be randomized so structures are closer to their equilibrium point, but will still need outside optimization.
-Molecules can also be palced randomly instead of in a grid, allowing for a more disordered structure.
+Molecules can also be placed randomly instead of in a grid, allowing for a more disordered structure.
 
 Features
 ========
