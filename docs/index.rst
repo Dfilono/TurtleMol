@@ -36,7 +36,7 @@ generating unique and complex molecular structures for computational chemistry. 
 or as a plugin for `Avogadro2 <https://www.openchemistry.org/projects/avogadro2/>`__, TURTLE aims to quickly generate
 the intial state of molecular strcutres that are ready for optimization via quamtum or classical calculations!
 
-Generating intial strcutre files for calculations can be a tedious process, one that TURTLE aims to fix. 
+Generating intial structure files for calculations can be a tedious process, one that TURTLE aims to fix. 
 Large structures can be generated quickly, and are very tunable based on the need of the user! 
 Currently only basic shapes such as boxes and spheres are generatable, but more complex meshes are in the works!
 
@@ -81,6 +81,9 @@ License
 =======
 
 Distributed under the MIT License. See `LICENSE <https://github.com/Dfilono/Molecule-Builder/blob/main/LICENSE>`__ for more information.
+
+.. image:: images/logo.png
+   :align: center
 
 
 .. toctree::
