@@ -118,9 +118,8 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
                     else:
                         break # If any atom doesn't fit, discard the whol molecule
 
-                if randOrient:
-                    #newMol = randReorient(newMol)
-                    pass
+                if randOrient and len(newMol) == len(og):
+                    newMol = randReorient(newMol)
 
                 if not isOverlapMolecule(newMol, filled, radii, tol) and \
                     numMol > len(filled):
@@ -171,9 +170,8 @@ def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
             else:
                 break # If any atom doesn't fit, discard the whol molecule
 
-        if randOrient:
-            #newMol = randReorient(newMol)
-            pass
+        if randOrient and len(newMol) == len(og):
+            newMol = randReorient(newMol)
 
         if not isOverlapMolecule(newMol, filled, radii, tol):
             if len(newMol) == len(og):

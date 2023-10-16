@@ -1,7 +1,7 @@
 '''Sets up the structure files'''
 
 import numpy as np
-from scipy.spatial.transform import Rotation
+import random
 from setAtomProp import setAtomicMass
 
 def makeBase(baseStruc):
@@ -79,26 +79,54 @@ def shiftPoints(points, shape):
 
 def randReorient(mol): # NOTE Currently does not work and is disabled
     '''Randomly reorients a molecule around geometric center'''
-    if not mol:
+    if len(mol) == 0:
         return mol
 
-    center = np.asarray(calcCenter(mol))
-    pointsToRotate = []
-    for i in mol:
-        pointsToRotate.append(i[1:])
-    print(pointsToRotate)
-    randomRotation = Rotation.random()
+    atomNames = [atom[0] for atom in mol]
+    atomInfo = [atom[4:] if len(atom) > 4 else [] for atom in mol]
+    points = np.array([atom[1:4] for atom in mol], dtype=np.float64)
+    centroid = points.mean(axis=0) # Calculate center of points
+    points -= centroid # Translate the points to origin
 
-    rotatedPoints = []
-    for i in pointsToRotate:
-        rotatedPoints.append(randomRotation.apply(i - center) + center)
-    print(rotatedPoints)
-    rotatedMol = []
-    for i in mol:
-        rotatedMol.append((i[0], rotatedPoints[0], rotatedPoints[1], rotatedPoints[2]))
-    print(f"Center: {center}, Mol: {mol}, Rotated Mol: {rotatedMol}\n")
+    # Perform the rotaton
+    # Generate random rotation angles in radians
+    thetaX = random.uniform(0, 2*np.pi)
+    thetaY = random.uniform(0, 2*np.pi)
+    thetaZ = random.uniform(0, 2*np.pi)
 
-    return rotatedMol
+    # Create the rotation matrix for the x-axis
+    rx = np.array([[1, 0, 0],
+                  [0, np.cos(thetaX), -np.sin(thetaX)],
+                  [0, np.sin(thetaX), np.cos(thetaX)]],
+                  dtype=np.float64)
+
+    # Create rotation matrix for the y-axis
+    ry = np.array([[np.cos(thetaY), 0, np.sin(thetaY)],
+                  [0, 1, 0],
+                  [-np.sin(thetaY), 0, np.cos(thetaY)]],
+                  dtype=np.float64)
+
+    # Create rotation matrix for the z-axis
+    rz = np.array([[np.cos(thetaZ), -np.sin(thetaZ), 0],
+                  [np.sin(thetaZ), np.cos(thetaZ), 0],
+                  [0, 0, 1]],
+                  dtype=np.float64)
+    
+    # Combined rotation matrix
+    R = rz @ ry @ rx
+
+    # Apply the rotation matrix to the points
+    rotatedPoints = np.dot(points, R.T)
+
+    # Translate the points back to position
+    rotatedPoints += centroid
+
+    rotatedAtoms = [tuple(name) + tuple(coord.tolist()) + tuple(info)
+                    for name, coord, info in zip(atomNames, rotatedPoints, atomInfo)]
+    
+    rotatedAtoms = [tuple(atom) for atom in rotatedAtoms]
+
+    return rotatedAtoms
 
 def calcDensity(shape, mol):
     '''Calculates the density of a given structure'''

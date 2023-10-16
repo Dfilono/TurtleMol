@@ -120,9 +120,8 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
                     else:
                         anyAtomOutside = True
 
-                if randOrient:
-                    #newMol = randReorient(newMol)
-                    pass
+                if randOrient and len(newMol) == len(og):
+                    newMol = randReorient(newMol)
 
                 if (not isOverlapMolecule(newMol, filledAtom, radii, tol) and
                     not anyAtomOutside and numMol > len(filledAtom)):
@@ -169,9 +168,10 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
                 newMol.append(newAtom)
             else:
                 anyAtomOutside = True
-        if randOrient:
-            #newMol = randReorient(newMol)
-            pass
+    
+        if randOrient and len(newMol) == len(og):
+            newMol = randReorient(newMol)
+
         if not isOverlapMolecule(newMol, filledAtom, radii, tol) and not anyAtomOutside:
             filledAtom.append(newMol)
         attempts += 1
