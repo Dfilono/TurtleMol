@@ -70,7 +70,7 @@ def writeOutput(data, filePath, strucType):
         elif filePath[-3:] == 'pdb':
             writePdb(data, filePath)
     except KeyError:
-        return f"Filetype {filePath[-3:]} not supported\n"
+        print(f"Filetype {filePath[-3:]} not supported\n")
 
 def writePdb(data, filePath):
     '''Writes a pdb file from results'''
