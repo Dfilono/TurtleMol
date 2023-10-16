@@ -1,9 +1,9 @@
-.. T.U.R.T.L.E. documentation master file, created by
+.. TURTLE documentation master file, created by
    sphinx-quickstart on Mon Oct 16 13:06:21 2023.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to T.U.R.T.L.E.'s documentation!
+Welcome to TURTLE's documentation!
 ========================================
 
 Design, create, and generate unique, complex molecular structures of any shape and size!
