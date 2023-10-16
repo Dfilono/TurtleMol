@@ -1,7 +1,6 @@
 '''Sets up the structure files'''
-
-import numpy as np
 import random
+import numpy as np
 from setAtomProp import setAtomicMass
 
 def makeBase(baseStruc):
@@ -60,9 +59,9 @@ def shiftPoints(points, shape):
 
     # Calculate the translation required
     translation = np.array([
-        shape.leftCorner()[0] - minXPoints,
-        shape.leftCorner()[1] - minYPoints,
-        shape.leftCorner()[2] - minZPoints,
+        shape.origin()[0] - minXPoints,
+        shape.origin()[1] - minYPoints,
+        shape.origin()[2] - minZPoints,
     ])
 
     # Shift the points
@@ -111,7 +110,7 @@ def randReorient(mol): # NOTE Currently does not work and is disabled
                   [np.sin(thetaZ), np.cos(thetaZ), 0],
                   [0, 0, 1]],
                   dtype=np.float64)
-    
+
     # Combined rotation matrix
     R = rz @ ry @ rx
 
@@ -123,7 +122,7 @@ def randReorient(mol): # NOTE Currently does not work and is disabled
 
     rotatedAtoms = [tuple(name) + tuple(coord.tolist()) + tuple(info)
                     for name, coord, info in zip(atomNames, rotatedPoints, atomInfo)]
-    
+
     rotatedAtoms = [tuple(atom) for atom in rotatedAtoms]
 
     return rotatedAtoms

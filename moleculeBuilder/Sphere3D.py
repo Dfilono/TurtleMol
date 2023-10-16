@@ -32,7 +32,7 @@ class Sphere3d:
     def findCenter(self):
         '''Find the center of the sphere'''
         return (self.xCoord, self.yCoord, self.zCoord)
-    
-    def leftCorner(self):
-        '''Returns the bottom left corner of the sphere'''
+
+    def origin(self):
+        '''Returns the origin of the sphere'''
         return (self.xCoord, self.yCoord, self.zCoord)

@@ -168,7 +168,7 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
                 newMol.append(newAtom)
             else:
                 anyAtomOutside = True
-    
+
         if randOrient and len(newMol) == len(og):
             newMol = randReorient(newMol)
 
