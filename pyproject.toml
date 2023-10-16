@@ -10,4 +10,5 @@ authors = [
 ]
 dependencies = [
     "pandas",
+    "numpy",
 ]
