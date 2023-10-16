@@ -3,8 +3,8 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "moleculeBuilder"
-version = "0.0.1"
+name = "TURTLE"
+version = "0.1.0"
 authors = [
     {name = "Dominick Filonowich", email = "filonoiwchd74@gmail.com"},
 ]
@@ -12,3 +12,14 @@ dependencies = [
     "pandas",
     "numpy",
 ]
+description = "Design, create, and generate unique, complex molecular structures of any shape and size!"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Dfilono/Molecule-Builder"
+"Bug Tracker" = "https://github.com/Dfilono/Molecule-Builder/issues"
