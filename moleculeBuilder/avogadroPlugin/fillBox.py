@@ -2,8 +2,7 @@ import argparse
 import json
 import sys
 import pandas as pd
-from moleculeBuilder import drawMol, \
-    defaultParams, readWriteFiles
+import moleculeBuilder as MB
 
 debug = True
 
@@ -78,7 +77,7 @@ def generateParams(opts):
         'baseStrucFile' : opts['ogStruc']
     }
 
-    dparams = defaultParams()
+    dparams = MB.defaultParams()
     for name in dparams:
         if name not in iparams:
             iparams[name] = dparams[name]
@@ -93,11 +92,11 @@ def runCommand():
     struc = pd.pd.read_csv(iparams['structureFile'], delim_whitespace=True,
                            skiprows=2, names=["Atom", "X", "Y", "Z"])
     if len(iparams['baseStrucFile']) > 0:
-        baseStruc = readWriteFiles.readStrucFile(iparams['baseStrucFile'])
+        baseStruc = MB.readWriteFiles.readStrucFile(iparams['baseStrucFile'])
     else:
         baseStruc = None
 
-    outStruc, strucType = drawMol.drawMolBox(struc, baseStruc, iparams)
+    outStruc, strucType = MB.drawMol.drawMolBox(struc, baseStruc, iparams)
 
     columns = ['Atom', 'X', 'Y', 'Z']
     df = pd.DataFrame(columns=columns)
