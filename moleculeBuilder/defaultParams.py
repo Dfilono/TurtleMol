@@ -8,7 +8,6 @@ Keywords:
     Zlen = float(depth of a box)
     numMolecules = int(Number of molecules in box)
     tol = float(minimum distance between molecules)
-    fromWall = minimum distance from wall
     inputFile = Path to the input file if you are using one
     structureFile = Path to the structure file being used. 
         Required for usage. Only the xyz format is currently supported
