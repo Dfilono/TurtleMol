@@ -1,6 +1,7 @@
 import argparse
 import json
 import sys
+import tempfile
 import pandas as pd
 import moleculeBuilder as MB
 
@@ -76,8 +77,13 @@ def generateParams(opts):
         'structureFile' : opts['xyz'],
         'baseStrucFile' : opts['ogStruc']
     }
-
-    dparams = MB.defaultParams()
+    try:
+        dparams = MB.defaultParams()
+    except:
+        fd1, name1 = tempfile.mkstemp("_ParamEror.txt")
+        with open(name1, 'w') as f:
+            f.write("defaultParams not found")
+            f.close()
     for name in dparams:
         if name not in iparams:
             iparams[name] = dparams[name]
@@ -85,18 +91,29 @@ def generateParams(opts):
     return iparams
 
 def runCommand():
+    fd1, name1 = tempfile.mkstemp("_CommandError.txt")
     stdinStr = sys.stdin.read()
     opts = json.loads(stdinStr)
     iparams = generateParams(opts)
 
     struc = pd.pd.read_csv(iparams['structureFile'], delim_whitespace=True,
                            skiprows=2, names=["Atom", "X", "Y", "Z"])
-    if len(iparams['baseStrucFile']) > 0:
-        baseStruc = MB.readWriteFiles.readStrucFile(iparams['baseStrucFile'])
-    else:
-        baseStruc = None
+    try:
+        if len(iparams['baseStrucFile']) > 0:
+            baseStruc = MB.readWriteFiles.readStrucFile(iparams['baseStrucFile'])
+        else:
+            baseStruc = None
+    except:
+        with open(name1, 'w') as f:
+            f.write("readWriteFiles not found")
+            f.close()
 
-    outStruc, strucType = MB.drawMol.drawMolBox(struc, baseStruc, iparams)
+    try:
+        outStruc, strucType = MB.drawMol.drawMolBox(struc, baseStruc, iparams)
+    except:
+        with open(name1, 'w') as f:
+            f.write("drawMol not found")
+            f.close()
 
     columns = ['Atom', 'X', 'Y', 'Z']
     df = pd.DataFrame(columns=columns)
