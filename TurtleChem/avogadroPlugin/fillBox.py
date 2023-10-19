@@ -3,7 +3,7 @@ import json
 import sys
 import tempfile
 import pandas as pd
-import moleculeBuilder as MB
+import TurtleChem
 
 debug = True
 
@@ -77,13 +77,22 @@ def generateParams(opts):
         'structureFile' : opts['xyz'],
         'baseStrucFile' : opts['ogStruc']
     }
+
+    if len(iparams) == 0:
+        fd1, name1 = tempfile.mkstemp('_NoInput.txt')
+        with open(name1, 'w') as f:
+            for k,v in iparams:
+                f.write(f'No input parameters')
+            f.close()
+
     try:
-        dparams = MB.defaultParams()
+        dparams = TurtleChem.defaultParams()
     except:
         fd1, name1 = tempfile.mkstemp("_ParamEror.txt")
         with open(name1, 'w') as f:
             f.write("defaultParams not found")
             f.close()
+
     for name in dparams:
         if name not in iparams:
             iparams[name] = dparams[name]
@@ -91,26 +100,35 @@ def generateParams(opts):
     return iparams
 
 def runCommand():
-    fd1, name1 = tempfile.mkstemp("_CommandError.txt")
     stdinStr = sys.stdin.read()
     opts = json.loads(stdinStr)
     iparams = generateParams(opts)
 
+    if len(iparams) == 0:
+        fd1, name1 = tempfile.mkstemp('_NoInput.txt')
+        with open(name1, 'w') as f:
+            for k,v in iparams:
+                f.write(f'No input parameters')
+            f.close()
+
     struc = pd.pd.read_csv(iparams['structureFile'], delim_whitespace=True,
                            skiprows=2, names=["Atom", "X", "Y", "Z"])
+    
     try:
         if len(iparams['baseStrucFile']) > 0:
-            baseStruc = MB.readWriteFiles.readStrucFile(iparams['baseStrucFile'])
+            baseStruc = TurtleChem.readStrucFile(iparams['baseStrucFile'])
         else:
             baseStruc = None
     except:
+        fd1, name1 = tempfile.mkstemp("_ReadError.txt")
         with open(name1, 'w') as f:
             f.write("readWriteFiles not found")
             f.close()
 
     try:
-        outStruc, strucType = MB.drawMol.drawMolBox(struc, baseStruc, iparams)
+        outStruc, strucType = TurtleChem.drawMolBox(struc, baseStruc, iparams)
     except:
+        fd1, name1 = tempfile.mkstemp("_DrawError.txt")
         with open(name1, 'w') as f:
             f.write("drawMol not found")
             f.close()

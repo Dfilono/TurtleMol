@@ -7,14 +7,14 @@ and fill said space with provided structure as many times as it can fit.
 '''
 
 import math
-from Box3D import Box3d, drawBox
-from Sphere3D import Sphere3d
-from shiftBox import atomsFillBox, atomsRandBox, \
+from .Box3D import Box3d, drawBox
+from .Sphere3D import Sphere3d
+from .shiftBox import atomsFillBox, atomsRandBox, \
                      moleculesFillBox, moleculesRandBox
-from shiftSphere import atomFillSphere, atomRandSphere, \
+from .shiftSphere import atomFillSphere, atomRandSphere, \
                         moleculeRandSphere, moleculeFillSphere
-from setAtomProp import setAtomicRadius
-from makeStruc import makeBase, calcNumMol, shiftPoints
+from .setAtomProp import setAtomicRadius
+from .makeStruc import makeBase, calcNumMol, shiftPoints
 
 def drawMolBox(struc, baseStruc, iparams):
     '''Utilized to place molecules in a box'''

@@ -2,9 +2,9 @@
 
 import sys
 import argparse
-from drawMol import drawMolBox, drawMolSphere
-from readWriteFiles import writeOutput, getInput, readStrucFile
-from defaultParams import defaultParams
+from .drawMol import drawMolBox, drawMolSphere
+from .readWriteFiles import writeOutput, getInput, readStrucFile
+from .defaultParams import defaultParams
 
 def parseCommandLine(dparams):
     '''Parses command line for parameters'''

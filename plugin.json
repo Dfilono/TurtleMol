@@ -6,6 +6,6 @@
     "description": "Design, create, and generate unique, complex molecular structures of any shape and size! ",
     "type": "commands",
     "commands": [
-      { "name": "TURTLE|Fill Box", "command": "./moleculeBuilder/avogadroPlugin/fillBox.py" }
+      { "name": "TURTLE|Fill Box", "command": "./TurtleChem/avogadroPlugin/fillBox.py" }
     ]
   }
