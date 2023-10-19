@@ -2,25 +2,25 @@
 
 # pylin: skip-file
 
-from moleculeBuilder.drawMol import drawMolBox, drawMolSphere
-from moleculeBuilder.readWriteFiles import readStrucFile
-from moleculeBuilder.defaultParams import defaultParams
+from TurtleChem.drawMol import drawMolBox, drawMolSphere
+from TurtleChem.readWriteFiles import readStrucFile
+from TurtleChem.defaultParams import defaultParams
 
 def testBaseStruc():
     iparamsSphere = {
         'shape' : 'sphere',
         'radius' : 5.0,
         'numMolecules' : 'fill',
-        'structureFile' : "moleculeBuilder/examples/Methane_Water/water.xyz",
-        'baseStrucFile' : "moleculeBuilder/examples/Methane_Water/ch4.xyz"
+        'structureFile' : "TurtleChem/examples/Methane_Water/water.xyz",
+        'baseStrucFile' : "TurtleChem/examples/Methane_Water/ch4.xyz"
     }
 
     iparamsCube = {
         'shape' : 'cube',
         'sideLength' : 10.0,
         'numMolecules' : 'fill',
-        'structureFile' : "moleculeBuilder/examples/Methane_Water/water.xyz",
-        'baseStrucFile' : "moleculeBuilder/examples/Methane_Water/ch4.xyz"
+        'structureFile' : "TurtleChem/examples/Methane_Water/water.xyz",
+        'baseStrucFile' : "TurtleChem/examples/Methane_Water/ch4.xyz"
     }
 
     dparams = defaultParams()

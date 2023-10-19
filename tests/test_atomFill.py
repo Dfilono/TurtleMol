@@ -2,23 +2,23 @@
 
 # pylin: skip-file
 
-from moleculeBuilder.drawMol import drawMolBox, drawMolSphere
-from moleculeBuilder.readWriteFiles import readStrucFile
-from moleculeBuilder.defaultParams import defaultParams
+from TurtleChem.drawMol import drawMolBox, drawMolSphere
+from TurtleChem.readWriteFiles import readStrucFile
+from TurtleChem.defaultParams import defaultParams
 
 def testAtomFill():
     iparamsSphere = {
         'shape' : 'sphere',
         'radius' : 5.0,
         'numMolecules' : 'fill',
-        'structureFile' : "moleculeBuilder/examples/Argon/argon.xyz"
+        'structureFile' : "TurtleChem/examples/Argon/argon.xyz"
     }
 
     iparamsCube = {
         'shape' : 'cube',
         'sideLength' : 10.0,
         'numMolecules' : 'fill',
-        'structureFile' : "moleculeBuilder/examples/Argon/argon.xyz"
+        'structureFile' : "TurtleChem/examples/Argon/argon.xyz"
     }
 
     dparams = defaultParams()

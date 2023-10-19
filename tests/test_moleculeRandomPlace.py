@@ -2,9 +2,9 @@
 
 # pylin: skip-file
 
-from moleculeBuilder.drawMol import drawMolBox, drawMolSphere
-from moleculeBuilder.readWriteFiles import readStrucFile
-from moleculeBuilder.defaultParams import defaultParams
+from TurtleChem.drawMol import drawMolBox, drawMolSphere
+from TurtleChem.readWriteFiles import readStrucFile
+from TurtleChem.defaultParams import defaultParams
 
 def testMoleculeRandomPlace():
     iparamsSphere = {
@@ -12,7 +12,7 @@ def testMoleculeRandomPlace():
         'radius' : 5.0,
         'numMolecules' : 20,
         'randFill' : True,
-        'structureFile' : "moleculeBuilder/examples/Water/water.xyz"
+        'structureFile' : "TurtleChem/examples/Water/water.xyz"
     }
 
     iparamsCube = {
@@ -20,7 +20,7 @@ def testMoleculeRandomPlace():
         'sideLength' : 10.0,
         'numMolecules' : 20,
         'randFill' : True,
-        'structureFile' : "moleculeBuilder/examples/Water/water.xyz"
+        'structureFile' : "TurtleChem/examples/Water/water.xyz"
     }
 
     dparams = defaultParams()

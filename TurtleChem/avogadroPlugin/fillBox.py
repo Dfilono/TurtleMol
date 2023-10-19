@@ -168,7 +168,7 @@ if __name__ == "__main__":
     debug = args['debug']
 
     if args['display_name']:
-        print("Box")
+        print("Fill Box")
     if args['menu_path']:
         print("&Extensions|TURTLE")
     if args['print_options']:
