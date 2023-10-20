@@ -44,7 +44,8 @@ if not specifically defined.
 
 To build an input file, simply write a .txt file with the parameter=value. For example:
 
-.. code::
+.. code-block::
+
     shape=sphere
     radius=5.0
     tol=0.5
@@ -56,5 +57,6 @@ Spaces between parameters are not allowed, spaces may be placed around the = sig
 
 To run Turtle, open command line and input the following:
 
-.. code::
+.. code-block::
+
     python TurtleChem -i ./path/to/input/file.txt
