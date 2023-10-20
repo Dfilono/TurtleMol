@@ -51,7 +51,6 @@ tol=0.5
 randomizeOrient=True
 numMolecules=fill
 structureFile=path/to/file.txt
-
 ```
 
 Spaces between parameters are not allowed, spaces may be placed around the = sign. 
