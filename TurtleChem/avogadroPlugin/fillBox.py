@@ -116,7 +116,7 @@ def runCommand():
     else:
         df = pd.DataFrame(outStruc, columns=['Atom', 'X', 'Y', 'X'])
 
-    file = f'{len(outStruc)}\n\n'
+    file = f'{len(df)}\n\n'
 
     if len(df) != 0:
         for index, row in df.iterrows():

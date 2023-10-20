@@ -10,7 +10,7 @@ Keywords:
     tol = float(minimum distance between molecules)
     inputFile = Path to the input file if you are using one
     structureFile = Path to the structure file being used. 
-        Required for usage. Only the xyz format is currently supported
+        Required for usage. XYZ and PDB formats are currently supported
     outputFile = Path to output file if desired
     baseStrucFile = Path to file for a structure that is present, but
         not deuplicated
