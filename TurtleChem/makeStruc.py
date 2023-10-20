@@ -131,12 +131,14 @@ def calcDensity(shape, mol):
     '''Calculates the density of a given structure'''
     vol = shape.volume() * 1.0e-24 # mL
     mass = 0
-    atomicMass = setAtomicMass() # g/mol
+    atomicMass = setAtomicMass()  # gmol
 
     for atom in mol:
         mass += atomicMass[atom[0]]
+    
+    moles = mass * 6.022e23 # g/molecules
 
-    return mass/vol # g/mol/mL
+    return mass/vol # g/molecules/mL
 
 def calcNumMol(shape, mol, denisty):
     '''
