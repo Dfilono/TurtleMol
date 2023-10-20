@@ -2,10 +2,10 @@
     "author": "Dominick Filonowich",
     "version": 0.1,
     "url": "https://github.com/Dfilono/Molecule-Builder",
-    "name": "TURTLE Molecule Builder",
+    "name": "Turtle Molecule Builder",
     "description": "Design, create, and generate unique, complex molecular structures of any shape and size! ",
     "type": "commands",
     "commands": [
-      { "name": "TURTLE|Fill Box", "command": "./TurtleChem/avogadroPlugin/fillBox.py" }
+      { "name": "Turtle|Fill Box", "command": "./TurtleChem/avogadroPlugin/fillBox.py" }
     ]
   }

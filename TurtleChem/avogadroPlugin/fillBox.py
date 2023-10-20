@@ -1,7 +1,8 @@
 import argparse
 import json
 import sys
-import tempfile
+import warnings
+warnings.simplefilter(action='igrnore', category=FutureWarning)
 import pandas as pd
 import TurtleChem
 import io
@@ -112,7 +113,7 @@ def runCommand():
     if strucType == "molecule":
         for mol in outStruc:
             for atom in mol:
-                df = df.append(pd.Series(atom, index=columns), ignore_index=True)
+                df = df.concat([df, pd.DataFrame([atom], columns=columns)], ignore_index=True)
     else:
         df = pd.DataFrame(outStruc, columns=['Atom', 'X', 'Y', 'X'])
 
@@ -132,7 +133,7 @@ def runCommand():
     return result
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser('TURTLE')
+    parser = argparse.ArgumentParser('Turtle')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--print-options', action='store_true')
     parser.add_argument('--run-command', action='store_true')
