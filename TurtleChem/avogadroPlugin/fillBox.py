@@ -4,6 +4,7 @@ import sys
 import tempfile
 import pandas as pd
 import TurtleChem
+import io
 
 debug = True
 
@@ -78,20 +79,7 @@ def generateParams(opts):
         'baseStrucFile' : opts['ogStruc']
     }
 
-    if len(iparams) == 0:
-        fd1, name1 = tempfile.mkstemp('_NoInput.txt')
-        with open(name1, 'w') as f:
-            for k,v in iparams:
-                f.write(f'No input parameters')
-            f.close()
-
-    try:
-        dparams = TurtleChem.defaultParams()
-    except:
-        fd1, name1 = tempfile.mkstemp("_ParamEror.txt")
-        with open(name1, 'w') as f:
-            f.write("defaultParams not found")
-            f.close()
+    dparams = TurtleChem.defaultParams()
 
     for name in dparams:
         if name not in iparams:
@@ -104,34 +92,19 @@ def runCommand():
     opts = json.loads(stdinStr)
     iparams = generateParams(opts)
 
-    if len(iparams) == 0:
-        fd1, name1 = tempfile.mkstemp('_NoInput.txt')
-        with open(name1, 'w') as f:
-            for k,v in iparams:
-                f.write(f'No input parameters')
-            f.close()
+    strucIO = io.StringIO(iparams['structureFile'])
 
-    struc = pd.pd.read_csv(iparams['structureFile'], delim_whitespace=True,
-                           skiprows=2, names=["Atom", "X", "Y", "Z"])
+    struc = pd.read_csv(strucIO, delim_whitespace=',',
+                            skiprows=2, names=["Atom", "X", "Y", "Z"])
     
-    try:
-        if len(iparams['baseStrucFile']) > 0:
-            baseStruc = TurtleChem.readStrucFile(iparams['baseStrucFile'])
-        else:
-            baseStruc = None
-    except:
-        fd1, name1 = tempfile.mkstemp("_ReadError.txt")
-        with open(name1, 'w') as f:
-            f.write("readWriteFiles not found")
-            f.close()
 
-    try:
-        outStruc, strucType = TurtleChem.drawMolBox(struc, baseStruc, iparams)
-    except:
-        fd1, name1 = tempfile.mkstemp("_DrawError.txt")
-        with open(name1, 'w') as f:
-            f.write("drawMol not found")
-            f.close()
+    if len(iparams['baseStrucFile']) > 0:
+        baseStruc = TurtleChem.readStrucFile(iparams['baseStrucFile'])
+    else:
+        baseStruc = None
+
+
+    outStruc, strucType = TurtleChem.drawMolBox(struc, baseStruc, iparams)
 
     columns = ['Atom', 'X', 'Y', 'Z']
     df = pd.DataFrame(columns=columns)
@@ -143,10 +116,13 @@ def runCommand():
     else:
         df = pd.DataFrame(outStruc, columns=['Atom', 'X', 'Y', 'X'])
 
-    file = f'{len(outStruc)}\n'
+    file = f'{len(outStruc)}\n\n'
 
-    for row in df:
-        file += f'{row[0]}    {row[1]}    {row[2]}    {row[3]}\n'
+    if len(df) != 0:
+        for index, row in df.iterrows():
+            file += f"{row['Atom']:<2}  {row['X']:> 10.5f}   {row['Y']:> 8.5f}   {row['Z']:> 8.5f}\n"
+    else:
+        file = iparams['structureFile']
 
     result = {}
     result['append'] = True
