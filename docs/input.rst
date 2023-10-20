@@ -45,10 +45,15 @@ if not specifically defined.
 To build an input file, simply write a .txt file with the parameter=value. For example:
 
     shape=sphere
+    
     radius=5.0
+    
     tol=0.5
+    
     randomizeOrient=True
+    
     numMolecules=fill
+    
     structureFile=path/to/file.txt
 
 Spaces between parameters are not allowed, spaces may be placed around the = sign. 
