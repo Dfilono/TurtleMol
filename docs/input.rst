@@ -51,7 +51,6 @@ To build an input file, simply write a .txt file with the parameter=value. For e
     randomizeOrient=True
     numMolecules=fill
     structureFile=path/to/file.txt
-.. code-block
 
 Spaces between parameters are not allowed, spaces may be placed around the = sign. 
 
@@ -59,4 +58,3 @@ To run Turtle, open command line and input the following:
 
 .. code-block::
     python TurtleChem -i ./path/to/input/file.txt
-.. code-block
