@@ -129,34 +129,30 @@ def randReorient(mol): # NOTE Currently does not work and is disabled
 
 def calcDensity(shape, mol):
     '''Calculates the density of a given structure'''
-    vol = shape.volume() * 1.0e-24 # mL
+    vol = shape.volume() * 1e-24 # mL
     mass = 0
-    atomicMass = setAtomicMass()  # gmol
+    atomicMass = setAtomicMass()  # g
 
     for atom in mol:
         mass += atomicMass[atom[0]]
     
-    moles = mass * 6.022e23 # g/molecules
+    moles = mass # g
 
-    return mass/vol # g/molecules/mL
+    return mass/vol # g/mL
 
 def calcNumMol(shape, mol, denisty):
     '''
     Calulates the number of molecules needed in a box to match
     the defined density based off of the defined volume
     '''
-    vol = shape.volume() # mL
-    massGoal = vol * float(denisty)
-    print(massGoal)
-    mass = 0
+    vol = shape.volume() # A^3
+    density = density # g/mL
+    density *= 1e-24 # g/A^3
     atomicMass = setAtomicMass() # g/mol
-
+    molarMass = 0 
     for atom in mol:
-        mass += atomicMass[atom[0]]
-
-    numMol = 1
-    while mass < massGoal:
-        mass += mass
-        numMol += 1
+        molarMass += atomicMass[atom[0]]
+    
+    numMol = (denisty * 6.022e23)/molarMass # molecules
 
     return int(numMol)
