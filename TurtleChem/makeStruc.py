@@ -153,6 +153,6 @@ def calcNumMol(shape, mol, denisty):
     for atom in mol:
         molarMass += atomicMass[atom[0]]
     
-    numMol = (denisty * 6.022e23)/molarMass # molecules
+    numMol = (density * 6.022e23 * vol)/molarMass # molecules
 
     return int(numMol)
