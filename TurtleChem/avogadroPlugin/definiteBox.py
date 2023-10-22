@@ -161,9 +161,9 @@ if __name__ == "__main__":
     debug = args['debug']
 
     if args['display_name']:
-        print("Choose Number of Atoms Box")
+        print("Choose Atom Amount")
     if args['menu_path']:
-        print("&Extensions|TURTLE")
+        print("&Extensions|Turtle")
     if args['print_options']:
         print(json.dumps(getOptions()))
     elif args['run_command']:
