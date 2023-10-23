@@ -149,7 +149,7 @@ def runCommand():
     return result
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser('Turtle')
+    parser = argparse.ArgumentParser('Choose Atoms in Box')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--print-options', action='store_true')
     parser.add_argument('--run-command', action='store_true')
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     debug = args['debug']
 
     if args['display_name']:
-        print("Choose Atom Amount")
+        print("Choose Atom Amount in Box")
     if args['menu_path']:
         print("&Extensions|Turtle")
     if args['print_options']:

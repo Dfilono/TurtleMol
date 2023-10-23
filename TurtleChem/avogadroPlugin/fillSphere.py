@@ -113,7 +113,7 @@ def runCommand():
     return result
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser('Turtle')
+    parser = argparse.ArgumentParser('Fill Sphere')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--print-options', action='store_true')
     parser.add_argument('--run-command', action='store_true')
