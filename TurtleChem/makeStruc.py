@@ -140,19 +140,19 @@ def calcDensity(shape, mol):
 
     return mass/vol # g/mL
 
-def calcNumMol(shape, mol, denisty):
+def calcNumMol(shape, mol, density):
     '''
     Calulates the number of molecules needed in a box to match
     the defined density based off of the defined volume
     '''
     vol = shape.volume() # A^3
-    density = density # g/mL
-    density *= 1e-24 # g/A^3
+    rho = density # g/mL
+    rho *= 1e-24 # g/A^3
     atomicMass = setAtomicMass() # g/mol
     molarMass = 0 
     for atom in mol:
         molarMass += atomicMass[atom[0]]
     
-    numMol = (density * 6.022e23 * vol)/molarMass # molecules
+    numMol = (rho * 6.022e23 * vol)/molarMass # molecules
 
     return int(numMol)

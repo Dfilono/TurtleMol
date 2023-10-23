@@ -2,7 +2,7 @@ import argparse
 import json
 import sys
 import warnings
-warnings.simplefilter(action='igrnore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
 import TurtleChem
 import io
@@ -63,15 +63,14 @@ def getOptions():
 
         'numMol' : {
             'label' : 'Number of Molecules',
-            'type' : 'int',
+            'type' : 'integer',
             'default' : 1,
             'toolTip' : 'Choose the number of molecules you want to add to the system!',
-            'suffix' : 'gmol/mL'
         },
 
         'Placement' : {
             'label' : 'Randomly Place',
-            'type' : 'bollean',
+            'type' : 'boolean',
             'default' : False,
             'toolTip' : 'Randomly place molecules instead of placing them in a grid'
         }
@@ -129,7 +128,7 @@ def runCommand():
     if strucType == "molecule":
         for mol in outStruc:
             for atom in mol:
-                df = df.concat([df, pd.DataFrame([atom], columns=columns)], ignore_index=True)
+                df = pd.concat([df, pd.DataFrame([atom], columns=columns)], ignore_index=True)
     else:
         df = pd.DataFrame(outStruc, columns=['Atom', 'X', 'Y', 'X'])
 
