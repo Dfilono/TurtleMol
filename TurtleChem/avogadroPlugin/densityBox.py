@@ -55,7 +55,7 @@ def getOptions():
         },
 
         'ogStruc' : {
-            'label' : 'Original Structure',
+            'label' : 'Structure From File',
             'type' : 'string',
             'default' : '',
             'toolTip' : 'Path to structure file for placement in center of box'
