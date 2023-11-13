@@ -68,7 +68,11 @@ You can install the latest development version of TURTLE from the `Github Reposi
       cd TurtleMol
       pip install .
 
-A PyPI version is in progress!
+Or you can install it via PyPI
+
+.. code-block:: bash
+
+      pip install TurtleMol
 
 Citation
 ========
