@@ -6,12 +6,11 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Upload Python Package PyPI
+name: Upload Python Package
 
 on:
-  deployment:
-    branches:
-    - main
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -23,8 +22,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-      with:
-          fetch-depth: 0
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
@@ -35,8 +32,8 @@ jobs:
         pip install build
     - name: Build package
       run: python -m build
-    - name: Publish package to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.5.2
+    - name: Publish package
+      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
