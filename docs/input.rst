@@ -1,8 +1,8 @@
 Input Parameters
 ================
 
-The inputs for Turtle can be entered via the command line or an input file. Not all 
-parameters need to entered, Turtle will rely on default values we have predefined. Some of those 
+The inputs for TurtleMol can be entered via the command line or an input file. Not all 
+parameters need to entered, TurtleMol will rely on default values we have predefined. Some of those 
 default values SHOULD be changed to ensure they meet the user's system, 
 and those will be marked in the following list of parameters. The units for all lengths
 are in Angstroms.
@@ -55,8 +55,8 @@ To build an input file, simply write a .txt file with the parameter=value. For e
 
 Spaces between parameters are not allowed, spaces may be placed around the = sign. 
 
-To run Turtle, open command line and input the following:
+To run TurtleMol, open command line and input the following:
 
 .. code-block::
 
-    python TurtleChem -i ./path/to/input/file.txt
+    python TurtleMol -i ./path/to/input/file.txt

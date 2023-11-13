@@ -43,7 +43,7 @@ Currently only basic shapes such as boxes and spheres are generatable, but more 
 Approach
 ========
 
-TURTLE takes an input molecules (or molecules) and copies them into a grid filling out a user defined volume.
+TurtleMol takes an input molecules (or molecules) and copies them into a grid filling out a user defined volume.
 The number of molecules in the volume can be specially defined, calculated via a desired density, or for filling space.
 The orientation of the molecules can be randomized so structures are closer to their equilibrium point, but will still need outside optimization.
 Molecules can also be placed randomly instead of in a grid, allowing for a more disordered structure.
@@ -60,12 +60,12 @@ Features
 Installation
 ============
 
-You can install the latest development version of TURTLE from the `Github Repository <https://github.com/Dfilono/Molecule-Builder>`__
+You can install the latest development version of TURTLE from the `Github Repository <https://github.com/Dfilono/TurtleMol>`__
 
 .. code-block:: bash
 
-      git clone https://github.com/Dfilono/Molecule-Builder
-      cd Molecule-Builder
+      git clone https://github.com/Dfilono/https://github.com/Dfilono/TurtleMol
+      cd TurtleMol
       pip install .
 
 A PyPI version is in progress!
@@ -80,7 +80,7 @@ provides support for further development!
 License
 =======
 
-Distributed under the MIT License. See `LICENSE <https://github.com/Dfilono/Molecule-Builder/blob/main/LICENSE>`__ for more information.
+Distributed under the MIT License. See `LICENSE <https://github.com/Dfilono/TurtleMol/blob/main/LICENSE>`__ for more information.
 
 .. image:: images/logo.png
    :align: center

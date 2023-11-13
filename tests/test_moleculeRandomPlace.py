@@ -2,9 +2,9 @@
 
 # pylin: skip-file
 
-from TurtleChem.drawMol import drawMolBox, drawMolSphere
-from TurtleChem.readWriteFiles import readStrucFile
-from TurtleChem.defaultParams import defaultParams
+from TurtleMol.drawMol import drawMolBox, drawMolSphere
+from TurtleMol.readWriteFiles import readStrucFile
+from TurtleMol.defaultParams import defaultParams
 
 def testMoleculeRandomPlace():
     iparamsSphere = {

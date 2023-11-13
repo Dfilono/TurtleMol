@@ -1,4 +1,4 @@
-<h1 align='center'>TURTLE</h1>
+<h1 align='center'>TurtleMol</h1>
 <h4 align='center'>Design, create, and generate unique, complex molecular structures of any shape and size!</h4>
 
 
@@ -26,7 +26,7 @@
 
 ## Introduction
 
-The Toolkit for Universial Reconstruction of Theoreticl Lattice Environments (TURTLE) goal is to ease the process of
+The goal of TurtleMol is to ease the process of
 generating unique and complex molecular structures for computational chemistry. Available as a standalone python-package,
 or as a plugin for [Avogadro2](https://www.openchemistry.org/projects/avogadro2/) TURTLE aims to quickly generate
 the intial state of molecular strcutres that are ready for optimization via quamtum or classical calculations!
@@ -58,10 +58,10 @@ Molecules can also be placed randomly instead of in a grid, allowing for a more 
 
 ## Installation
 
-You can install the latest development version of TURTLE from the [Github Repository](https://github.com/Dfilono/Molecule-Builder).
+You can install the latest development version of TurtleMol from the [Github Repository](https://github.com/Dfilono/TurtleMol).
 
-    git clone https://github.com/Dfilono/Molecule-Builder
-    cd Molecule-Builder
+    git clone https://github.com/Dfilono/TurtleMol
+    cd TurtleMol
     pip install .
 
 A PyPI version is in progress!
@@ -74,10 +74,10 @@ provides support for further development!
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](https://github.com/Dfilono/Molecule-Builder/blob/main/LICENSE) for more information.
+Distributed under the MIT License. See [LICENSE](https://github.com/Dfilono/TurtleMol/blob/main/LICENSE) for more information.
 
 ## Documentation
 
 Documentation is in progress.
 
-<img src="https://github.com/Dfilono/Molecule-Builder/blob/main/docs/images/logo.png">
+<img src="https://github.com/Dfilono/TurtleMol/blob/main/docs/images/logo.png">
