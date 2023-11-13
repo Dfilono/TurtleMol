@@ -6,11 +6,11 @@
     "description": "Design, create, and generate unique, complex molecular structures of any shape and size! ",
     "type": "commands",
     "commands": [
-      { "name": "Turtle|Fill Box", "command": "./TurtleMol/avogadroPlugin/fillBox.py" },
-      { "name": "Turtle|Fill Sphere", "command": "./TurtleMol/avogadroPlugin/fillSphere.py" },
-      { "name": "Turtle|Density Box", "command": "./TurtleMol/avogadroPlugin/densityBox.py" },
-      { "name": "Turtle|Density Sphere", "command": "./TurtleMol/avogadroPlugin/densitySphere.py" },
-      { "name": "Turtle|Definite Box", "command": "./TurtleMol/avogadroPlugin/definiteBox.py" },
-      { "name": "Turtle|Definite Sphere", "command": "./TurtleMol/avogadroPlugin/definiteSphere.py" }
+      { "name": "TurtleMol|Fill Box", "command": "./TurtleMol/avogadroPlugin/fillBox.py" },
+      { "name": "TurtleMol|Fill Sphere", "command": "./TurtleMol/avogadroPlugin/fillSphere.py" },
+      { "name": "TurtleMol|Density Box", "command": "./TurtleMol/avogadroPlugin/densityBox.py" },
+      { "name": "TurtleMol|Density Sphere", "command": "./TurtleMol/avogadroPlugin/densitySphere.py" },
+      { "name": "TurtleMol|Definite Box", "command": "./TurtleMol/avogadroPlugin/definiteBox.py" },
+      { "name": "TurtleMol|Definite Sphere", "command": "./TurtleMol/avogadroPlugin/definiteSphere.py" }
     ]
   }

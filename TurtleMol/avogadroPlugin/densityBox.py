@@ -155,7 +155,7 @@ if __name__ == "__main__":
     if args['display_name']:
         print("Density Box")
     if args['menu_path']:
-        print("&Extensions|Turtle")
+        print("&Extensions|TurtleMol")
     if args['print_options']:
         print(json.dumps(getOptions()))
     elif args['run_command']:
