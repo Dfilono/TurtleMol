@@ -1,2 +1,2 @@
 include README.md
-include TurtleChem/data/ElementData.csv
+include TurtleMol/data/ElementData.csv

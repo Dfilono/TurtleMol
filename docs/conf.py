@@ -9,7 +9,7 @@
 project = 'TurtleMol'
 copyright = '2023, Dominick Filonowich'
 author = 'Dominick Filonowich'
-html_title = 'TurtlleMol'
+html_title = 'TurtleMol'
 html_logo = './images/logo.png'
 release = '0.1.0'
 
