@@ -11,16 +11,16 @@ def testBaseStruc():
         'shape' : 'sphere',
         'radius' : 5.0,
         'numMolecules' : 'fill',
-        'structureFile' : "TurtleChem/examples/Methane_Water/water.xyz",
-        'baseStrucFile' : "TurtleChem/examples/Methane_Water/ch4.xyz"
+        'structureFile' : "TurtleMol/examples/Methane_Water/water.xyz",
+        'baseStrucFile' : "TurtleMol/examples/Methane_Water/ch4.xyz"
     }
 
     iparamsCube = {
         'shape' : 'cube',
         'sideLength' : 10.0,
         'numMolecules' : 'fill',
-        'structureFile' : "TurtleChem/examples/Methane_Water/water.xyz",
-        'baseStrucFile' : "TurtleChem/examples/Methane_Water/ch4.xyz"
+        'structureFile' : "TurtleMol/examples/Methane_Water/water.xyz",
+        'baseStrucFile' : "TurtleMol/examples/Methane_Water/ch4.xyz"
     }
 
     dparams = defaultParams()

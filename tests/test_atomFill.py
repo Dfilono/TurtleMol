@@ -11,14 +11,14 @@ def testAtomFill():
         'shape' : 'sphere',
         'radius' : 5.0,
         'numMolecules' : 'fill',
-        'structureFile' : "TurtleChem/examples/Argon/argon.xyz"
+        'structureFile' : "TurtleMol/examples/Argon/argon.xyz"
     }
 
     iparamsCube = {
         'shape' : 'cube',
         'sideLength' : 10.0,
         'numMolecules' : 'fill',
-        'structureFile' : "TurtleChem/examples/Argon/argon.xyz"
+        'structureFile' : "TurtleMol/examples/Argon/argon.xyz"
     }
 
     dparams = defaultParams()

@@ -12,7 +12,7 @@ def testRandOrient():
         'radius' : 5.0,
         'numMolecules' : 'fill',
         'randomizeOrient' : True,
-        'structureFile' : "TurtleChem/examples/Water/water.xyz"
+        'structureFile' : "TurtleMol/examples/Water/water.xyz"
     }
 
     iparamsCube = {
@@ -20,7 +20,7 @@ def testRandOrient():
         'sideLength' : 10.0,
         'numMolecules' : 'fill',
         'randomizeOrient' : True,
-        'structureFile' : "TurtleChem/examples/Water/water.xyz"
+        'structureFile' : "TurtleMol/examples/Water/water.xyz"
     }
 
     dparams = defaultParams()

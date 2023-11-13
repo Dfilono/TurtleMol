@@ -11,14 +11,14 @@ def testReadWritePDB():
         'shape' : 'sphere',
         'radius' : 5.0,
         'numMolecules' : 'fill',
-        'structureFile' : "TurtleChem/examples/Water/water.pdb"
+        'structureFile' : "TurtleMol/examples/Water/water.pdb"
     }
 
     iparamsCube = {
         'shape' : 'cube',
         'sideLength' : 10.0,
         'numMolecules' : 'fill',
-        'structureFile' : "TurtleChem/examples/Water/water.pdb"
+        'structureFile' : "TurtleMol/examples/Water/water.pdb"
     }
 
     dparams = defaultParams()

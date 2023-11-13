@@ -12,7 +12,7 @@ def testMoleculeRandomPlace():
         'radius' : 5.0,
         'numMolecules' : 20,
         'randFill' : True,
-        'structureFile' : "TurtleChem/examples/Water/water.xyz"
+        'structureFile' : "TurtleMol/examples/Water/water.xyz"
     }
 
     iparamsCube = {
@@ -20,7 +20,7 @@ def testMoleculeRandomPlace():
         'sideLength' : 10.0,
         'numMolecules' : 20,
         'randFill' : True,
-        'structureFile' : "TurtleChem/examples/Water/water.xyz"
+        'structureFile' : "TurtleMol/examples/Water/water.xyz"
     }
 
     dparams = defaultParams()
