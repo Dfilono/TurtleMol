@@ -3,24 +3,24 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to TURTLE's documentation!
+Welcome to TurtleMol's documentation!
 ========================================
 
 Design, create, and generate unique, complex molecular structures of any shape and size!
 
-.. image:: https://github.com/Dfilono/Molecule-Builder/actions/workflows/python-package.yml/badge.svg
-   :target: https://github.com/Dfilono/Molecule-Builder/actions/workflows/python-package.yml
+.. image:: https://github.com/Dfilono/TurtleMol/actions/workflows/python-package.yml/badge.svg
+   :target: https://github.com/Dfilono/TurtleMol/actions/workflows/python-package.yml
    :alt: GitHub actions build status
 
-.. image:: https://codecov.io/gh/Dfilono/Molecule-Builder/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/Dfilono/Molecule-Builder
+.. image:: https://codecov.io/gh/Dfilono/TurtleMol/branch/main/graph/badge.svg
+   :target: https://codecov.io/gh/Dfilono/TurtleMol
    :alt: Codecov test coverage
 
-.. image:: https://img.shields.io/github/license/Dfilono/Molecule-Builder
-   :target: https://github.com/Dfilono/Molecule-Builder/blob/main/LICENSE
+.. image:: https://img.shields.io/github/license/Dfilono/TurtleMol
+   :target: https://github.com/Dfilono/TurtleMol/blob/main/LICENSE
 
-.. image:: https://img.shields.io/github/repo-size/Dfilono/Molecule-Builder
-   :target: https://github.com/Dfilono/Molecule-Builder
+.. image:: https://img.shields.io/github/repo-size/Dfilono/TurtleMol
+   :target: https://github.com/Dfilono/TurtleMol
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
@@ -31,7 +31,7 @@ Design, create, and generate unique, complex molecular structures of any shape a
 Motivation
 ==========
 
-The Toolkit for Universial Reconstruction of Theoreticl Lattice Environments (TURTLE) goal is to ease the process of
+The goal of TurtleMol is to ease the process of
 generating unique and complex molecular structures for computational chemistry. Available as a standalone python-package,
 or as a plugin for `Avogadro2 <https://www.openchemistry.org/projects/avogadro2/>`__, TURTLE aims to quickly generate
 the intial state of molecular strcutres that are ready for optimization via quamtum or classical calculations!
