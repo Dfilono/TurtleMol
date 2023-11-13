@@ -64,7 +64,9 @@ You can install the latest development version of TurtleMol from the [Github Rep
     cd TurtleMol
     pip install .
 
-A PyPI version is in progress!
+Or you can download it from PyPi:
+
+    pip install TurtleMol
 
 ## Citation
 
