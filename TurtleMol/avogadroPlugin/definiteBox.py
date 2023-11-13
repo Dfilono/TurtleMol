@@ -4,7 +4,7 @@ import sys
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
-import TurtleChem
+import TurtleMol
 import io
 
 debug = True
@@ -56,7 +56,7 @@ def getOptions():
 
         'ogStruc' : {
             'label' : 'Structure From File',
-            'type' : 'string',
+            'type' : 'filePath',
             'default' : '',
             'toolTip' : 'Path to structure file for placement in center of box'
         },
@@ -95,7 +95,7 @@ def generateParams(opts):
         'randFill' : opts['Placement']
     }
 
-    dparams = TurtleChem.defaultParams()
+    dparams = TurtleMol.defaultParams()
 
     for name in dparams:
         if name not in iparams:
@@ -115,12 +115,12 @@ def runCommand():
     
 
     if len(iparams['baseStrucFile']) > 0:
-        baseStruc = TurtleChem.readStrucFile(iparams['baseStrucFile'])
+        baseStruc = TurtleMol.readStrucFile(iparams['baseStrucFile'])
     else:
         baseStruc = None
 
 
-    outStruc, strucType = TurtleChem.drawMolBox(struc, baseStruc, iparams)
+    outStruc, strucType = TurtleMol.drawMolBox(struc, baseStruc, iparams)
 
     columns = ['Atom', 'X', 'Y', 'Z']
     df = pd.DataFrame(columns=columns)
@@ -141,7 +141,7 @@ def runCommand():
         file = iparams['structureFile']
 
     result = {}
-    result['append'] = True
+    result['append'] = False
     result['moleculeFormat'] = 'xyz'
     result['xyz'] = file
 

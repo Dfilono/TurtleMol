@@ -4,7 +4,7 @@ import sys
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
-import TurtleChem
+import TurtleMol
 import io
 
 debug = True
@@ -20,12 +20,30 @@ def getOptions():
             'suffix' : 'Angstroms'
         },
 
-        'Radius' : {
-            'label' : 'Radius',
+        'Length' : {
+            'label' : 'Length (X)',
             'type' : 'float',
             'default' : 1.0,
             'precision' : 2,
-            'toolTip' : 'Radius of Sphere',
+            'toolTip' : 'Length of Box',
+            'suffix' : 'Angstroms'
+        },
+
+        'Width' : {
+            'label' : 'Width (Y)',
+            'type' : 'float',
+            'default' : 1.0,
+            'precision' : 2,
+            'toolTip' : 'Width of Box',
+            'suffix' : 'Angstroms'
+        },
+
+        'Height' : {
+            'label' : 'Height (Z)',
+            'type' : 'float',
+            'default' : 1.0,
+            'precision' : 2,
+            'toolTip' : 'Height of Box',
             'suffix' : 'Angstroms'
         },
 
@@ -38,9 +56,17 @@ def getOptions():
 
         'ogStruc' : {
             'label' : 'Structure From File',
-            'type' : 'string',
+            'type' : 'filePath',
             'default' : '',
             'toolTip' : 'Path to structure file for placement in center of box'
+        },
+
+        'density' : {
+            'label' : 'Density',
+            'type' : 'float',
+            'default' : 1.0,
+            'toolTip' : 'Choose the density of the box you want to fill!',
+            'suffix' : 'gmol/mL'
         }
     }
 
@@ -53,14 +79,17 @@ def generateParams(opts):
     iparams = {
         'shape' : 'box',
         'tol' : opts['Tolerance'],
-        'radius' : opts['Radius'],
+        'Xlen' : opts['Length'],
+        'Ylen' : opts['Width'],
+        'Zlen' : opts['Height'],
         'numMolecules' : 'fill',
         'randomizeOrient' : opts['Randomize'],
         'structureFile' : opts['xyz'],
-        'baseStrucFile' : opts['ogStruc']
+        'baseStrucFile' : opts['ogStruc'],
+        'density' : opts['density']
     }
 
-    dparams = TurtleChem.defaultParams()
+    dparams = TurtleMol.defaultParams()
 
     for name in dparams:
         if name not in iparams:
@@ -80,12 +109,11 @@ def runCommand():
     
 
     if len(iparams['baseStrucFile']) > 0:
-        baseStruc = TurtleChem.readStrucFile(iparams['baseStrucFile'])
+        baseStruc = TurtleMol.readStrucFile(iparams['baseStrucFile'])
     else:
         baseStruc = None
 
-
-    outStruc, strucType = TurtleChem.drawMolSphere(struc, baseStruc, iparams)
+    outStruc, strucType = TurtleMol.drawMolBox(struc, baseStruc, iparams)
 
     columns = ['Atom', 'X', 'Y', 'Z']
     df = pd.DataFrame(columns=columns)
@@ -106,14 +134,14 @@ def runCommand():
         file = iparams['structureFile']
 
     result = {}
-    result['append'] = True
+    result['append'] = False
     result['moleculeFormat'] = 'xyz'
     result['xyz'] = file
 
     return result
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser('Fill Sphere')
+    parser = argparse.ArgumentParser('Choose Density for Box')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--print-options', action='store_true')
     parser.add_argument('--run-command', action='store_true')
@@ -125,7 +153,7 @@ if __name__ == "__main__":
     debug = args['debug']
 
     if args['display_name']:
-        print("Fill Sphere")
+        print("Density Box")
     if args['menu_path']:
         print("&Extensions|Turtle")
     if args['print_options']:

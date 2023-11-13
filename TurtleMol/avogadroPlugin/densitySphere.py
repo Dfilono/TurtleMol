@@ -38,7 +38,7 @@ def getOptions():
 
         'ogStruc' : {
             'label' : 'Structure From File',
-            'type' : 'string',
+            'type' : 'filePath',
             'default' : '',
             'toolTip' : 'Path to structure file for placement in center of box'
         },
@@ -115,7 +115,7 @@ def runCommand():
         file = iparams['structureFile']
 
     result = {}
-    result['append'] = True
+    result['append'] = False
     result['moleculeFormat'] = 'xyz'
     result['xyz'] = file
 

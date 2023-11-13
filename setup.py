@@ -11,7 +11,7 @@ test_requirements = requirements.append(['pytest'])
 
 setup(
     python_requires = '>=3.7',
-    packages = find_packages(include=['TurtleChem', 'TurtleChem.*']),
+    packages = find_packages(include=['TurtleMol', 'TurtleMol.*']),
     install_requires=requirements,
     include_package_data=True,
     setup_requires=setup_requirements,
