@@ -28,16 +28,16 @@
 
 The goal of TurtleMol is to ease the process of
 generating unique and complex molecular structures for computational chemistry. Available as a standalone python-package,
-or as a plugin for [Avogadro2](https://www.openchemistry.org/projects/avogadro2/) TURTLE aims to quickly generate
+or as a plugin for [Avogadro2](https://www.openchemistry.org/projects/avogadro2/) TurtleMol aims to quickly generate
 the intial state of molecular strcutres that are ready for optimization via quamtum or classical calculations!
 
-Generating intial structure files for calculations can be a tedious process, one that TURTLE aims to fix. 
+Generating intial structure files for calculations can be a tedious process, one that TurtleMol aims to fix. 
 Large structures can be generated quickly, and are very tunable based on the need of the user! 
 Currently only basic shapes such as boxes and spheres are generatable, but more complex meshes are in the works!
 
 ## Approach
 
-TURTLE takes an input molecules (or molecules) and copies them into a grid filling out a user defined volume.
+TurtleMol takes an input molecules (or molecules) and copies them into a grid filling out a user defined volume.
 The number of molecules in the volume can be specially defined, calculated via a desired density, or for filling space.
 
 The orientation of the molecules can be randomized so structures are closer to their equilibrium point, but will still need outside optimization.
