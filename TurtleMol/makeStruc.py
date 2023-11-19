@@ -1,5 +1,6 @@
 '''Sets up the structure files'''
 import random
+import math
 import numpy as np
 from .setAtomProp import setAtomicMass
 
@@ -156,3 +157,56 @@ def calcNumMol(shape, mol, density):
     numMol = (rho * 6.022e23 * vol)/molarMass # molecules
 
     return int(numMol)
+
+def calcDistance(shape, mol, density, shapeType):
+    '''
+    Calculates the distance between molecules for the correct density
+    '''
+    if str(shapeType).lower() == "box":
+        x, y, z = shape.length, shape.width, shape.height
+
+        numMol = calcNumMol(shape, mol, density)
+
+        # Calculate the molecules to place in each dimension
+        pointsPerDimension = round(numMol ** (1/3))
+
+        # Generate grid points
+        XCount = np.linspace(0, x, pointsPerDimension, endpoint=False)
+        YCount = np.linspace(0, y, pointsPerDimension, endpoint=False)
+        ZCount = np.linspace(0, z, pointsPerDimension, endpoint=False)
+
+        # Create a meshgrid and reshape it to get coordiantes
+        xx, yy, zz = np.meshgrid(XCount, YCount, ZCount, indexing='ij')
+        coords = np.vstack([xx.ravel(), yy.ravel(), zz.ravel()]).T
+
+        return coords[:numMol].tolist()
+    
+    elif str(shapeType).lower() == "sphere":
+
+        def insideSphere(x, y, z, radius):
+            return x**2 + y**2 + z**2 <= radius**2
+
+        r = shape.radius
+
+        numMol = calcNumMol(shape, mol, density)
+
+        # Create cubic geometry to enclose the sphere
+        cubeSide = 2*r
+
+        # Calculate total points in the cube
+        rho = numMol / shape.volume()
+        totalPoints = int(rho * cubeSide**3)
+
+        # Generate points within cube
+        XCount = np.linspace(-r, r, int(totalPoints**(1/3)))
+        YCount = np.linspace(-r, r, int(totalPoints**(1/3)))
+        ZCount = np.linspace(-r, r, int(totalPoints**(1/3)))
+
+        # Create meshgrid and reshape to get coordinates
+        xx, yy, zz = np.meshgrid(XCount, YCount, ZCount, indexing='ij')
+        coords = np.vstack([xx.ravel(), yy.ravel(), zz.ravel()]).T
+
+        # Find points inside sphere
+        insidePoints = [point for point in coords if insideSphere(*point, r)]
+        
+        return insidePoints[:numMol].tolist()

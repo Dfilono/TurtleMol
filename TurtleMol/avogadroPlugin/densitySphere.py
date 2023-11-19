@@ -47,7 +47,7 @@ def getOptions():
             'label' : 'Density',
             'type' : 'float',
             'default' : 1.0,
-            'toolTip' : 'Choose the density of the sphere you want to fill!',
+            'toolTip' : 'Choose the density of the box you want to fill!',
             'suffix' : 'gmol/mL'
         }
     }
@@ -93,7 +93,6 @@ def runCommand():
     else:
         baseStruc = None
 
-
     outStruc, strucType = TurtleMol.drawMolSphere(struc, baseStruc, iparams)
 
     columns = ['Atom', 'X', 'Y', 'Z']
@@ -122,7 +121,7 @@ def runCommand():
     return result
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser('Choose Density of Sphere')
+    parser = argparse.ArgumentParser('Choose Density for Sphere')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--print-options', action='store_true')
     parser.add_argument('--run-command', action='store_true')
