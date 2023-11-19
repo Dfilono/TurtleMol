@@ -68,6 +68,16 @@ Or you can download it from PyPi:
 
     pip install TurtleMol
 
+TurtleMol is also available as a plugin for [Avogadro2](https://www.openchemistry.org/projects/avogadro2/)
+and can be installed via the following instructions.
+
+<img src="https://github.com/Dfilono/TurtleMol/blob/main/docs/images/installationPart1.png">
+
+<img src="https://github.com/Dfilono/TurtleMol/blob/main/docs/images/installationPart2.png">
+
+Note that for the plugin to function, the TurtleMol python package and its dependecies must also be installed
+in the same Python environment that is referenced by Avogadro.
+
 ## Citation
 
 If you find this code helpful, please consider referencing it! We don't currently have a released article to cite,
