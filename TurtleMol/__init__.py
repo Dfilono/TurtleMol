@@ -9,5 +9,7 @@ from .setAtomProp import setAtomicMass, setAtomicRadius
 from .shiftBox import atomsFillBox, atomsRandBox, moleculesFillBox, moleculesRandBox, inBox
 from .shiftSphere import atomFillSphere, atomRandSphere, moleculeFillSphere, moleculeRandSphere
 from .Sphere3D import Sphere3d
+from .shiftDensity import placeMols
+
 from . import _version
 __version__ = _version.get_versions()['version']
