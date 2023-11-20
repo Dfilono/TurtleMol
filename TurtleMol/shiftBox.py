@@ -94,7 +94,6 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
                 anyAtomOutside = False
 
                 for atom in og:
-                    #print(atom)
                     # Calculate the shift for each tile and new point
                     newX = box.xCoord + atom[1] + xShift
                     newY = box.yCoord + atom[2] + yShift
