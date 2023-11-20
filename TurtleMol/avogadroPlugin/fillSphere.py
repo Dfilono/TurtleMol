@@ -51,7 +51,7 @@ def getOptions():
 
 def generateParams(opts):
     iparams = {
-        'shape' : 'box',
+        'shape' : 'sphere',
         'tol' : opts['Tolerance'],
         'radius' : opts['Radius'],
         'numMolecules' : 'fill',
