@@ -209,4 +209,4 @@ def calcDistance(shape, mol, density, shapeType):
         # Find points inside sphere
         insidePoints = [point for point in coords if insideSphere(*point, r)]
         
-        return insidePoints[:numMol].tolist()
+        return insidePoints[:numMol]
