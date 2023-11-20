@@ -9,7 +9,7 @@
 name: Upload Python Package TestPyPI
 
 on:
-  deployment:
+  push:
     branches:
     - main
 
