@@ -9,12 +9,14 @@ and fill said space with provided structure as many times as it can fit.
 import math
 from .Box3D import Box3d, drawBox
 from .Sphere3D import Sphere3d
+from .mesh3D import mesh3D
 from .shiftBox import atomsFillBox, atomsRandBox, \
                      moleculesFillBox, moleculesRandBox
 from .shiftSphere import atomFillSphere, atomRandSphere, \
                         moleculeRandSphere, moleculeFillSphere
+from .shiftMesh import atomsFillMesh, moleculesFillMesh
 from .setAtomProp import setAtomicRadius
-from .makeStruc import makeBase, calcNumMol, shiftPoints
+from .makeStruc import makeBase, shiftPoints
 from .shiftDensity import placeMols
 
 def drawMolBox(struc, baseStruc, iparams):
@@ -118,3 +120,32 @@ def drawMolSphere(struc, baseStruc, iparams):
             return list(filledAtom), "molecule"
 
     return "ERROR: No atoms found"
+
+def drawMolMesh(struc, baseStruc, iparams):
+    '''Places molecules in a mesh'''
+    mesh = mesh3D(iparams['mesh'])
+    radii = setAtomicRadius(iparams['atomRadius'])
+    numMol = iparams['numMolecules']
+    tol = float(iparams['tol'])
+
+    originalPoints = makeBase(struc)
+
+    if not isinstance(numMol, int) and str(numMol).lower() != "fill":
+        numMol = int(numMol)
+
+    if iparams['randFill'] == 'False' or iparams['randFill'] is False:
+        if len(originalPoints) == 1:
+            filledAtom = atomsFillMesh(mesh, originalPoints, tol, radii, numMol)
+
+            return list(filledAtom), 'atom'
+        else:
+            filledMol = moleculesFillMesh(mesh, originalPoints, tol,
+                                          radii, numMol, baseStruc)
+            
+            return list(filledMol), 'molecule'
+
+    elif iparams['randFill'] == 'True' or iparams['randFill'] is True:
+        if len(originalPoints) == 1:
+            pass
+        else:
+            pass

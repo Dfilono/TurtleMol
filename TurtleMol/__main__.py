@@ -2,7 +2,7 @@
 
 import sys
 import argparse
-from .drawMol import drawMolBox, drawMolSphere
+from .drawMol import drawMolBox, drawMolSphere, drawMolMesh
 from .readWriteFiles import writeOutput, getInput, readStrucFile
 from .defaultParams import defaultParams
 
@@ -100,6 +100,10 @@ def main():
     elif iparams['shape'].lower() == 'sphere':
         # Generate the new structure
         outStruc, strucType = drawMolSphere(struc, baseStruc, iparams)
+
+    elif iparams['shape'].lower() == 'mesh' and iparams['mesh'] is not None:
+        outStruc, strucType = drawMolMesh(struc, baseStruc, iparams)
+
 
     if iparams['outputFile']:
         writeOutput(outStruc, iparams['outputFile'], strucType)
