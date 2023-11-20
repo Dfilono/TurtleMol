@@ -53,6 +53,8 @@ def parseCommandLine(dparams):
                         default=dparams['atomRadius'])
     parser.add_argument('-out', '--outputFile', type=str,
                         help="Path for output file if desired")
+    parser.add_argument('-mesh', '--mesh', type=str,
+                        help="Path for mesh file if desired")
 
     return parser.parse_args()
 

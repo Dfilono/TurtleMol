@@ -1,3 +1,5 @@
+'''Places molecules in a given volume based on the provided denisty'''
+
 import numpy as np
 from .makeStruc import calcDistance
 from .isOverlap import isOverlapMolecule, isOverlapAtom
