@@ -55,6 +55,8 @@ def parseCommandLine(dparams):
                         help="Path for output file if desired")
     parser.add_argument('-mesh', '--mesh', type=str,
                         help="Path for mesh file if desired")
+    parser.add_argument('-scale', '--meshScale', type=float,
+                        help="Uniform scale of mesh", default=dparams['meshScale'])
 
     return parser.parse_args()
 

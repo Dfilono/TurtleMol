@@ -1,6 +1,5 @@
 '''Sets up the structure files'''
 import random
-import math
 import numpy as np
 from .setAtomProp import setAtomicMass
 
@@ -77,7 +76,7 @@ def shiftPoints(points, shape):
 
     return shiftedPoints
 
-def randReorient(mol): # NOTE Currently does not work and is disabled
+def randReorient(mol):
     '''Randomly reorients a molecule around geometric center'''
     if len(mol) == 0:
         return mol

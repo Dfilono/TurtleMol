@@ -1,6 +1,8 @@
 shape=mesh
 numMolecules=fill
-structureFile=TurtleMol/examples/Mesh_WaterWater/water.pdb
-outputFile=TurtleMol/examples/Mesh_WaterWater/WaterOut.pdb
+structureFile=TurtleMol/examples/Mesh_Water/water.xyz
+outputFile=TurtleMol/examples/Mesh_Water/WaterOut.xyz
 mesh=TurtleMol/examples/Mesh_Water/monkey.stl
-tol = 1.0
+meshScale=10
+randomizeOrient=True
+tol=1.0

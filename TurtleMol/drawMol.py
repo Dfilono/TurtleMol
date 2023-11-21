@@ -123,7 +123,7 @@ def drawMolSphere(struc, baseStruc, iparams):
 
 def drawMolMesh(struc, baseStruc, iparams):
     '''Places molecules in a mesh'''
-    mesh = mesh3D(iparams['mesh'])
+    mesh = mesh3D(iparams['mesh'], iparams['meshScale'])
     radii = setAtomicRadius(iparams['atomRadius'])
     numMol = iparams['numMolecules']
     tol = float(iparams['tol'])
@@ -140,7 +140,7 @@ def drawMolMesh(struc, baseStruc, iparams):
             return list(filledAtom), 'atom'
         else:
             filledMol = moleculesFillMesh(mesh, originalPoints, tol,
-                                          radii, numMol, baseStruc)
+                                          radii, numMol, baseStruc, iparams['randomizeOrient'])
             
             return list(filledMol), 'molecule'
 
