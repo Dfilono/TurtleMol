@@ -95,11 +95,10 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
 
                         newMol.append(atomData)
                         
-                        if randOrient and len(newMol) == len(og):
-                            newMol = randReorient(newMol)
-
-                        if not isOverlapMolecule(newMol, filled, radii, tol):
-                            filled.append(newMol)
+                    if randOrient and len(newMol) == len(og):
+                        newMol = randReorient(newMol)
+                    if not isOverlapMolecule(newMol, filled, radii, tol):
+                        filled.append(newMol)
     return filled
 
 def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
@@ -129,7 +128,6 @@ def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
                     filled.append(atomData)
         attempts += 1
     return filled
-
 
 def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
                       randOrient, maxAttempts):
