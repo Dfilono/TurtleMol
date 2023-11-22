@@ -22,3 +22,6 @@ class mesh3D():
         '''Check if point is inside the mesh'''
         adjustedPoint = [point[i] +self.origin[i] for i in range(3)]
         return self.mesh.contains([point])[0]
+    
+    def findCenter(self):
+        return self.origin

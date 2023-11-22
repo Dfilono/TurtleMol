@@ -51,7 +51,7 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
 
     if baseStruc is not None:
         base = makeBase(baseStruc)
-        #filled.append(reCenter(base, )) # NOTE: Add functionality for building around a structure
+        filled.append(reCenter(base, mesh))
 
     # Determine bounds of mesh
     bounds = mesh.bounds
@@ -136,7 +136,7 @@ def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
 
     if baseStruc is not None:
         base = makeBase(baseStruc)
-        #filled.append(reCenter(base, )) # NOTE: Add functionality for building around a structure
+        filled.append(reCenter(base, mesh))
 
     # Determine bounds of mesh
     bounds = mesh.bounds
