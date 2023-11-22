@@ -209,3 +209,27 @@ def calcDistance(shape, mol, density, shapeType):
         insidePoints = [point for point in coords if insideSphere(*point, r)]
         
         return insidePoints[:numMol]
+    
+    elif str(shapeType).lower() == 'mesh':
+        # Determine bounds of mesh
+        bounds = shape.bounds
+        minBound, maxBound = bounds[0], bounds[1]
+
+        numMol = calcNumMol(shape, mol, density)
+
+        # Calculate the molecules to place in each dimension
+        pointsPerDimension = round(numMol ** (1/3))
+
+        # Generate grid points
+        XCount = np.linspace(minBound[0], maxBound[0], pointsPerDimension, endpoint=False)
+        YCount = np.linspace(minBound[1], maxBound[1], pointsPerDimension, endpoint=False)
+        ZCount = np.linspace(minBound[2], maxBound[2], pointsPerDimension, endpoint=False)
+
+        # Create a meshgrid and reshape it to get coordiantes
+        xx, yy, zz = np.meshgrid(XCount, YCount, ZCount, indexing='ij')
+        coords = np.vstack([xx.ravel(), yy.ravel(), zz.ravel()]).T
+
+        # Find points inside sphere
+        insidePoints = [point for point in coords if shape.isInside(point)]
+
+        return insidePoints[:numMol]

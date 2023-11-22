@@ -10,6 +10,8 @@ from .shiftBox import atomsFillBox, atomsRandBox, moleculesFillBox, moleculesRan
 from .shiftSphere import atomFillSphere, atomRandSphere, moleculeFillSphere, moleculeRandSphere
 from .Sphere3D import Sphere3d
 from .shiftDensity import placeMols
+from .mesh3D import mesh3D
+from .shiftMesh import atomsFillMesh, moleculesFillMesh, atomsRandMesh, moleculesRandMesh
 
 from . import _version
 __version__ = _version.get_versions()['version']

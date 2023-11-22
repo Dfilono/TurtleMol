@@ -14,7 +14,7 @@ from .shiftBox import atomsFillBox, atomsRandBox, \
                      moleculesFillBox, moleculesRandBox
 from .shiftSphere import atomFillSphere, atomRandSphere, \
                         moleculeRandSphere, moleculeFillSphere
-from .shiftMesh import atomsFillMesh, moleculesFillMesh
+from .shiftMesh import atomsFillMesh, moleculesFillMesh, atomsRandMesh, moleculesRandMesh
 from .setAtomProp import setAtomicRadius
 from .makeStruc import makeBase, shiftPoints
 from .shiftDensity import placeMols
@@ -33,7 +33,7 @@ def drawMolBox(struc, baseStruc, iparams):
 
     if iparams['density']:
         filled, type = placeMols(box, originalPoints, iparams['density'],
-                                 tol, "box", radii)
+                                 tol, "box", radii, iparams['randomizeOrient'])
         return filled, type
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
@@ -84,7 +84,7 @@ def drawMolSphere(struc, baseStruc, iparams):
 
     if iparams['density']:
         filled, type = placeMols(sphere, originalPoints, iparams['density'],
-                                 tol, "sphere", radii)
+                                 tol, "sphere", radii, iparams['randomizeOrient'])
         return filled, type
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
@@ -130,6 +130,11 @@ def drawMolMesh(struc, baseStruc, iparams):
 
     originalPoints = makeBase(struc)
 
+    if iparams['density']:
+        filled, type = placeMols(mesh, originalPoints, iparams['density'],
+                                 tol, "mesh", radii, iparams['randomizeOrient'])
+        return filled, type
+
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
         numMol = int(numMol)
 
@@ -146,6 +151,11 @@ def drawMolMesh(struc, baseStruc, iparams):
 
     elif iparams['randFill'] == 'True' or iparams['randFill'] is True:
         if len(originalPoints) == 1:
-            pass
+            filledAtom = atomsRandMesh(mesh, originalPoints, tol, radii, numMol,
+                                       iparams['maxAttempts'])
+            return list(filledAtom), 'atom'
         else:
-            pass
+            filledMol = moleculesRandMesh(mesh, originalPoints, tol, radii, numMol,
+                                          baseStruc, iparams['randomizeOrient'],
+                                          iparams['maxAttempts'])
+            return list(filledMol), 'molecule'
