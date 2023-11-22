@@ -102,6 +102,7 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
     return filled
 
 def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
+    '''Randomly places atoms in a mesh'''
     filled = []
     attempts = 0
 
@@ -131,6 +132,7 @@ def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
 
 def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
                       randOrient, maxAttempts):
+    '''Randomly places molecules in a mesh'''
     filled = []
     attempts = 0
 

@@ -1,6 +1,6 @@
 {
     "author": "Dominick Filonowich",
-    "version": 0.1,
+    "version": 0.11,
     "url": "https://github.com/Dfilono/TurtleMol",
     "name": "Turtle Molecule Builder",
     "description": "Design, create, and generate unique, complex molecular structures of any shape and size! ",
@@ -8,9 +8,12 @@
     "commands": [
       { "name": "TurtleMol|Fill Box", "command": "./TurtleMol/avogadroPlugin/fillBox.py" },
       { "name": "TurtleMol|Fill Sphere", "command": "./TurtleMol/avogadroPlugin/fillSphere.py" },
+      { "name": "TurtleMol|Fill Mesh", "command": "./TurtleMol/avogadroPlugin/fillMesh.py" },
       { "name": "TurtleMol|Density Box", "command": "./TurtleMol/avogadroPlugin/densityBox.py" },
       { "name": "TurtleMol|Density Sphere", "command": "./TurtleMol/avogadroPlugin/densitySphere.py" },
+      { "name": "TurtleMol|Density Mesh", "command": "./TurtleMol/avogadroPlugin/densityMesh.py" },
       { "name": "TurtleMol|Definite Box", "command": "./TurtleMol/avogadroPlugin/definiteBox.py" },
-      { "name": "TurtleMol|Definite Sphere", "command": "./TurtleMol/avogadroPlugin/definiteSphere.py" }
+      { "name": "TurtleMol|Definite Sphere", "command": "./TurtleMol/avogadroPlugin/definiteSphere.py" },
+      { "name": "TurtleMol|Definite Mesh", "command": "./TurtleMol/avogadroPlugin/definiteMesh.py" }
     ]
   }
