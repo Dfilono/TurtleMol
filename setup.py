@@ -5,6 +5,7 @@ requirements = [
     'numpy',
     'pandas',
     'trimesh',
+    'rtree',
 ]
 
 setup_requirements = []
