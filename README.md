@@ -78,6 +78,10 @@ and can be installed via the following instructions.
 Note that for the plugin to function, the TurtleMol python package and its dependecies must also be installed
 in the same Python environment that is referenced by Avogadro.
 
+## Contributing
+
+We have a lot of wishlist features that can be seen [HERE](https://github.com/Dfilono/TurtleMol/WISHLIST.md). If you want to help add any of these features, or others you think TurtleMol would benefit from, let me know! Submit a pull request with your update (please test it in your own fork first), and I'll check it!
+
 ## Citation
 
 If you find this code helpful, please consider referencing it! We don't currently have a released article to cite,
