@@ -154,7 +154,7 @@ if __name__ == "__main__":
     debug = args['debug']
 
     if args['display_name']:
-        print("Choose Density in Mesh")
+        print("Density Mesh")
     if args['menu_path']:
         print("&Extensions|TurtleMol")
     if args['print_options']:
