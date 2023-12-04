@@ -4,6 +4,7 @@ import versioneer
 requirements = [
     'numpy',
     'pandas',
+    'trimesh',
 ]
 
 setup_requirements = []

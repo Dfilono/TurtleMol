@@ -1,7 +1,7 @@
 '''Sets properties of atoms'''
 
 import pandas as pd
-from readWriteFiles import getElementData
+from .readWriteFiles import getElementData
 
 def setAtomicRadius(atomRadius):
     '''Defines the dataframe to find the atomic radius'''

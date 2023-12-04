@@ -1,7 +1,7 @@
 # Top level package
 from .Box3D import Box3d, drawBox
 from .defaultParams import defaultParams
-from .drawMol import drawMolBox, drawMolSphere
+from .drawMol import drawMolBox, drawMolSphere, drawMolMesh
 from .isOverlap import isOverlapAtom, isOverlapMolecule
 from .makeStruc import makeBase, calcCenter, reCenter, shiftPoints, randReorient, calcDensity, calcNumMol
 from .readWriteFiles import getInput, readStrucFile, readPdb, writeOutput, writePdb, writeXYZ, getElementData
