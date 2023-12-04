@@ -7,6 +7,7 @@ Data on elements is also imported and searchable. Primary use at this time is fo
 
 import os
 import pandas as pd
+import trimesh
 
 def getInput(filePath):
     '''Reads input file if provided'''
@@ -59,6 +60,11 @@ def readPdb(filePath):
     df = pd.DataFrame(data, columns=['Atom', 'X', 'Y', 'Z', 'Residue', 'ResidueSeq'])
 
     return df
+
+def readMesh(filePath):
+    '''Reads mesh files in format like .obj, .stl, .ply'''
+    mesh = trimesh.load(filePath)
+    return mesh
 
 def writeOutput(data, filePath, strucType):
     '''Writes data to output file'''

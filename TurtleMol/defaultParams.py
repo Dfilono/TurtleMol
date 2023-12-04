@@ -42,6 +42,8 @@ Keywords:
         'randFill' : False,
         'density' : None,
         'atomRadius' : 'AtomicRadius',
+        'mesh' : None,
+        'meshScale' : 1.0
     }
 
     return params

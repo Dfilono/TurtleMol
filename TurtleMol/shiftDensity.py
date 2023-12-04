@@ -1,8 +1,10 @@
+'''Places molecules in a given volume based on the provided denisty'''
+
 import numpy as np
-from .makeStruc import calcDistance
+from .makeStruc import calcDistance, randReorient
 from .isOverlap import isOverlapMolecule, isOverlapAtom
 
-def placeMols(shape, og, density, tol, shapeType, radii):
+def placeMols(shape, og, density, tol, shapeType, radii, randReorient):
     '''Place molecules in the grid defined by the density'''
     gridPoints = calcDistance(shape, og, density, shapeType)
 
@@ -31,6 +33,9 @@ def placeMols(shape, og, density, tol, shapeType, radii):
     mols = []
     for point in gridPoints:
         newPoint = translateMol(og, point)
+
+        if randReorient:
+            newPoint = randReorient(newPoint)
 
         if len(og) == 1:
             if not isOverlapAtom(newPoint, mols, radii, tol):

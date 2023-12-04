@@ -1,0 +1,8 @@
+shape=mesh
+numMolecules=fill
+structureFile=TurtleMol/examples/Mesh_Water/water.xyz
+outputFile=TurtleMol/examples/Mesh_Water/WaterOut.xyz
+mesh=TurtleMol/examples/Mesh_Water/monkey.stl
+meshScale=10
+randomizeOrient=True
+tol=1.0
