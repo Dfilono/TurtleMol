@@ -1,8 +1,8 @@
 '''Places molecules in a given volume based on the provided denisty'''
 
 import numpy as np
-from .makeStruc import calcDistance, randReorient
-from .isOverlap import isOverlapMolecule, isOverlapAtom
+from makeStruc import calcDistance, randReorient
+from isOverlap import isOverlapMolecule, isOverlapAtom
 
 def placeMols(shape, og, density, tol, shapeType, radii, randReorient):
     '''Place molecules in the grid defined by the density'''

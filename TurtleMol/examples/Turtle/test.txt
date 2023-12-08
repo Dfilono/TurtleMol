@@ -1,0 +1,8 @@
+shape=mesh
+numMolecules=fill
+structureFile=TurtleMol/examples/Mesh_Water/water.xyz
+outputFile=TurtleMol/examples/Turtle/out.pdb
+mesh=TurtleMol/examples/Turtle/turtle.stl
+meshScale=20
+randomizeOrient=True
+tol=1.0

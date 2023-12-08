@@ -1,7 +1,7 @@
 '''Defines mesh'''
 
 import numpy as np
-from .readWriteFiles import readMesh
+from readWriteFiles import readMesh
 
 class mesh3D():
     '''Defines properties of a mesh'''

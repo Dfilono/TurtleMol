@@ -1,7 +1,7 @@
 '''Sets up the structure files'''
 import random
 import numpy as np
-from .setAtomProp import setAtomicMass
+from setAtomProp import setAtomicMass
 
 def makeBase(baseStruc):
     '''Convert dataframe to list of points'''

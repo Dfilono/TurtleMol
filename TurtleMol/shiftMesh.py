@@ -2,8 +2,8 @@
 
 import numpy as np
 import random
-from .isOverlap import isOverlapAtom, isOverlapMolecule
-from .makeStruc import makeBase, reCenter, randReorient
+from isOverlap import isOverlapAtom, isOverlapMolecule
+from makeStruc import makeBase, reCenter, randReorient
 
 def atomsFillMesh(mesh, og, tol, radii, numMol):
     '''Fills mesh with single atoms'''
