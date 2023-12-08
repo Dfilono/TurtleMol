@@ -2,7 +2,7 @@
 
 import sys
 import argparse
-from drawMol import drawMolBox, drawMolSphere, drawMolMesh
+from .drawMol import drawMolBox, drawMolSphere, drawMolMesh
 from readWriteFiles import writeOutput, getInput, readStrucFile
 from defaultParams import defaultParams
 
