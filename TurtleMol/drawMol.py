@@ -32,9 +32,9 @@ def drawMolBox(struc, baseStruc, iparams):
     originalPoints = shiftPoints(originalPoints, box)
 
     if iparams['density']:
-        filled, type = placeMols(box, originalPoints, iparams['density'],
+        filled, strucType = placeMols(box, originalPoints, iparams['density'],
                                  tol, "box", radii, iparams['randomizeOrient'])
-        return filled, type
+        return filled, strucType
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
         numMol = int(numMol)

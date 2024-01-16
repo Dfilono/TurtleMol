@@ -29,7 +29,7 @@ def placeMols(shape, og, density, tol, shapeType, radii, randReorient):
         
         return transMol
 
-    
+    strucType = 'molecule'
     mols = []
     for point in gridPoints:
         newPoint = translateMol(og, point)
@@ -40,10 +40,10 @@ def placeMols(shape, og, density, tol, shapeType, radii, randReorient):
         if len(og) == 1:
             if not isOverlapAtom(newPoint, mols, radii, tol):
                 mols.append(newPoint)
-                type = "atom"
+                strucType = "atom"
         else:
             if not isOverlapMolecule(newPoint, mols, radii, tol):
                 mols.append(newPoint)
-                type = "molecule"
+                strucType = "molecule"
     
-    return mols, type
+    return mols, strucType
