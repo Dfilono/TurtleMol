@@ -1,8 +1,8 @@
 '''Module places molecules in a box'''
 
 import random
-from isOverlap import isOverlapAtom, isOverlapMolecule
-from makeStruc import makeBase, reCenter, randReorient
+from .isOverlap import isOverlapAtom, isOverlapMolecule
+from .makeStruc import makeBase, reCenter, randReorient
 
 def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
     '''Fills box with single atoms'''

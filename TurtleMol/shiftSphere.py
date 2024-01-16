@@ -1,8 +1,8 @@
 '''Module places molecules in a sphere'''
 
 import random
-from isOverlap import isOverlapAtom, isOverlapMolecule
-from makeStruc import makeBase, reCenter, randReorient
+from .isOverlap import isOverlapAtom, isOverlapMolecule
+from .makeStruc import makeBase, reCenter, randReorient
 
 def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
     '''Fills sphere with single atoms'''
