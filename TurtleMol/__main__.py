@@ -2,9 +2,9 @@
 
 import sys
 import argparse
-from .drawMol import drawMolBox, drawMolSphere, drawMolMesh
-from .readWriteFiles import writeOutput, getInput, readStrucFile
-from .defaultParams import defaultParams
+from drawMol import drawMolBox, drawMolSphere, drawMolMesh
+from readWriteFiles import writeOutput, getInput, readStrucFile
+from defaultParams import defaultParams
 
 def parseCommandLine(dparams):
     '''Parses command line for parameters'''
@@ -43,7 +43,7 @@ def parseCommandLine(dparams):
                         help="Number of molecules", default=dparams['numMolecules'])
     parser.add_argument('-t', '--tol', type=float,
                         help="Minimum distance between molecules", default=dparams['tol'])
-    parser.add_argument('-rho', '--denisty', type=float,
+    parser.add_argument('-rho', '--density', type=float,
                         help="Density in g/mL", default=dparams['density'])
     parser.add_argument('-a', '--maxAttempts', type=int,
                         help="Maximum iterations for finite sized systems",

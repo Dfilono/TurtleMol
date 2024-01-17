@@ -32,9 +32,9 @@ def drawMolBox(struc, baseStruc, iparams):
     originalPoints = shiftPoints(originalPoints, box)
 
     if iparams['density']:
-        filled, type = placeMols(box, originalPoints, iparams['density'],
+        filled, strucType = placeMols(box, originalPoints, iparams['density'],
                                  tol, "box", radii, iparams['randomizeOrient'])
-        return filled, type
+        return filled, strucType
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
         numMol = int(numMol)
@@ -83,9 +83,9 @@ def drawMolSphere(struc, baseStruc, iparams):
     originalPoints = shiftPoints(originalPoints, sphere)
 
     if iparams['density']:
-        filled, type = placeMols(sphere, originalPoints, iparams['density'],
+        filled, strucType = placeMols(sphere, originalPoints, iparams['density'],
                                  tol, "sphere", radii, iparams['randomizeOrient'])
-        return filled, type
+        return filled, strucType
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
         numMol = int(numMol)
@@ -131,9 +131,9 @@ def drawMolMesh(struc, baseStruc, iparams):
     originalPoints = makeBase(struc)
 
     if iparams['density']:
-        filled, type = placeMols(mesh, originalPoints, iparams['density'],
+        filled, strucType = placeMols(mesh, originalPoints, iparams['density'],
                                  tol, "mesh", radii, iparams['randomizeOrient'])
-        return filled, type
+        return filled, strucType
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
         numMol = int(numMol)

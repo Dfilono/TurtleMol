@@ -4,7 +4,7 @@ import numpy as np
 from .makeStruc import calcDistance, randReorient
 from .isOverlap import isOverlapMolecule, isOverlapAtom
 
-def placeMols(shape, og, density, tol, shapeType, radii, randReorient):
+def placeMols(shape, og, density, tol, shapeType, radii, randOrient):
     '''Place molecules in the grid defined by the density'''
     gridPoints = calcDistance(shape, og, density, shapeType)
 
@@ -29,21 +29,21 @@ def placeMols(shape, og, density, tol, shapeType, radii, randReorient):
         
         return transMol
 
-    
+    strucType = 'molecule'
     mols = []
     for point in gridPoints:
         newPoint = translateMol(og, point)
 
-        if randReorient:
+        if randOrient:
             newPoint = randReorient(newPoint)
 
         if len(og) == 1:
             if not isOverlapAtom(newPoint, mols, radii, tol):
                 mols.append(newPoint)
-                type = "atom"
+                strucType = "atom"
         else:
             if not isOverlapMolecule(newPoint, mols, radii, tol):
                 mols.append(newPoint)
-                type = "molecule"
+                strucType = "molecule"
     
-    return mols, type
+    return mols, strucType
