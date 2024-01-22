@@ -18,6 +18,7 @@ from .shiftMesh import atomsFillMesh, moleculesFillMesh, atomsRandMesh, molecule
 from .setAtomProp import setAtomicRadius
 from .makeStruc import makeBase, shiftPoints
 from .shiftDensity import placeMols
+from .shiftUnitCell import unitCellBox, unitCellMesh, unitCellSphere
 
 def drawMolBox(struc, baseStruc, iparams):
     '''Utilized to place molecules in a box'''
@@ -30,6 +31,11 @@ def drawMolBox(struc, baseStruc, iparams):
     originalPoints = makeBase(struc)
 
     originalPoints = shiftPoints(originalPoints, box)
+
+    if iparams['unitCell']:
+        filled, strucType = unitCellBox(box, dims, iparams['unitCell'], 
+                                        originalPoints, radii)
+        return filled, strucType
 
     if iparams['density']:
         filled, strucType = placeMols(box, originalPoints, iparams['density'],
@@ -82,6 +88,11 @@ def drawMolSphere(struc, baseStruc, iparams):
     originalPoints = makeBase(struc)
     originalPoints = shiftPoints(originalPoints, sphere)
 
+    if iparams['unitCell']:
+        filled, strucType = unitCellSphere(sphere, iparams['unitCell'], 
+                                        originalPoints, radii)
+        return filled, strucType
+
     if iparams['density']:
         filled, strucType = placeMols(sphere, originalPoints, iparams['density'],
                                  tol, "sphere", radii, iparams['randomizeOrient'])
@@ -129,6 +140,11 @@ def drawMolMesh(struc, baseStruc, iparams):
     tol = float(iparams['tol'])
 
     originalPoints = makeBase(struc)
+
+    if iparams['unitCell']:
+        filled, strucType = unitCellSphere(mesh, iparams['unitCell'], 
+                                        originalPoints)
+        return filled, strucType
 
     if iparams['density']:
         filled, strucType = placeMols(mesh, originalPoints, iparams['density'],

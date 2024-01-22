@@ -24,7 +24,7 @@ def readStrucFile(filePath):
     # Reads XYZ
     if filePath[-3:] == 'xyz':
         return pd.read_csv(filePath, delim_whitespace=True,
-                           skiprows=2, names=["Atom", "X", "Y", "Z"])
+                           skiprows=2, names=["Atom", "X", "Y", "Z"]), None
     # Reads PDB
     if filePath[-3:] == 'pdb':
         return readPdb(filePath)
@@ -34,11 +34,23 @@ def readStrucFile(filePath):
 def readPdb(filePath):
     '''Reads structure file if a pdb'''
     data = []
+    unitCell = None
     symbols = getElementData('AtomicMass')
 
     with open(filePath, 'r', encoding = 'utf-8') as pdbFile:
         for line in pdbFile:
-            if line.startswith('ATOM') or line.startswith('HETATM'):
+
+            if line.startswith('CRYST1'):
+                # Extract unit cell parameters from the CRYST1 line
+                a = float(line[6:15].strip())
+                b = float(line[15:24].strip())
+                c = float(line[24:33].strip())
+                alpha = float(line[33:40].strip())
+                beta = float(line[40:47].strip())
+                gamma = float(line[47:54].strip())
+                unitCell = {'a': a, 'b': b, 'c': c, 'alpha': alpha, 'beta': beta, 'gamma': gamma}
+
+            elif line.startswith('ATOM') or line.startswith('HETATM'):
                 # Parse relevant fields from the PDB format
                 atomName = line[12:16].strip()
                 element = line[76:78].strip()
@@ -59,7 +71,7 @@ def readPdb(filePath):
 
     df = pd.DataFrame(data, columns=['Atom', 'X', 'Y', 'Z', 'Residue', 'ResidueSeq'])
 
-    return df
+    return df, unitCell
 
 def readMesh(filePath):
     '''Reads mesh files in format like .obj, .stl, .ply'''

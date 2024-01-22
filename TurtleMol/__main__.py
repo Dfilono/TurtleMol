@@ -86,8 +86,11 @@ def main():
     print(iparams)
 
     # Get structure
-    struc = readStrucFile(iparams['structureFile'])
+    struc, unitCell = readStrucFile(iparams['structureFile'])
     print(struc)
+
+    if unitCell:
+        iparams['unitCell'] = unitCell
 
     if iparams['baseStrucFile']:
         baseStruc = readStrucFile(iparams['baseStrucFile'])
