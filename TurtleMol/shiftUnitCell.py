@@ -23,18 +23,20 @@ def unitCellBox(shape, dims, cellDims, og, radii):
                 currentCell = []
                 
                 for atom in og:
-                    newX = atom[1] + disp
-                    newY = atom[2] + disp
-                    newZ = atom[3] + disp
+                    newX = shape.xCoord + atom[1] + disp[0]
+                    newY = shape.yCoord + atom[2] + disp[1]
+                    newZ = shape.zCoord + atom[3] + disp[2]
                     atomType = atom[0]
 
+                    atomRadius = radii.get(atomType, 0.0)
+
                     # Adjust for atomic radiss
-                    newXMin = newX - radii[atom[0]]
-                    newYMin = newY - radii[atom[0]]
-                    newZMin = newZ - radii[atom[0]]
-                    newXMax = newX + radii[atom[0]]
-                    newYMax = newY + radii[atom[0]]
-                    newZMax = newZ + radii[atom[0]]
+                    newXMin = newX - atomRadius
+                    newYMin = newY - atomRadius
+                    newZMin = newZ - atomRadius
+                    newXMax = newX + atomRadius
+                    newYMax = newY + atomRadius
+                    newZMax = newZ + atomRadius
 
                     # Check if the new atom fits within the box
                     if  inBox(newXMin, newXMax, newYMin, newYMax, newZMin,
@@ -59,13 +61,15 @@ def unitCellSphere(shape, cellDims, og, radii):
     for dx in range(dupeCount[0]):
         for dy in range(dupeCount[1]):
             for dz in range(dupeCount[2]):
-                disp = np.array([dx * cellDims[0], dy * cellDims[1], dz * cellDims[2]])
+                disp = np.array([dx * cellDims[0], 
+                                 dy * cellDims[1], 
+                                 dz * cellDims[2]])
                 currentCell = []
 
                 for atom in og:
-                    newX = atom[1] + disp
-                    newY = atom[2] + disp
-                    newZ = atom[3] + disp
+                    newX = (shape.xCoord - shape.radius)+ atom[1] + disp[0]
+                    newY = (shape.yCoord - shape.radius) + atom[2] + disp[1]
+                    newZ = (shape.zCoord - shape.radius) + atom[3] + disp[2]
                     atomType = atom[0]
 
                     atomRadius = radii.get(atomType, 0.0)
@@ -83,7 +87,7 @@ def unitCellSphere(shape, cellDims, og, radii):
 def unitCellMesh(shape, cellDims, og):
     '''Duplicates unit cells to fill a given mesh'''
     # Box dimensions that completely contain the mesh
-    maxBound, minBound = shape.bounds[0], shape.bounds[1]
+    maxBound, minBound = shape.bounds[1], shape.bounds[0]
     boxDim = maxBound - minBound
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
 
@@ -92,13 +96,15 @@ def unitCellMesh(shape, cellDims, og):
     for dx in range(dupeCount[0]):
         for dy in range(dupeCount[1]):
             for dz in range(dupeCount[2]):
-                disp = np.array([dx * cellDims[0], dy * cellDims[1], dz * cellDims[2]])
+                disp = np.array([dx * cellDims[0], 
+                                 dy * cellDims[1], 
+                                 dz * cellDims[2]]) + minBound
                 currentCell = []
 
                 for atom in og:
-                    newX = atom[1] + disp
-                    newY = atom[2] + disp
-                    newZ = atom[3] + disp
+                    newX = shape.origin()[0] + atom[1] + disp[0]
+                    newY = shape.origin()[1] + atom[2] + disp[1]
+                    newZ = shape.origin()[2] + atom[3] + disp[2]
                     atomType = atom[0]
 
                     if shape.isInside([newX, newY, newZ]):

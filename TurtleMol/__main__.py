@@ -90,7 +90,7 @@ def main():
     print(struc)
 
     if unitCell:
-        iparams['unitCell'] = unitCell
+        iparams['unitCell'] = [unitCell['a'], unitCell['b'], unitCell['c']]
 
     if iparams['baseStrucFile']:
         baseStruc = readStrucFile(iparams['baseStrucFile'])

@@ -142,7 +142,7 @@ def drawMolMesh(struc, baseStruc, iparams):
     originalPoints = makeBase(struc)
 
     if iparams['unitCell']:
-        filled, strucType = unitCellSphere(mesh, iparams['unitCell'], 
+        filled, strucType = unitCellMesh(mesh, iparams['unitCell'], 
                                         originalPoints)
         return filled, strucType
 
