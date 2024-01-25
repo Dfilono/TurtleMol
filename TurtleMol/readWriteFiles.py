@@ -93,8 +93,8 @@ def writeOutput(data, filePath, strucType):
 def writePdb(data, filePath):
     '''Writes a pdb file from results'''
     template = (
-        "HETATM{atomNum:5d} {atomType:^4}{residueName:<4} A{resNum:4d}"
-        "    {x:8.3f}{y:8.3f}{z:8.3f}{occupancy:6.2f}{tempFactor:6.2f}\n"
+        "HETATM{atomNum:5d} {atomType:>2}  {residueName:>3} A{resNum: >4d}"
+        "    {x: >8.3f}{y: >8.3f}{z: >8.3f}{occupancy: >6.2f}{tempFactor: >6.2f}\n"
         )
 
     with open(filePath, 'w', encoding = 'utf-8') as pdbFile:
