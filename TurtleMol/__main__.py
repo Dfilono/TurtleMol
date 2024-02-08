@@ -93,7 +93,7 @@ def main():
         iparams['unitCell'] = [unitCell['a'], unitCell['b'], unitCell['c']]
 
     if iparams['baseStrucFile']:
-        baseStruc = readStrucFile(iparams['baseStrucFile'])
+        baseStruc, unitCell = readStrucFile(iparams['baseStrucFile'])
     else:
         baseStruc = None
 
