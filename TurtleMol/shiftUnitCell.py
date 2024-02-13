@@ -9,7 +9,7 @@ def unitCellBox(shape, dims, cellDims, og, radii):
     '''Duplicates unit cells to fill a given box'''
     # Calculate how many times to duplicate the unit cell in a given dimension
     dupeCount = [int(dims[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}  90.00  90.00  90.00 P1          1'
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
@@ -56,7 +56,7 @@ def unitCellSphere(shape, cellDims, og, radii):
     # Box dimensions that completely contain the sphere
     boxDim = [2 * shape.radius] * 3
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}  90.00  90.00  90.00 P1          1'
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
@@ -92,7 +92,7 @@ def unitCellMesh(shape, cellDims, og):
     maxBound, minBound = shape.bounds[1], shape.bounds[0]
     boxDim = maxBound - minBound
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}  90.00  90.00  90.00 P1          1'
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
