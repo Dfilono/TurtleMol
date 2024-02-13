@@ -33,9 +33,9 @@ def drawMolBox(struc, baseStruc, iparams):
     originalPoints = shiftPoints(originalPoints, box)
 
     if iparams['unitCell']:
-        filled, strucType = unitCellBox(box, dims, iparams['unitCell'], 
+        filled, strucType, cellParams = unitCellBox(box, dims, iparams['unitCell'], 
                                         originalPoints, radii)
-        return filled, strucType
+        return filled, strucType, cellParams
 
     if iparams['density']:
         filled, strucType = placeMols(box, originalPoints, iparams['density'],
@@ -89,9 +89,9 @@ def drawMolSphere(struc, baseStruc, iparams):
     originalPoints = shiftPoints(originalPoints, sphere)
 
     if iparams['unitCell']:
-        filled, strucType = unitCellSphere(sphere, iparams['unitCell'], 
+        filled, strucType, cellParams = unitCellSphere(sphere, iparams['unitCell'], 
                                         originalPoints, radii)
-        return filled, strucType
+        return filled, strucType, cellParams
 
     if iparams['density']:
         filled, strucType = placeMols(sphere, originalPoints, iparams['density'],
@@ -142,9 +142,9 @@ def drawMolMesh(struc, baseStruc, iparams):
     originalPoints = makeBase(struc)
 
     if iparams['unitCell']:
-        filled, strucType = unitCellMesh(mesh, iparams['unitCell'], 
+        filled, strucType, cellParams = unitCellMesh(mesh, iparams['unitCell'], 
                                         originalPoints)
-        return filled, strucType
+        return filled, strucType, cellParams
 
     if iparams['density']:
         filled, strucType = placeMols(mesh, originalPoints, iparams['density'],

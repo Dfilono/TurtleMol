@@ -9,6 +9,7 @@ def unitCellBox(shape, dims, cellDims, og, radii):
     '''Duplicates unit cells to fill a given box'''
     # Calculate how many times to duplicate the unit cell in a given dimension
     dupeCount = [int(dims[i] / cellDims[i]) for i in range(3)]
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
@@ -48,13 +49,14 @@ def unitCellBox(shape, dims, cellDims, og, radii):
                         currentCell.append(newAtom)
 
                 filled.append(currentCell)
-    return filled, "molecule"
+    return filled, "molecule", cellParams
 
 def unitCellSphere(shape, cellDims, og, radii):
     '''Duplicates unit cells to fill a given sphere'''
     # Box dimensions that completely contain the sphere
     boxDim = [2 * shape.radius] * 3
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
@@ -82,7 +84,7 @@ def unitCellSphere(shape, cellDims, og, radii):
                             newAtom = (atom[0], newX, newY, newZ)
                         currentCell.append(newAtom)
                 filled.append(currentCell)
-    return filled, "molecule"
+    return filled, "molecule", cellParams
 
 def unitCellMesh(shape, cellDims, og):
     '''Duplicates unit cells to fill a given mesh'''
@@ -90,6 +92,7 @@ def unitCellMesh(shape, cellDims, og):
     maxBound, minBound = shape.bounds[1], shape.bounds[0]
     boxDim = maxBound - minBound
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[0]*cellDims[0]: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
@@ -114,4 +117,4 @@ def unitCellMesh(shape, cellDims, og):
                             newAtom = (atom[0], newX, newY, newZ)
                         currentCell.append(newAtom)
                 filled.append(currentCell)
-    return filled, "molecule"
+    return filled, "molecule", cellParams

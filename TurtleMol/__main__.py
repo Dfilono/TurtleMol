@@ -99,19 +99,34 @@ def main():
 
     if iparams['shape'].lower() == 'box' or iparams['shape'].lower() == 'cube':
         # Generate the new structure
-        outStruc, strucType = drawMolBox(struc, baseStruc, iparams)
-        print(len(outStruc))
+
+        if unitCell:
+            outStruc, strucType, cellParams = drawMolBox(struc, baseStruc, iparams)
+        else:
+            outStruc, strucType = drawMolBox(struc, baseStruc, iparams)
 
     elif iparams['shape'].lower() == 'sphere':
         # Generate the new structure
-        outStruc, strucType = drawMolSphere(struc, baseStruc, iparams)
+
+        if unitCell:
+            outStruc, strucType, cellParams = drawMolSphere(struc, baseStruc, iparams)
+        else:
+            outStruc, strucType = drawMolSphere(struc, baseStruc, iparams)
 
     elif iparams['shape'].lower() == 'mesh' and iparams['mesh'] is not None:
-        outStruc, strucType = drawMolMesh(struc, baseStruc, iparams)
+        # Generate the new structure
 
+        if unitCell:
+            outStruc, strucType, cellParams = drawMolMesh(struc, baseStruc, iparams)
+        else:
+            outStruc, strucType = drawMolMesh(struc, baseStruc, iparams)
 
+        
     if iparams['outputFile']:
-        writeOutput(outStruc, iparams['outputFile'], strucType)
+        if unitCell:
+            writeOutput(outStruc, iparams['outputFile'], strucType, cellParams)
+        else:
+            writeOutput(outStruc, iparams['outputFile'], strucType)
 
 if __name__ == "__main__":
     main()
