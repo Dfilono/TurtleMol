@@ -78,7 +78,7 @@ def readMesh(filePath):
     mesh = trimesh.load(filePath)
     return mesh
 
-def writeOutput(data, filePath, strucType):
+def writeOutput(data, filePath, strucType, cellParams=None):
     '''Writes data to output file'''
     try:
         # Writes XYZ
@@ -86,20 +86,27 @@ def writeOutput(data, filePath, strucType):
             writeXYZ(data, filePath, strucType)
         # Writes PDB
         elif filePath[-3:] == 'pdb':
-            writePdb(data, filePath)
+            if cellParams != None:
+                writePdb(data, filePath, cellParams)
+            else:
+                writePdb(data, filePath)
     except KeyError:
         print(f"Filetype {filePath[-3:]} not supported\n")
 
-def writePdb(data, filePath):
+def writePdb(data, filePath, cellParams=None):
     '''Writes a pdb file from results'''
     template = (
-        "HETATM{atomNum:5d} {atomType:^4}{residueName:<4} A{resNum:4d}"
-        "    {x:8.3f}{y:8.3f}{z:8.3f}{occupancy:6.2f}{tempFactor:6.2f}\n"
+        "HETATM{atomNum:5d} {atomType:>2}  {residueName:>3} A{resNum: >4d}"
+        "    {x: >8.3f}{y: >8.3f}{z: >8.3f}{occupancy: >6.2f}{tempFactor: >6.2f}\n"
         )
 
     with open(filePath, 'w', encoding = 'utf-8') as pdbFile:
         atomNum = 1
         resNum = 1
+        cell = cellParams
+
+        if cell != None:
+            pdbFile.write(cell + '\n')
 
         for mol in data:
             for atom in mol:
