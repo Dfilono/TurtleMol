@@ -59,14 +59,10 @@ def unitCellBox(shape, dims, cellDims, og, radii):
 def unitCellSphere(shape, cellDims, og, radii):
     '''Duplicates unit cells to fill a given sphere'''
 
-    # Find the atom types in the tile
-    atomNames = {atom[0] for atom in og}
-    totalRadius = sum(radii[str.capitalize(name)] for name in atomNames)
-
     # Box dimensions that completely contain the sphere
     boxDim = [2 * shape.radius] * 3
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0] - totalRadius: .3f}    {dupeCount[1]*cellDims[1] - totalRadius: .3f}    {dupeCount[2]*cellDims[2] - totalRadius: .3f}  90.00  90.00  90.00 P1          1'
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
@@ -108,7 +104,7 @@ def unitCellMesh(shape, cellDims, og, radius):
     boxDim = maxBound - minBound
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
     
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0] - totalRadius: .3f}    {dupeCount[1]*cellDims[1] - totalRadius: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0] - totalRadius: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]  - totalRadius: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
