@@ -143,7 +143,7 @@ def drawMolMesh(struc, baseStruc, iparams):
 
     if iparams['unitCell']:
         filled, strucType, cellParams = unitCellMesh(mesh, iparams['unitCell'], 
-                                        originalPoints)
+                                        originalPoints, radii)
         return filled, strucType, cellParams
 
     if iparams['density']:

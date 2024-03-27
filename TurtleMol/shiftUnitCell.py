@@ -7,9 +7,14 @@ from .shiftBox import inBox
 # Box
 def unitCellBox(shape, dims, cellDims, og, radii):
     '''Duplicates unit cells to fill a given box'''
+
+    # Find the atom types in the tile
+    atomNames = {atom[0] for atom in og}
+    totalRadius = sum(radii[str.capitalize(name)] for name in atomNames)
+
     # Calculate how many times to duplicate the unit cell in a given dimension
     dupeCount = [int(dims[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0] - totalRadius: .3f}    {dupeCount[1]*cellDims[1] - totalRadius: .3f}    {dupeCount[2]*cellDims[2] - totalRadius: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
@@ -53,10 +58,15 @@ def unitCellBox(shape, dims, cellDims, og, radii):
 
 def unitCellSphere(shape, cellDims, og, radii):
     '''Duplicates unit cells to fill a given sphere'''
+
+    # Find the atom types in the tile
+    atomNames = {atom[0] for atom in og}
+    totalRadius = sum(radii[str.capitalize(name)] for name in atomNames)
+
     # Box dimensions that completely contain the sphere
     boxDim = [2 * shape.radius] * 3
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0] - totalRadius: .3f}    {dupeCount[1]*cellDims[1] - totalRadius: .3f}    {dupeCount[2]*cellDims[2] - totalRadius: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
@@ -86,13 +96,19 @@ def unitCellSphere(shape, cellDims, og, radii):
                 filled.append(currentCell)
     return filled, "molecule", cellParams
 
-def unitCellMesh(shape, cellDims, og):
+def unitCellMesh(shape, cellDims, og, radius):
     '''Duplicates unit cells to fill a given mesh'''
+
+    # Find the atom types in the tile
+    atomNames = {atom[0] for atom in og}
+    totalRadius = sum(radius[str.capitalize(name)] for name in atomNames)
+
     # Box dimensions that completely contain the mesh
     maxBound, minBound = shape.bounds[1], shape.bounds[0]
     boxDim = maxBound - minBound
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
+    
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0] - totalRadius: .3f}    {dupeCount[1]*cellDims[1] - totalRadius: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
 
     filled = []
 
