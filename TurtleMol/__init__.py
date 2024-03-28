@@ -2,7 +2,7 @@
 from .Box3D import Box3d, drawBox
 from .defaultParams import defaultParams
 from .drawMol import drawMolBox, drawMolSphere, drawMolMesh
-from .isOverlap import isOverlapAtom, isOverlapMolecule, isOverlapAtomKDTree, isOverlapMoleculeKDTree
+from .isOverlap import isOverlapAtom, isOverlapMolecule, isOverlapAtomKDTree, isOverlapMoleculeKDTree, buildKDTreeMapping
 from .makeStruc import makeBase, calcCenter, reCenter, shiftPoints, randReorient, calcDensity, calcNumMol, calcDistance
 from .readWriteFiles import getInput, readStrucFile, readPdb, writeOutput, writePdb, writeXYZ, getElementData, readMesh
 from .setAtomProp import setAtomicMass, setAtomicRadius

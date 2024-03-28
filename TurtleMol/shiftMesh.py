@@ -61,7 +61,7 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
         filled.append(reCenter(base, mesh))
 
     # Create KD-tree for filledAtoms
-    kdTree = scipy.spatial.cKDTree(np.array(filled))
+    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
 
     # Determine bounds of mesh
     bounds = mesh.bounds
