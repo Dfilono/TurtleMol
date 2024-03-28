@@ -3,7 +3,7 @@
 import numpy as np
 import scipy.spatial
 from .makeStruc import calcDistance, randReorient
-from .isOverlap import isOverlapMoleculeKDTree, isOverlapAtomKDTree
+from .isOverlap import isOverlapMoleculeKDTree, isOverlapAtomKDTree, buildKDTreeMapping
 
 def placeMols(shape, og, density, tol, shapeType, radii, randOrient):
     '''Place molecules in the grid defined by the density'''
@@ -33,29 +33,32 @@ def placeMols(shape, og, density, tol, shapeType, radii, randOrient):
     strucType = 'molecule'
     mols = []
 
-    # Create KD-tree for filledAtoms
-    kdTree = scipy.spatial.cKDTree(np.array(mols))
-
     for point in gridPoints:
         newPoint = translateMol(og, point)
+
+        if len(mols) == 0:
+            mols.append(newPoint)
+
+            # Create KD-tree for filledAtoms
+            kdTree, indexToAtom = buildKDTreeMapping(mols, radii)
 
         if randOrient:
             newPoint = randReorient(newPoint)
 
         if len(og) == 1:
-            if not isOverlapAtomKDTree(newPoint, kdTree, radii, tol):
+            if (kdTree is None or not isOverlapAtomKDTree(newPoint, kdTree, indexToAtom, radii, tol)):
                 mols.append(newPoint)
 
                 # Rebuild KDTree with newly added atoms
-                kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in mols]))
+                kdTree, indexToAtom = buildKDTreeMapping(mols, radii)
 
                 strucType = "atom"
         else:
-            if not isOverlapMoleculeKDTree(newPoint, kdTree, radii, tol):
+            if (kdTree is None or not isOverlapMoleculeKDTree(newPoint, kdTree, indexToAtom, radii, tol)):
                 mols.append(newPoint)
 
                 # Rebuild KDTree with newly added atoms
-                kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in mols]))
+                kdTree, indexToAtom = buildKDTreeMapping(mols, radii)
 
                 strucType = "molecule"
     

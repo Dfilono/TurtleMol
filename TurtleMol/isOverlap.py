@@ -5,6 +5,7 @@ or if two different molecules overlap
 
 import math
 import numpy as np
+import scipy.spatial
 
 def isOverlapMolecule(newAtom, filledAtoms, radii, tol): # Depreciated!!!!
     '''Checks if two molecules overlap'''
@@ -36,21 +37,21 @@ def isOverlapAtom(newAtom, filledAtoms, radii, tol): # Depreciated!!!!
     print('isOverlapMolecule is depreciated and will be removed from future versions!\n')
     return False
 
-def isOverlapAtomKDTree(newAtom, kdTree, radii, tol):
+def isOverlapAtomKDTree(newAtom, kdTree, indexToAtom, radii, tol):
     '''Checks if two atoms overlap using a KDTree'''
     atomName, x, y, z = newAtom[:4]
     radius = radii[str.capitalize(atomName)]
     nearbyAtoms = kdTree.query_ball_point([x, y, z], radius + tol)
 
     for i in nearbyAtoms:
-        otherAtom = kdTree.data[i]
-        distance = np.linalg.norm(np.array([x, y, z]) - otherAtom)
-
-        if distance < (radius + radii[str.capitalize(kdTree.data[i][0])] + tol):
-            return True
+            molID, filledAtomName, filledAtomRadius = indexToAtom[i]
+            otherAtom = kdTree.data[i]
+            distance = np.linalg.norm(np.array([x, y, z]) - otherAtom)
+            if distance < (radius + filledAtomRadius + tol):
+                return True
     return False
 
-def isOverlapMoleculeKDTree(newMol, kdTree, radii, tol):
+def isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol):
     '''Checks if any two atoms from a new molecule overlap using a KDTree'''
     for atom in newMol:
         atomName, x, y, z = atom[:4]
@@ -58,9 +59,22 @@ def isOverlapMoleculeKDTree(newMol, kdTree, radii, tol):
         nearbyAtoms = kdTree.query_ball_point([x, y, z], radius + tol)
 
         for i in nearbyAtoms:
+            molID, filledAtomName, filledAtomRadius = indexToAtom[i]
             otherAtom = kdTree.data[i]
             distance = np.linalg.norm(np.array([x, y, z]) - otherAtom)
-
-            if distance < (radius + radii[str.capitalize(kdTree.data[i][0])] + tol):
+            if distance < (radius + filledAtomRadius + tol):
                 return True
     return False
+
+def buildKDTreeMapping(filledMolecules, radii):
+    atomCoords = []
+    indexToAtom = {}
+
+    for molID, molecule in enumerate(filledMolecules):
+        for atom in molecule:
+            index = len(atomCoords)
+            atomCoords.append(atom[1:4])
+            indexToAtom[index] = (molID, atom[0], radii[atom[0]])
+
+    kd_tree = scipy.spatial.cKDTree(atomCoords) if atomCoords else None
+    return kd_tree, indexToAtom

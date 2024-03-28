@@ -3,7 +3,7 @@
 import random
 import scipy.spatial
 import numpy as np
-from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree
+from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree, buildKDTreeMapping
 from .makeStruc import makeBase, reCenter, randReorient
 
 def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
@@ -14,7 +14,7 @@ def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
     filledAtom = []
 
     # Create KD-tree for filledAtoms
-    kdTree = scipy.spatial.cKDTree(np.array(filledAtom))
+    kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
 
     for zShift in range(z):
         for yShift in range(y):
@@ -40,12 +40,12 @@ def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
                         else:
                             newAtom = (atom[0], newX, newY, newZ)
 
-                        if not isOverlapAtomKDTree(newAtom, kdTree, radii, tol) and \
+                        if (kdTree is None or not isOverlapAtomKDTree(newAtom, kdTree, indexToAtom, radii, tol)) and \
                             numMol > len(filledAtom):
                             filledAtom.append(newAtom)
 
                             # Rebuild KDTree with newly added atoms
-                            kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filledAtom]))
+                            kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
 
     return filledAtom
 
@@ -55,7 +55,7 @@ def atomsRandBox(numMol, maxAttempts, og, box,
     filledAtom = []
 
     # Create KD-tree for filledAtoms
-    kdTree = scipy.spatial.cKDTree(np.array(filledAtom))
+    kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
 
     attempts = 0
 
@@ -79,11 +79,11 @@ def atomsRandBox(numMol, maxAttempts, og, box,
                 else:
                     newAtom = (atom[0], newX, newY, newZ)
 
-                if not isOverlapAtomKDTree(newAtom, kdTree, radii, tol):
+                if (kdTree is None or not isOverlapAtomKDTree(newAtom, kdTree, indexToAtom, radii, tol)):
                     filledAtom.append(newAtom)
 
                     # Rebuild KDTree with newly added atoms
-                    kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filledAtom]))
+                    kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
 
         attempts += 1
 
@@ -101,8 +101,7 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
         base = makeBase(baseStruc)
         filledAtom.append(reCenter(base, box))
 
-    # Create KD-tree for filledAtoms
-    kdTree = scipy.spatial.cKDTree(np.array(filledAtom))
+    kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
 
     for zShift in range(z):
         for yShift in range(y):
@@ -139,13 +138,13 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
                 if randOrient and len(newMol) == len(og):
                     newMol = randReorient(newMol)
 
-                if (not isOverlapMoleculeKDTree(newMol, kdTree, radii, tol) and
+                if ((kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)) and
                     not anyAtomOutside and numMol > len(filledAtom)):
 
                     filledAtom.append(newMol)
 
                     # Rebuild KDTree with newly added atoms
-                    kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filledAtom]))
+                    kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
 
     return filledAtom
 
@@ -161,7 +160,7 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
         filledAtom.append(reCenter(base, box))
 
     # Create KD-tree for filledAtoms
-    kdTree = scipy.spatial.cKDTree(np.array(filledAtom))
+    kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
 
     while len(filledAtom) < numMol and attempts < maxAttempts:
         newMol = []
@@ -194,7 +193,7 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
         if randOrient and len(newMol) == len(og):
             newMol = randReorient(newMol)
 
-        if not isOverlapMoleculeKDTree(newMol, kdTree, radii, tol) and not anyAtomOutside:
+        if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)) and not anyAtomOutside:
             filledAtom.append(newMol)
 
             # Rebuild KDTree with newly added atoms
