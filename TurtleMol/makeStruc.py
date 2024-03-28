@@ -1,6 +1,7 @@
 '''Sets up the structure files'''
 import random
 import numpy as np
+import Box3D
 from .setAtomProp import setAtomicMass
 
 def makeBase(baseStruc):
@@ -187,14 +188,15 @@ def calcDistance(shape, mol, density, shapeType):
 
         r = shape.radius
 
-        numMol = calcNumMol(shape, mol, density)
-
         # Create cubic geometry to enclose the sphere
         cubeSide = 2*r
 
+        box = Box3D(0, 0, 0, [cubeSide, cubeSide, cubeSide])
+
+        numMol = calcNumMol(box, mol, density)
+
         # Calculate total points in the cube
-        rho = numMol / shape.volume()
-        totalPoints = int(rho * cubeSide**3)
+        totalPoints = round(numMol ** (1/3))
 
         # Generate points within cube
         XCount = np.linspace(-r, r, int(totalPoints**(1/3)))
