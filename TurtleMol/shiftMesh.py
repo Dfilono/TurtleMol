@@ -1,8 +1,9 @@
 '''Fills an arbitrary mesh with molecules'''
 
-import numpy as np
 import random
-from .isOverlap import isOverlapAtom, isOverlapMolecule
+import numpy as np
+import scipy.spatial
+from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree
 from .makeStruc import makeBase, reCenter, randReorient
 
 def atomsFillMesh(mesh, og, tol, radii, numMol):
@@ -11,6 +12,9 @@ def atomsFillMesh(mesh, og, tol, radii, numMol):
 
     if str(numMol).lower() == 'fill':
         numMol = 10000000000000
+
+    # Create KD-tree for filledAtoms
+    kdTree = scipy.spatial.cKDTree(np.array(filled))
 
     # Determine bounds of mesh
     bounds = mesh.bounds
@@ -35,9 +39,12 @@ def atomsFillMesh(mesh, og, tol, radii, numMol):
                             atomData.append(atom[4])
                     point = [x, y, z]
                     if mesh.isInside(point) and \
-                        not isOverlapAtom(atomData, filled, radii, tol):
+                        not isOverlapAtomKDTree(atomData, kdTree, radii, tol):
 
                         filled.append(atomData)
+
+                        # Rebuild KDTree with newly added atoms
+                        kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filled]))
     
     return filled
 
@@ -52,6 +59,9 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
     if baseStruc is not None:
         base = makeBase(baseStruc)
         filled.append(reCenter(base, mesh))
+
+    # Create KD-tree for filledAtoms
+    kdTree = scipy.spatial.cKDTree(np.array(filled))
 
     # Determine bounds of mesh
     bounds = mesh.bounds
@@ -97,14 +107,20 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
                         
                     if randOrient and len(newMol) == len(og):
                         newMol = randReorient(newMol)
-                    if not isOverlapMolecule(newMol, filled, radii, tol):
+                    if not isOverlapMoleculeKDTree(newMol, kdTree, radii, tol):
                         filled.append(newMol)
+
+                        # Rebuild KDTree with newly added atoms
+                        kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filled]))
     return filled
 
 def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
     '''Randomly places atoms in a mesh'''
     filled = []
     attempts = 0
+
+    # Create KD-tree for filledAtoms
+    kdTree = scipy.spatial.cKDTree(np.array(filled))
 
     # Determine bounds of mesh
     bounds = mesh.bounds
@@ -125,8 +141,11 @@ def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
                 elif len(atom) == 5:
                     atomData = (atomType, atomPoint[0], atomPoint[1], atomPoint[2], atom[4])
 
-                if not isOverlapAtom(atomData, filled, radii, tol):
+                if not isOverlapAtomKDTree(atomData, kdTree, radii, tol):
                     filled.append(atomData)
+
+                    # Rebuild KDTree with newly added atoms
+                    kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filled]))
         attempts += 1
     return filled
 
@@ -139,6 +158,9 @@ def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
     if baseStruc is not None:
         base = makeBase(baseStruc)
         filled.append(reCenter(base, mesh))
+
+    # Create KD-tree for filledAtoms
+    kdTree = scipy.spatial.cKDTree(np.array(filled))
 
     # Determine bounds of mesh
     bounds = mesh.bounds
@@ -167,9 +189,12 @@ def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
         if randOrient and len(newMol) == len(og):
             newMol = randReorient(newMol)
 
-        if not isOverlapMolecule(newMol, filled, radii, tol):
+        if not isOverlapMoleculeKDTree(newMol, kdTree, radii, tol):
             if len(newMol) == len(og):
                 filled.append(newMol)
+
+                # Rebuild KDTree with newly added atoms
+                kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filled]))
 
         attempts += 1
     return list(filled)

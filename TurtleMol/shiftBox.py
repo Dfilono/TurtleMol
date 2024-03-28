@@ -1,7 +1,9 @@
 '''Module places molecules in a box'''
 
 import random
-from .isOverlap import isOverlapAtom, isOverlapMolecule
+import scipy.spatial
+import numpy as np
+from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree
 from .makeStruc import makeBase, reCenter, randReorient
 
 def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
@@ -10,6 +12,9 @@ def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
         numMol = 10000000000000
 
     filledAtom = []
+
+    # Create KD-tree for filledAtoms
+    kdTree = scipy.spatial.cKDTree(np.array(filledAtom))
 
     for zShift in range(z):
         for yShift in range(y):
@@ -35,9 +40,12 @@ def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
                         else:
                             newAtom = (atom[0], newX, newY, newZ)
 
-                        if not isOverlapAtom(newAtom, filledAtom, radii, tol) and \
+                        if not isOverlapAtomKDTree(newAtom, kdTree, radii, tol) and \
                             numMol > len(filledAtom):
                             filledAtom.append(newAtom)
+
+                            # Rebuild KDTree with newly added atoms
+                            kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filledAtom]))
 
     return filledAtom
 
@@ -45,6 +53,9 @@ def atomsRandBox(numMol, maxAttempts, og, box,
                      radii, tol):
     '''Places a defined number of single atoms in box'''
     filledAtom = []
+
+    # Create KD-tree for filledAtoms
+    kdTree = scipy.spatial.cKDTree(np.array(filledAtom))
 
     attempts = 0
 
@@ -68,8 +79,11 @@ def atomsRandBox(numMol, maxAttempts, og, box,
                 else:
                     newAtom = (atom[0], newX, newY, newZ)
 
-                if not isOverlapAtom(newAtom, filledAtom, radii, tol):
+                if not isOverlapAtomKDTree(newAtom, kdTree, radii, tol):
                     filledAtom.append(newAtom)
+
+                    # Rebuild KDTree with newly added atoms
+                    kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filledAtom]))
 
         attempts += 1
 
@@ -86,6 +100,9 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
     if baseStruc is not None:
         base = makeBase(baseStruc)
         filledAtom.append(reCenter(base, box))
+
+    # Create KD-tree for filledAtoms
+    kdTree = scipy.spatial.cKDTree(np.array(filledAtom))
 
     for zShift in range(z):
         for yShift in range(y):
@@ -122,10 +139,13 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
                 if randOrient and len(newMol) == len(og):
                     newMol = randReorient(newMol)
 
-                if (not isOverlapMolecule(newMol, filledAtom, radii, tol) and
+                if (not isOverlapMoleculeKDTree(newMol, kdTree, radii, tol) and
                     not anyAtomOutside and numMol > len(filledAtom)):
 
                     filledAtom.append(newMol)
+
+                    # Rebuild KDTree with newly added atoms
+                    kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filledAtom]))
 
     return filledAtom
 
@@ -139,6 +159,9 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
     if baseStruc is not None:
         base = makeBase(baseStruc)
         filledAtom.append(reCenter(base, box))
+
+    # Create KD-tree for filledAtoms
+    kdTree = scipy.spatial.cKDTree(np.array(filledAtom))
 
     while len(filledAtom) < numMol and attempts < maxAttempts:
         newMol = []
@@ -171,8 +194,11 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
         if randOrient and len(newMol) == len(og):
             newMol = randReorient(newMol)
 
-        if not isOverlapMolecule(newMol, filledAtom, radii, tol) and not anyAtomOutside:
+        if not isOverlapMoleculeKDTree(newMol, kdTree, radii, tol) and not anyAtomOutside:
             filledAtom.append(newMol)
+
+            # Rebuild KDTree with newly added atoms
+            kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filledAtom]))
         attempts += 1
 
     return list(filledAtom)
