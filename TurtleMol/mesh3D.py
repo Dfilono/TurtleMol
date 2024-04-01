@@ -2,6 +2,7 @@
 
 import numpy as np
 from .readWriteFiles import readMesh
+import trimesh
 
 class mesh3D():
     '''Defines properties of a mesh'''
@@ -22,9 +23,16 @@ class mesh3D():
         self.meshBound = self.mesh.apply_scale((1.1, 1.1, 1))
 
     def isInside(self, point):
-        '''Check if point is inside the mesh'''
-        adjustedPoint = [point[i] +self.meshOrigin[i] for i in range(3)]
-        return self.meshBound.contains([point])[0]
+        '''Check if point is inside the mesh or on the boundary'''
+        # Checks if the point is inside the mesh
+        inside = self.meshBound.contains([point])[0]
+
+        # Check if the point is on the boundary of the mesh
+        # We will get the closest point on the mesh to our point and check if they are the same
+        closestPoint, distance, _ = trimesh.proximity.closest_point(self.mesh, [point])
+        onBound = np.isclose(distance[0], 0, atol=1e-3)
+
+        return inside or onBound
     
     def volume(self):
         return self.mesh.volume
