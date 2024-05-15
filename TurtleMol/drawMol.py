@@ -46,9 +46,9 @@ def drawMolBox(struc, baseStruc, iparams):
         numMol = int(numMol)
 
     if iparams['randFill'] == 'False' or iparams['randFill'] is False:
-        numXShifts = math.ceil(box.length / tol)
-        numYShifts = math.ceil(box.height / tol)
-        numZShifts = math.ceil(box.width / tol)
+        numXShifts = math.ceil(float(box.length) / float(tol))
+        numYShifts = math.ceil(float(box.height) /float( tol))
+        numZShifts = math.ceil(float(box.width)/ float(tol))
 
         # Check if structure is monatomic or molecule
         if len(originalPoints) == 1:
