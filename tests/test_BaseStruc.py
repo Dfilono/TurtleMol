@@ -32,10 +32,10 @@ def testBaseStruc():
         if name not in iparamsCube:
             iparamsCube[name] = dparams[name]
 
-    struc = readStrucFile(iparamsSphere['structureFile'])
+    struc, unitCell = readStrucFile(iparamsSphere['structureFile'])
 
     if iparamsSphere['baseStrucFile']:
-        baseStruc = readStrucFile(iparamsSphere['baseStrucFile'])
+        baseStruc, baseUnitCell = readStrucFile(iparamsSphere['baseStrucFile'])
     else:
         baseStruc = None
 

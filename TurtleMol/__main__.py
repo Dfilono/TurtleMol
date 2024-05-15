@@ -86,29 +86,55 @@ def main():
     print(iparams)
 
     # Get structure
-    struc = readStrucFile(iparams['structureFile'])
+    struc, unitCell = readStrucFile(iparams['structureFile'])
     print(struc)
 
+    if unitCell:
+        iparams['unitCell'] = [unitCell['a'], unitCell['b'], unitCell['c']]
+
     if iparams['baseStrucFile']:
-        baseStruc = readStrucFile(iparams['baseStrucFile'])
+        baseStruc, baseUnitCell = readStrucFile(iparams['baseStrucFile'])
     else:
         baseStruc = None
 
     if iparams['shape'].lower() == 'box' or iparams['shape'].lower() == 'cube':
         # Generate the new structure
-        outStruc, strucType = drawMolBox(struc, baseStruc, iparams)
-        print(len(outStruc))
+
+        if unitCell:
+            outStruc, strucType, cellParams = drawMolBox(struc, baseStruc, iparams)
+        else:
+            outStruc, strucType = drawMolBox(struc, baseStruc, iparams)
 
     elif iparams['shape'].lower() == 'sphere':
         # Generate the new structure
-        outStruc, strucType = drawMolSphere(struc, baseStruc, iparams)
+
+        if unitCell:
+            outStruc, strucType, cellParams = drawMolSphere(struc, baseStruc, iparams)
+        else:
+            outStruc, strucType = drawMolSphere(struc, baseStruc, iparams)
 
     elif iparams['shape'].lower() == 'mesh' and iparams['mesh'] is not None:
-        outStruc, strucType = drawMolMesh(struc, baseStruc, iparams)
+        # Generate the new structure
+        outStruc = []
 
+#        if isinstance(iparams['mesh'], str):
+#            iparams['mesh'] = [iparams['mesh']]
+#
+#        for i in iparams['mesh']:
 
+        if unitCell:
+            outStrucTemp, strucType, cellParams = drawMolMesh(struc, baseStruc, iparams)
+            outStruc.append(outStrucTemp)
+        else:
+            outStrucTemp, strucType = drawMolMesh(struc, baseStruc, iparams)
+            outStruc.append(outStrucTemp)
+
+        
     if iparams['outputFile']:
-        writeOutput(outStruc, iparams['outputFile'], strucType)
+        if unitCell:
+            writeOutput(outStruc, iparams['outputFile'], strucType, cellParams)
+        else:
+            writeOutput(outStruc, iparams['outputFile'], strucType)
 
 if __name__ == "__main__":
     main()

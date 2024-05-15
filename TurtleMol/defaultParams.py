@@ -43,7 +43,8 @@ Keywords:
         'density' : None,
         'atomRadius' : 'AtomicRadius',
         'mesh' : None,
-        'meshScale' : 1.0
+        'meshScale' : 1.0,
+        'unitCell' : None
     }
 
     return params

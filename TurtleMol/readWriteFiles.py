@@ -24,7 +24,7 @@ def readStrucFile(filePath):
     # Reads XYZ
     if filePath[-3:] == 'xyz':
         return pd.read_csv(filePath, delim_whitespace=True,
-                           skiprows=2, names=["Atom", "X", "Y", "Z"])
+                           skiprows=2, names=["Atom", "X", "Y", "Z"]), None
     # Reads PDB
     if filePath[-3:] == 'pdb':
         return readPdb(filePath)
@@ -34,11 +34,23 @@ def readStrucFile(filePath):
 def readPdb(filePath):
     '''Reads structure file if a pdb'''
     data = []
+    unitCell = None
     symbols = getElementData('AtomicMass')
 
     with open(filePath, 'r', encoding = 'utf-8') as pdbFile:
         for line in pdbFile:
-            if line.startswith('ATOM') or line.startswith('HETATM'):
+
+            if line.startswith('CRYST1'):
+                # Extract unit cell parameters from the CRYST1 line
+                a = float(line[6:15].strip())
+                b = float(line[15:24].strip())
+                c = float(line[24:33].strip())
+                alpha = float(line[33:40].strip())
+                beta = float(line[40:47].strip())
+                gamma = float(line[47:54].strip())
+                unitCell = {'a': a, 'b': b, 'c': c, 'alpha': alpha, 'beta': beta, 'gamma': gamma}
+
+            elif line.startswith('ATOM') or line.startswith('HETATM'):
                 # Parse relevant fields from the PDB format
                 atomName = line[12:16].strip()
                 element = line[76:78].strip()
@@ -59,14 +71,14 @@ def readPdb(filePath):
 
     df = pd.DataFrame(data, columns=['Atom', 'X', 'Y', 'Z', 'Residue', 'ResidueSeq'])
 
-    return df
+    return df, unitCell
 
 def readMesh(filePath):
     '''Reads mesh files in format like .obj, .stl, .ply'''
     mesh = trimesh.load(filePath)
     return mesh
 
-def writeOutput(data, filePath, strucType):
+def writeOutput(data, filePath, strucType, cellParams=None):
     '''Writes data to output file'''
     try:
         # Writes XYZ
@@ -74,20 +86,27 @@ def writeOutput(data, filePath, strucType):
             writeXYZ(data, filePath, strucType)
         # Writes PDB
         elif filePath[-3:] == 'pdb':
-            writePdb(data, filePath)
+            if cellParams != None:
+                writePdb(data, filePath, cellParams)
+            else:
+                writePdb(data, filePath)
     except KeyError:
         print(f"Filetype {filePath[-3:]} not supported\n")
 
-def writePdb(data, filePath):
+def writePdb(data, filePath, cellParams=None):
     '''Writes a pdb file from results'''
     template = (
-        "HETATM{atomNum:5d} {atomType:^4}{residueName:<4} A{resNum:4d}"
-        "    {x:8.3f}{y:8.3f}{z:8.3f}{occupancy:6.2f}{tempFactor:6.2f}\n"
+        "HETATM{atomNum:5d} {atomType:>2}  {residueName:>3} A{resNum: >4d}"
+        "    {x: >8.3f}{y: >8.3f}{z: >8.3f}{occupancy: >6.2f}{tempFactor: >6.2f}\n"
         )
 
     with open(filePath, 'w', encoding = 'utf-8') as pdbFile:
         atomNum = 1
         resNum = 1
+        cell = cellParams
+
+        if cell != None:
+            pdbFile.write(cell + '\n')
 
         for mol in data:
             for atom in mol:
