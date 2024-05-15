@@ -115,11 +115,19 @@ def main():
 
     elif iparams['shape'].lower() == 'mesh' and iparams['mesh'] is not None:
         # Generate the new structure
+        outStruc = []
+
+#        if isinstance(iparams['mesh'], str):
+#            iparams['mesh'] = [iparams['mesh']]
+#
+#        for i in iparams['mesh']:
 
         if unitCell:
-            outStruc, strucType, cellParams = drawMolMesh(struc, baseStruc, iparams)
+            outStrucTemp, strucType, cellParams = drawMolMesh(struc, baseStruc, iparams)
+            outStruc.append(outStrucTemp)
         else:
-            outStruc, strucType = drawMolMesh(struc, baseStruc, iparams)
+            outStrucTemp, strucType = drawMolMesh(struc, baseStruc, iparams)
+            outStruc.append(outStrucTemp)
 
         
     if iparams['outputFile']:

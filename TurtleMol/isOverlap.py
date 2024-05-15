@@ -71,10 +71,15 @@ def buildKDTreeMapping(filledMolecules, radii):
     indexToAtom = {}
 
     for molID, molecule in enumerate(filledMolecules):
-        for atom in molecule:
+        if isinstance(molecule, list):
+            for atom in molecule:
+                index = len(atomCoords)
+                atomCoords.append(atom[1:4])
+                indexToAtom[index] = (molID, atom[0], radii[atom[0]])
+        else:
             index = len(atomCoords)
-            atomCoords.append(atom[1:4])
-            indexToAtom[index] = (molID, atom[0], radii[atom[0]])
+            atomCoords.append(molecule[1:4])
+            indexToAtom[index] = (molID, molecule[0], radii[molecule[0]])
 
     kd_tree = scipy.spatial.cKDTree(atomCoords) if atomCoords else None
     return kd_tree, indexToAtom
