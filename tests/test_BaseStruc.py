@@ -35,7 +35,7 @@ def testBaseStruc():
     struc, unitCell = readStrucFile(iparamsSphere['structureFile'])
 
     if iparamsSphere['baseStrucFile']:
-        baseStruc = readStrucFile(iparamsSphere['baseStrucFile'])
+        baseStruc, baseUnitCell = readStrucFile(iparamsSphere['baseStrucFile'])
     else:
         baseStruc = None
 

@@ -197,7 +197,7 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
             filledAtom.append(newMol)
 
             # Rebuild KDTree with newly added atoms
-            kdTree = scipy.spatial.cKDTree(np.array([atom[1:4] for atom in filledAtom]))
+            kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
         attempts += 1
 
     return list(filledAtom)
