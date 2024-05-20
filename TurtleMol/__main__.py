@@ -3,10 +3,10 @@
 import sys
 import re
 import argparse
-from drawMol import drawMolBox, drawMolSphere, drawMolMesh
-from readWriteFiles import writeOutput, getInput, readStrucFile
-from defaultParams import defaultParams
-from multMesh import buildMultiMesh
+from .drawMol import drawMolBox, drawMolSphere, drawMolMesh
+from .readWriteFiles import writeOutput, getInput, readStrucFile, loadGlobalMatrix
+from .defaultParams import defaultParams
+from .multMesh import buildMultiMesh
 
 def parseCommandLine(dparams):
     '''Parses command line for parameters'''
@@ -95,6 +95,9 @@ def main():
     if ',' in iparams['meshScale']:
         iparams['meshScale'] = [path.strip() for path in iparams['meshScale'].split(',')]
 
+    if ',' in iparams['globalMatrixPath']:
+        iparams['globalMatrixPath'] = [path.strip() for path in iparams['globalMatrixPath'].split(',')]
+
     print(iparams)
 
     # Get structure
@@ -114,6 +117,14 @@ def main():
 
     if unitCells:
         iparams['unitCells'] = [[cell['a'], cell['b'], cell['c']] for cell in unitCells]
+
+    if iparams['globalMatrixPath'] is not None and isinstance(iparams['globalMatrixPath'], list):
+        matrices = []
+        for m in iparams['globalMatrixPath']:
+            globMat = loadGlobalMatrix(m)
+            matrices.append(globMat)
+
+        iparams['globalMatrix'] = matrices
 
     if iparams['baseStrucFile']:
         baseStruc, baseUnitCell = readStrucFile(iparams['baseStrucFile'])
@@ -143,6 +154,7 @@ def main():
             outStruc, strucType = drawMolMesh(struc, baseStruc, iparams)
 
     elif iparams['shape'].lower() == 'multimesh' and isinstance(iparams['mesh'], list):
+        assert iparams['globalMatrix'] is not None and len(iparams['globalMatrix']) == len(iparams['mesh']), 'Global transformation matrix required for each mesh'
         outStruc, strucType, cellParams = buildMultiMesh(struc, baseStruc, iparams)
 
     if iparams['outputFile']:

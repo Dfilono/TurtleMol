@@ -1,6 +1,6 @@
 '''Module handles multiple meshes/structures'''
 
-import itertools
+import numpy as np
 from .drawMol import drawMolMesh
 from .isOverlap import isOverlapMoleculeKDTree, buildKDTreeMapping
 from .setAtomProp import setAtomicRadius
@@ -27,6 +27,7 @@ def buildMultiMesh(strucs, baseStruc, iparams):
             iparams['mesh'] = str(meshList[i])
             iparams['meshScale'] = float(scaleList[i])
             struc = strucs[i]
+            matrix = iparams['globalMatrix'][i]
             
             if iparams['unitCells']:
                 tol = 0
@@ -37,7 +38,8 @@ def buildMultiMesh(strucs, baseStruc, iparams):
                 tol = float(iparams['tol'])
                 coord, strucType = drawMolMesh(struc, baseStruc, iparams)
                 cellParams = None
-            
+
+            allMolMesh = []
             for mol in coord:
                 newMol = []
                 for atom in mol:
@@ -46,12 +48,13 @@ def buildMultiMesh(strucs, baseStruc, iparams):
                     if len(atom) == 5:
                         atomData = (atom[0].capitalize(), atom[1], atom[2], atom[3], atom[4])
                     newMol.append(atomData)
-                
-                if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
-                    coords.append(newMol)
+                allMolMesh.extend(newMol)
 
-                    # Rebuild KDTree with newly added atoms
-                    kdTree, indexToAtom = buildKDTreeMapping(coords, radii)
+            allMolMesh = applyGlobalTransform(allMolMesh, matrix)
+            if (kdTree is None or not isOverlapMoleculeKDTree(allMolMesh, kdTree, indexToAtom, radii, tol)):
+                coords.append(allMolMesh)
+                # Rebuild KDTree with newly added atoms
+                kdTree, indexToAtom = buildKDTreeMapping(coords, radii)
             
             strucTypes.append(strucType)
 
@@ -59,6 +62,8 @@ def buildMultiMesh(strucs, baseStruc, iparams):
             for i in range(len(meshList)):
                 iparams['mesh'] = str(meshList[i])
                 iparams['meshScale'] = float(scaleList[i])
+                matrix = iparams['globalMatrix'][i]
+
                 if iparams['unitCell']:
                     tol = 0
                     coord, strucType, cellParam = drawMolMesh(strucs, baseStruc, iparams)
@@ -68,6 +73,7 @@ def buildMultiMesh(strucs, baseStruc, iparams):
                     coord, strucType = drawMolMesh(strucs, baseStruc, iparams)
                     cellParams = None
 
+                allMolMesh = []
                 for mol in coord:
                     newMol = []
                     for atom in mol:
@@ -76,12 +82,49 @@ def buildMultiMesh(strucs, baseStruc, iparams):
                         if len(atom) == 5:
                             atomData = (atom[0].capitalize(), atom[1], atom[2], atom[3], atom[4])
                         newMol.append(atomData)
+                    allMolMesh.extend(newMol)
 
-                    if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
-                        coords.append(newMol)
+                allMolMesh = applyGlobalTransform(allMolMesh, matrix)
+                if (kdTree is None or not isOverlapMoleculeKDTree(allMolMesh, kdTree, indexToAtom, radii, tol)):
+                    coords.append(allMolMesh)
 
-                        # Rebuild KDTree with newly added atoms
-                        kdTree, indexToAtom = buildKDTreeMapping(coords, radii)
+                    # Rebuild KDTree with newly added atoms
+                    kdTree, indexToAtom = buildKDTreeMapping(coords, radii)
                 strucTypes.append(strucType)
 
     return coords, 'molecule', cellParams
+
+
+def applyGlobalTransform(data, matrix):
+    '''Applies the global transformation to atom coordinates'''
+
+    # Compute original centroid
+    ogCentroid = computeCentroid(data)
+
+    # Get Transformation Vector from Matrix
+    transVector = matrix[:3, 3]
+
+    # Compute Translation Vector
+    transVector = transVector - np.array(ogCentroid)
+
+    # Apply the translation to all atoms
+    transformed = applyTranslation(data, transVector)
+    
+    return transformed
+
+def computeCentroid(atoms):
+    '''Computes the centroid of a set of atoms'''
+    coords = np.array([atom[1:4] for atom in atoms])
+    centroid = np.mean(coords, axis = 0)
+    return centroid.tolist()
+
+def applyTranslation(atoms, transVector):
+    '''Applies the translation vector to all atoms'''
+    translated = []
+    for atom in atoms:
+        translatedCoords = (np.array(atom[1:4]) + transVector).tolist()
+        if len(atom) == 4:
+            translated.append([atom[0]] + translatedCoords)
+        elif len(atom) == 5:
+            translated.append([atom[0]] + translatedCoords + [atom[4]])
+    return translated

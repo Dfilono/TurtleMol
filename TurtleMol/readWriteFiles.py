@@ -7,6 +7,7 @@ Data on elements is also imported and searchable. Primary use at this time is fo
 
 import os
 import re
+import numpy as np
 import pandas as pd
 import trimesh
 
@@ -102,7 +103,7 @@ def writePdb(data, filePath, cellParams=None):
     '''Writes a pdb file from results'''
     template = (
         "HETATM{atomNum:5d} {atomType:>2}  {residueName:>3} A{resNum: >4d}"
-        "    {x: >8.3f}{y: >8.3f}{z: >8.3f}{occupancy: >6.2f}{tempFactor: >6.2f}"
+        "    {x: >8.3f}{y: >8.2f}{z: >8.3f}{occupancy: >6.2f}{tempFactor: >6.2f}"
         "           {element:>2}\n"
         )
 
@@ -178,6 +179,10 @@ def multiUnitCell(cellParams):
     combinedParam = f"CRYST1{combinedCell[0]:9.3f}{combinedCell[1]:9.3f}{combinedCell[2]:9.3f} 90.00 90.00 90.00 P 1           1\n"
 
     return combinedParam
+
+def loadGlobalMatrix(file):
+    '''Loads the global transformation matrix from file'''
+    return np.loadtxt(file)
 
 def getElementData(param):
     '''

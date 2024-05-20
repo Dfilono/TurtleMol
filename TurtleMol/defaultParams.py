@@ -45,6 +45,7 @@ Keywords:
         'mesh' : None,
         'meshScale' : 1.0,
         'unitCell' : None,
+        'globalMatrixPath' : None,
     }
 
     return params
