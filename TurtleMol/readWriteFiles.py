@@ -6,6 +6,7 @@ Data on elements is also imported and searchable. Primary use at this time is fo
 '''
 
 import os
+import re
 import pandas as pd
 import trimesh
 
@@ -85,9 +86,13 @@ def writeOutput(data, filePath, strucType, cellParams=None):
         if filePath[-3:] == 'xyz':
             writeXYZ(data, filePath, strucType)
         # Writes PDB
-        elif filePath[-3:] == 'pdb':
+        elif str(filePath[-3:]) == 'pdb':
             if cellParams != None:
-                writePdb(data, filePath, cellParams)
+                if isinstance(cellParams, str):
+                    writePdb(data, filePath, cellParams)
+                else:
+                    newCellParams = multiUnitCell(cellParams)
+                    writePdb(data, filePath, newCellParams)
             else:
                 writePdb(data, filePath)
     except KeyError:
@@ -97,7 +102,8 @@ def writePdb(data, filePath, cellParams=None):
     '''Writes a pdb file from results'''
     template = (
         "HETATM{atomNum:5d} {atomType:>2}  {residueName:>3} A{resNum: >4d}"
-        "    {x: >8.3f}{y: >8.3f}{z: >8.3f}{occupancy: >6.2f}{tempFactor: >6.2f}\n"
+        "    {x: >8.3f}{y: >8.3f}{z: >8.3f}{occupancy: >6.2f}{tempFactor: >6.2f}"
+        "           {element:>2}\n"
         )
 
     with open(filePath, 'w', encoding = 'utf-8') as pdbFile:
@@ -113,6 +119,7 @@ def writePdb(data, filePath, cellParams=None):
                 pdbFile.write(template.format(
                    atomNum = atomNum,
                    atomType = atom[0],
+                   element = atom[0].capitalize(),
                    residueName = atom[4],
                    resNum = resNum,
                    x = atom[1],
@@ -148,6 +155,29 @@ def writeXYZ(data, filePath, strucType):
             f.write(str(len(df['Atom'])))
             f.write('\n\n')
             f.write(df.to_string(header=False, index=False))
+
+def multiUnitCell(cellParams):
+    '''Helps write multi-mesh/struc files'''
+
+    def parseCryst(cryst):
+        match = re.match(r"CRYST1\s+(\d+\.\d+)\s+(\d+\.\d+)\s+(\d+\.\d+)", cryst)
+        if match:
+            return [float(match.group(1)), float(match.group(2)), float(match.group(3))]
+        else:
+            raise ValueError("Invalid CRYST1 string format")
+    
+    cells = [parseCryst(i) for i in cellParams]
+    maxLen = max(len(cell) for cell in cells)
+    combinedCell = [0] * maxLen
+    for i in range(maxLen):
+        values = [cell[i] for cell in cells if i < len(cell)]
+        if len(set(values)) == 1:
+            combinedCell[i] = values[0]
+        else:
+            combinedCell[i] = sum(values)
+    combinedParam = f"CRYST1{combinedCell[0]:9.3f}{combinedCell[1]:9.3f}{combinedCell[2]:9.3f} 90.00 90.00 90.00 P 1           1\n"
+
+    return combinedParam
 
 def getElementData(param):
     '''

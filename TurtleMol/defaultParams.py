@@ -44,7 +44,7 @@ Keywords:
         'atomRadius' : 'AtomicRadius',
         'mesh' : None,
         'meshScale' : 1.0,
-        'unitCell' : None
+        'unitCell' : None,
     }
 
     return params

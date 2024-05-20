@@ -1,10 +1,12 @@
 '''Module contains the main loop'''
 
 import sys
+import re
 import argparse
 from drawMol import drawMolBox, drawMolSphere, drawMolMesh
 from readWriteFiles import writeOutput, getInput, readStrucFile
 from defaultParams import defaultParams
+from multMesh import buildMultiMesh
 
 def parseCommandLine(dparams):
     '''Parses command line for parameters'''
@@ -83,14 +85,35 @@ def main():
         print('Please provide an initial structure')
         sys.exit()
 
+    # Check if structures and meshes are singular or plural
+    if ',' in iparams['structureFile']:
+        iparams['structureFile'] = [path.strip() for path in iparams['structureFile'].split(',')]
+
+    if ',' in iparams['mesh']:
+        iparams['mesh'] = [path.strip() for path in iparams['mesh'].split(',')]
+
+    if ',' in iparams['meshScale']:
+        iparams['meshScale'] = [path.strip() for path in iparams['meshScale'].split(',')]
+
     print(iparams)
 
     # Get structure
-    struc, unitCell = readStrucFile(iparams['structureFile'])
-    print(struc)
+    if isinstance(iparams['structureFile'], str):
+        struc, unitCell = readStrucFile(iparams['structureFile'])
+        print(struc)
+    elif isinstance(iparams['structureFile'], list):
+        struc = []
+        unitCells = []
+        for i in iparams['structureFile']:
+            strucs, unitCellTemp = readStrucFile(i)
+            struc.append(strucs)
+            unitCells.append(unitCellTemp)
 
     if unitCell:
         iparams['unitCell'] = [unitCell['a'], unitCell['b'], unitCell['c']]
+
+    if unitCells:
+        iparams['unitCells'] = [[cell['a'], cell['b'], cell['c']] for cell in unitCells]
 
     if iparams['baseStrucFile']:
         baseStruc, baseUnitCell = readStrucFile(iparams['baseStrucFile'])
@@ -118,6 +141,9 @@ def main():
             outStruc, strucType, cellParams = drawMolMesh(struc, baseStruc, iparams)
         else:
             outStruc, strucType = drawMolMesh(struc, baseStruc, iparams)
+
+    elif iparams['shape'].lower() == 'multimesh' and isinstance(iparams['mesh'], list):
+        outStruc, strucType, cellParams = buildMultiMesh(struc, baseStruc, iparams)
 
     if iparams['outputFile']:
         if unitCell:
