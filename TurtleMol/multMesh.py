@@ -27,7 +27,7 @@ def buildMultiMesh(strucs, baseStruc, iparams):
             iparams['mesh'] = str(meshList[i])
             iparams['meshScale'] = float(scaleList[i])
             struc = strucs[i]
-            matrix = iparams['globalMatrix'][i]
+            matrix = iparams['globalMatrix'][i] * scaleList[i]
             
             if iparams['unitCells']:
                 tol = 0
@@ -62,7 +62,7 @@ def buildMultiMesh(strucs, baseStruc, iparams):
             for i in range(len(meshList)):
                 iparams['mesh'] = str(meshList[i])
                 iparams['meshScale'] = float(scaleList[i])
-                matrix = iparams['globalMatrix'][i]
+                matrix = iparams['globalMatrix'][i]  * scaleList[i]
 
                 if iparams['unitCell']:
                     tol = 0
