@@ -14,7 +14,7 @@ def unitCellBox(shape, dims, cellDims, og, radii):
 
     # Calculate how many times to duplicate the unit cell in a given dimension
     dupeCount = [int(dims[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
+    cellParams = f'CRYST1{dupeCount[0]*cellDims[0]:9.3f}{dupeCount[1]*cellDims[1]:9.3f}{dupeCount[2]*cellDims[2]:9.3f}  90.00  90.00  90.00 P 1         1'
 
     filled = []
 

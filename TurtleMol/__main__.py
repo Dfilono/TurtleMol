@@ -159,7 +159,7 @@ def main():
 
     if iparams['outputFile']:
         if unitCell:
-            writeOutput(outStruc, iparams['outputFile'], strucType, cellParams)
+            writeOutput(outStruc, iparams['outputFile'], strucType, cellParams, iparams['padding'])
         else:
             writeOutput(outStruc, iparams['outputFile'], strucType)
 

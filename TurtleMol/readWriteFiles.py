@@ -6,7 +6,6 @@ Data on elements is also imported and searchable. Primary use at this time is fo
 '''
 
 import os
-import re
 import numpy as np
 import pandas as pd
 import trimesh
@@ -80,7 +79,7 @@ def readMesh(filePath):
     mesh = trimesh.load(filePath)
     return mesh
 
-def writeOutput(data, filePath, strucType, cellParams=None):
+def writeOutput(data, filePath, strucType, cellParams=None, padding=[0, 0, 0]):
     '''Writes data to output file'''
     try:
         # Writes XYZ
@@ -92,7 +91,7 @@ def writeOutput(data, filePath, strucType, cellParams=None):
                 if isinstance(cellParams, str):
                     writePdb(data, filePath, cellParams)
                 else:
-                    newCellParams = multiUnitCell(cellParams)
+                    newCellParams = multiUnitCell(data, padding)
                     writePdb(data, filePath, newCellParams)
             else:
                 writePdb(data, filePath)
@@ -102,9 +101,9 @@ def writeOutput(data, filePath, strucType, cellParams=None):
 def writePdb(data, filePath, cellParams=None):
     '''Writes a pdb file from results'''
     template = (
-        "HETATM{atomNum:5d} {atomType:>2}  {residueName:>3} A{resNum: >4d}"
+        "HETATM{atomNum:5d} {atomType:>2}   {residueName:>3} A{resNum: >4d}"
         "    {x: >8.3f}{y: >8.2f}{z: >8.3f}{occupancy: >6.2f}{tempFactor: >6.2f}"
-        "           {element:>2}\n"
+        "          {element:>2}\n"
         )
 
     with open(filePath, 'w', encoding = 'utf-8') as pdbFile:
@@ -119,7 +118,7 @@ def writePdb(data, filePath, cellParams=None):
             for atom in mol:
                 pdbFile.write(template.format(
                    atomNum = atomNum,
-                   atomType = atom[0],
+                   atomType = atom[0].upper(),
                    element = atom[0].capitalize(),
                    residueName = atom[4],
                    resNum = resNum,
@@ -157,26 +156,21 @@ def writeXYZ(data, filePath, strucType):
             f.write('\n\n')
             f.write(df.to_string(header=False, index=False))
 
-def multiUnitCell(cellParams):
+def multiUnitCell(coords, padding = [0, 0, 0]):
     '''Helps write multi-mesh/struc files'''
-
-    def parseCryst(cryst):
-        match = re.match(r"CRYST1\s+(\d+\.\d+)\s+(\d+\.\d+)\s+(\d+\.\d+)", cryst)
-        if match:
-            return [float(match.group(1)), float(match.group(2)), float(match.group(3))]
-        else:
-            raise ValueError("Invalid CRYST1 string format")
+    def findOutermostPoints(mols):
+        coord = np.array([atom[1:4] for mol in mols for atom in mol])
+        minPoint = np.min(coord, axis=0)
+        maxPoint = np.max(coord, axis=0)
+        return minPoint, maxPoint
     
-    cells = [parseCryst(i) for i in cellParams]
-    maxLen = max(len(cell) for cell in cells)
-    combinedCell = [0] * maxLen
-    for i in range(maxLen):
-        values = [cell[i] for cell in cells if i < len(cell)]
-        if len(set(values)) == 1:
-            combinedCell[i] = values[0]
-        else:
-            combinedCell[i] = sum(values)
-    combinedParam = f"CRYST1{combinedCell[0]:9.3f}{combinedCell[1]:9.3f}{combinedCell[2]:9.3f} 90.00 90.00 90.00 P 1           1\n"
+    minPoint, maxPoint = findOutermostPoints(coords)
+
+    dimensions = abs(maxPoint - minPoint)
+
+    paddedDimensions = dimensions + np.array(padding)
+    
+    combinedParam = f"CRYST1{paddedDimensions[0]:9.3f}{paddedDimensions[1]:9.3f}{paddedDimensions[2]:9.3f}  90.00  90.00  90.00 P 1         1\n"
 
     return combinedParam
 

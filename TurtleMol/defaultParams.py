@@ -46,6 +46,7 @@ Keywords:
         'meshScale' : 1.0,
         'unitCell' : None,
         'globalMatrixPath' : None,
+        'padding' : [0, 0, 0],
     }
 
     return params
