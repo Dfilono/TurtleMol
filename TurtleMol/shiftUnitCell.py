@@ -5,7 +5,7 @@ import trimesh
 from .shiftBox import inBox
 
 # Box
-def unitCellBox(shape, dims, cellDims, og, radii):
+def unitCellBox(shape, dims, cellDims, cellAngles, og, radii):
     '''Duplicates unit cells to fill a given box'''
 
     # Find the atom types in the tile
@@ -14,7 +14,7 @@ def unitCellBox(shape, dims, cellDims, og, radii):
 
     # Calculate how many times to duplicate the unit cell in a given dimension
     dupeCount = [int(dims[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1{dupeCount[0]*cellDims[0]:9.3f}{dupeCount[1]*cellDims[1]:9.3f}{dupeCount[2]*cellDims[2]:9.3f}  90.00  90.00  90.00 P 1         1'
+    cellParams = f'CRYST1{dupeCount[0]*cellDims[0]:9.3f}{dupeCount[1]*cellDims[1]:9.3f}{dupeCount[2]*cellDims[2]:9.3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P 1         1'
 
     filled = []
 
@@ -56,13 +56,13 @@ def unitCellBox(shape, dims, cellDims, og, radii):
                 filled.append(currentCell)
     return filled, "molecule", cellParams
 
-def unitCellSphere(shape, cellDims, og, radii):
+def unitCellSphere(shape, cellDims, cellAngles, og, radii):
     '''Duplicates unit cells to fill a given sphere'''
 
     # Box dimensions that completely contain the sphere
     boxDim = [2 * shape.radius] * 3
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
 
     filled = []
 
@@ -92,7 +92,7 @@ def unitCellSphere(shape, cellDims, og, radii):
                 filled.append(currentCell)
     return filled, "molecule", cellParams
 
-def unitCellMesh(shape, cellDims, og, radius):
+def unitCellMesh(shape, cellDims, cellAngles, og, radius):
     '''Duplicates unit cells to fill a given mesh'''
 
     # Find the atom types in the tile
@@ -104,7 +104,7 @@ def unitCellMesh(shape, cellDims, og, radius):
     boxDim = maxBound - minBound
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
     
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  90.00  90.00  90.00 P1          1'
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
 
     filled = []
 

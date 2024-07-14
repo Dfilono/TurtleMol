@@ -33,7 +33,7 @@ def drawMolBox(struc, baseStruc, iparams):
     originalPoints = shiftPoints(originalPoints, box)
 
     if iparams['unitCell']:
-        filled, strucType, cellParams = unitCellBox(box, dims, iparams['unitCell'], 
+        filled, strucType, cellParams = unitCellBox(box, dims, iparams['unitCell'], iparams['angle'],
                                         originalPoints, radii)
         return filled, strucType, cellParams
 
@@ -89,7 +89,7 @@ def drawMolSphere(struc, baseStruc, iparams):
     originalPoints = shiftPoints(originalPoints, sphere)
 
     if iparams['unitCell']:
-        filled, strucType, cellParams = unitCellSphere(sphere, iparams['unitCell'], 
+        filled, strucType, cellParams = unitCellSphere(sphere, iparams['unitCell'], iparams['angle'],
                                         originalPoints, radii)
         return filled, strucType, cellParams
 
@@ -134,7 +134,7 @@ def drawMolSphere(struc, baseStruc, iparams):
 
 def drawMolMesh(struc, baseStruc, iparams):
     '''Places molecules in a mesh'''
-    mesh = mesh3D(iparams['mesh'], iparams['meshScale'])
+    mesh = mesh3D(iparams['mesh'], iparams['meshScale'], iparams['scaleX'], iparams['scaleY'], iparams['scaleZ'])
     radii = setAtomicRadius(iparams['atomRadius'])
     numMol = iparams['numMolecules']
     tol = float(iparams['tol'])
@@ -142,7 +142,7 @@ def drawMolMesh(struc, baseStruc, iparams):
     originalPoints = makeBase(struc)
 
     if iparams['unitCell']:
-        filled, strucType, cellParams = unitCellMesh(mesh, iparams['unitCell'], 
+        filled, strucType, cellParams = unitCellMesh(mesh, iparams['unitCell'], iparams['angle'],
                                         originalPoints, radii)
         return filled, strucType, cellParams
 

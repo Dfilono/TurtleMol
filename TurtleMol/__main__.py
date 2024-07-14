@@ -95,6 +95,15 @@ def main():
     if ',' in iparams['meshScale']:
         iparams['meshScale'] = [path.strip() for path in iparams['meshScale'].split(',')]
 
+    if ',' in iparams['scaleX']:
+        iparams['scaleX'] = [path.strip() for path in iparams['scaleX'].split(',')]
+
+    if ',' in iparams['scaleY']:
+        iparams['scaleY'] = [path.strip() for path in iparams['scaleY'].split(',')]
+
+    if ',' in iparams['scaleZ']:
+        iparams['scaleZ'] = [path.strip() for path in iparams['scaleZ'].split(',')]
+
     if ',' in iparams['globalMatrixPath']:
         iparams['globalMatrixPath'] = [path.strip() for path in iparams['globalMatrixPath'].split(',')]
 
@@ -114,9 +123,11 @@ def main():
 
     if unitCell:
         iparams['unitCell'] = [unitCell['a'], unitCell['b'], unitCell['c']]
+        iparams['angle'] = [unitCell['alpha'], unitCell['beta'], unitCell['gamma']]
 
     if unitCells:
         iparams['unitCells'] = [[cell['a'], cell['b'], cell['c']] for cell in unitCells]
+        iparams['angles'] = [[cell['alpha'], cell['beta'], cell['gamma']] for cell in unitCells]
 
     if iparams['globalMatrixPath'] is not None and isinstance(iparams['globalMatrixPath'], list):
         matrices = []

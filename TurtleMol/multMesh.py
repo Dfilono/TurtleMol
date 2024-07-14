@@ -8,13 +8,23 @@ from .setAtomProp import setAtomicRadius
 def buildMultiMesh(strucs, baseStruc, iparams):
     '''Builds meshes of molecules based on a given number of meshes and atomic structures'''
     assert isinstance(iparams['mesh'], list), 'Only one mesh provided, or meshes not in list'
-    assert isinstance(iparams['meshScale'], list), 'Please provide a scale for every provided mesh'
+    #assert isinstance(iparams['meshScale'], list), 'Please provide a scale for every provided mesh'
     
     coords = []
     strucTypes = []
     cellParams = []
     meshList = iparams['mesh']
-    scaleList = iparams['meshScale']
+    scaleXList = iparams['scaleX']
+    scaleYList = iparams['scaleY']
+    scaleZList = iparams['scaleZ']
+    scaleList = []
+
+    if isinstance(iparams['meshScale'], float):
+        for i in meshList:
+            scaleList.append(1)
+    else:
+        scaleList = iparams['meshScale']
+
     radii = setAtomicRadius(iparams['atomRadius'])
 
     # Create KD-tree for filledAtoms
@@ -27,11 +37,27 @@ def buildMultiMesh(strucs, baseStruc, iparams):
             iparams['mesh'] = str(meshList[i])
             iparams['meshScale'] = float(scaleList[i])
             struc = strucs[i]
-            matrix = iparams['globalMatrix'][i] * scaleList[i]
+            if scaleXList is not None and scaleYList is not None and scaleZList is not None:
+                iparams['scaleX'] = float(scaleXList[i]) if scaleXList[i] is not None else scaleList[i]
+                iparams['scaleY'] = float(scaleYList[i]) if scaleYList[i] is not None else scaleList[i]
+                iparams['scaleZ'] = float(scaleZList[i]) if scaleZList[i] is not None else scaleList[i]
+            
+                scaleFactors = np.array([iparams['scaleX'], iparams['scaleY'], iparams['scaleZ']])
+
+                # Create scaling matrix
+                scalingMatrix = np.eye(4)
+                scalingMatrix[0, 0] = scaleFactors[0]
+                scalingMatrix[1, 1] = scaleFactors[1]
+                scalingMatrix[2, 2] = scaleFactors[2]
+
+                matrix = np.dot(iparams['globalMatrix'][i], scalingMatrix)
+            else:
+                matrix = iparams['globalMatrix'][i] * scaleList[i]
             
             if iparams['unitCells']:
                 tol = 0
                 iparams['unitCell'] = [iparams['unitCells'][i][0], iparams['unitCells'][i][1], iparams['unitCells'][i][2]]
+                iparams['angle'] = [iparams['angles'][i][0], iparams['angles'][i][1], iparams['angles'][i][2]]
                 coord, strucType, cellParam = drawMolMesh(struc, baseStruc, iparams)
                 cellParams.append(cellParam)
             else:
@@ -62,7 +88,23 @@ def buildMultiMesh(strucs, baseStruc, iparams):
             for i in range(len(meshList)):
                 iparams['mesh'] = str(meshList[i])
                 iparams['meshScale'] = float(scaleList[i])
-                matrix = iparams['globalMatrix'][i]  * scaleList[i]
+                struc = strucs[i]
+                if scaleXList is not None and scaleYList is not None and scaleZList is not None:
+                    iparams['scaleX'] = float(scaleXList[i]) if scaleXList[i] is not None else scaleList[i]
+                    iparams['scaleY'] = float(scaleYList[i]) if scaleYList[i] is not None else scaleList[i]
+                    iparams['scaleZ'] = float(scaleZList[i]) if scaleZList[i] is not None else scaleList[i]
+
+                    scaleFactors = np.array([iparams['scaleX'], iparams['scaleY'], iparams['scaleZ']])
+
+                    # Create scaling matrix
+                    scalingMatrix = np.eye(4)
+                    scalingMatrix[0, 0] = scaleFactors[0]
+                    scalingMatrix[1, 1] = scaleFactors[1]
+                    scalingMatrix[2, 2] = scaleFactors[2]
+
+                    matrix = np.dot(iparams['globalMatrix'][i], scalingMatrix)
+                else:
+                    matrix = iparams['globalMatrix'][i] * scaleList[i]
 
                 if iparams['unitCell']:
                     tol = 0

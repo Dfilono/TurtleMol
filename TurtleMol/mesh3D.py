@@ -7,9 +7,13 @@ import trimesh
 class mesh3D():
     '''Defines properties of a mesh'''
 
-    def __init__(self, filePath, scale):
+    def __init__(self, filePath, scale, scaleX = None, scaleY = None, scaleZ = None):
         self.mesh = readMesh(filePath)
-        self.scale = float(scale)
+        
+        if scaleX is not None and scaleY is not None and scaleZ is not None:
+            self.scale = (scaleX, scaleY, scaleZ)
+        else:
+            self.scale = float(scale)
         self.mesh = self.mesh.apply_scale(self.scale)
 
         # Mesh properties
