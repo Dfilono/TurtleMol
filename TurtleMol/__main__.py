@@ -126,8 +126,8 @@ def main():
         iparams['angle'] = [unitCell['alpha'], unitCell['beta'], unitCell['gamma']]
 
     if unitCells:
-        iparams['unitCells'] = [[cell['a'], cell['b'], cell['c']] for cell in unitCells]
-        iparams['angles'] = [[cell['alpha'], cell['beta'], cell['gamma']] for cell in unitCells]
+        iparams['unitCells'] = [[cell['a'], cell['b'], cell['c']] if cell is not None else None for cell in unitCells]
+        iparams['angles'] = [[cell['alpha'], cell['beta'], cell['gamma']] if cell is not None else None for cell in unitCells]
 
     if iparams['globalMatrixPath'] is not None and isinstance(iparams['globalMatrixPath'], list):
         matrices = []

@@ -54,7 +54,7 @@ def buildMultiMesh(strucs, baseStruc, iparams):
             else:
                 matrix = iparams['globalMatrix'][i] * scaleList[i]
             
-            if iparams['unitCells']:
+            if iparams['unitCells'][i] is not None:
                 tol = 0
                 iparams['unitCell'] = [iparams['unitCells'][i][0], iparams['unitCells'][i][1], iparams['unitCells'][i][2]]
                 iparams['angle'] = [iparams['angles'][i][0], iparams['angles'][i][1], iparams['angles'][i][2]]
@@ -62,8 +62,9 @@ def buildMultiMesh(strucs, baseStruc, iparams):
                 cellParams.append(cellParam)
             else:
                 tol = float(iparams['tol'])
+                iparams['unitCell'] = None
                 coord, strucType = drawMolMesh(struc, baseStruc, iparams)
-                cellParams = None
+                cellParams.append(None)
 
             allMolMesh = []
             for mol in coord:
