@@ -6,6 +6,7 @@ Data on elements is also imported and searchable. Primary use at this time is fo
 '''
 
 import os
+import json
 import numpy as np
 import pandas as pd
 import trimesh
@@ -23,12 +24,16 @@ def getInput(filePath):
 def readStrucFile(filePath):
     '''Reads structure file'''
     # Reads XYZ
-    if filePath[-3:] == 'xyz':
+    if str(filePath[-3:]).lower() == 'xyz':
         return pd.read_csv(filePath, delim_whitespace=True,
                            skiprows=2, names=["Atom", "X", "Y", "Z"]), None
     # Reads PDB
-    if filePath[-3:] == 'pdb':
+    if str(filePath[-3:]).lower() == 'pdb':
         return readPdb(filePath)
+    
+    # Reads CJSON
+    if str(filePath[-5:]).lower() == 'cjson':
+        return readCJSON(filePath)
 
     return f"ERROR: Issue generating file to {filePath}"
 
@@ -74,6 +79,41 @@ def readPdb(filePath):
 
     return df, unitCell
 
+def readCJSON(filepath):
+    '''Reads Structure from cjson file'''
+    with open(filepath, 'r') as file:
+        data = json.load(file)
+
+    # Extract atomic data
+    atomNumbers = data['atoms']['elements']['number']
+    coords = data['atoms']['coords']['3d']
+
+    symbols = getElementData('AtomicNumber')
+    symbols = pd.Series(symbols.Symbol.values, index=symbols.AtomicNumber.values).to_dict()
+
+    # Create dataframe
+    atomData = []
+    for i in range(len(atomNumbers)):
+        symbol = symbols.get(atomNumbers[i], "Unknown")
+        atomData.append([symbol, coords[i*3], coords[i*3 + 1], coords[i*3 + 2]])
+
+    df = pd.DataFrame(atomData, columns=['Atom', 'X', 'Y', 'Z'])
+
+    # Extract unit cell data if present
+    unitCell = None
+    if 'unitCell' in data:
+        unitCell = {
+                'a': data['unitCell']['a'],
+                'b': data['unitCell']['b'],
+                'c': data['unitCell']['c'],
+                'alpha': data['unitCell']['alpha'],
+                'beta': data['unitCell']['beta'],
+                'gamma': data['unitCell']['gamma']
+            }
+    
+    print(df)
+    return df, unitCell
+
 def readMesh(filePath):
     '''Reads mesh files in format like .obj, .stl, .ply'''
     mesh = trimesh.load(filePath)
@@ -83,10 +123,10 @@ def writeOutput(data, filePath, strucType, cellParams=None, padding=[0, 0, 0]):
     '''Writes data to output file'''
     try:
         # Writes XYZ
-        if filePath[-3:] == 'xyz':
+        if str(filePath[-3:]).lower() == 'xyz':
             writeXYZ(data, filePath, strucType)
         # Writes PDB
-        elif str(filePath[-3:]) == 'pdb':
+        elif str(filePath[-3:]).lower() == 'pdb':
             if cellParams != None:
                 if isinstance(cellParams, str):
                     writePdb(data, filePath, cellParams)
@@ -95,6 +135,16 @@ def writeOutput(data, filePath, strucType, cellParams=None, padding=[0, 0, 0]):
                     writePdb(data, filePath, newCellParams)
             else:
                 writePdb(data, filePath)
+        # Write CJSON
+        elif str(filePath[-5:]).lower() == 'cjson':
+            if cellParams !=None:
+                if isinstance(cellParams, str):
+                    writeCJSON(data, filePath, cellParams)
+                else:
+                    newCellParams = multiUnitCell(data, padding)
+                    writeCJSON(data, filePath, newCellParams)
+            else:
+                writeCJSON(data, filePath)
     except KeyError:
         print(f"Filetype {filePath[-3:]} not supported\n")
 
@@ -155,6 +205,56 @@ def writeXYZ(data, filePath, strucType):
             f.write(str(len(df['Atom'])))
             f.write('\n\n')
             f.write(df.to_string(header=False, index=False))
+
+def writeCJSON(data, filePath, cellParams=None):
+    '''Writes a cjson file from results'''
+    # Init cjson structure
+    cjsonData = {
+        'chemical json': 0,
+        'atoms' : {
+            'elements' : {
+                'number' : []
+            },
+            "coords" : {
+                '3d' : []
+            }
+        }
+    }
+
+    # Fetch data to convert atomic symbol to atomic number
+    symbols = getElementData('AtomicNumber')
+    symbols = pd.Series(symbols.AtomicNumber.values, index=symbols.Symbol.values).to_dict()
+
+    # Populate cjson structure with data
+    for mol in data:
+        for atom in mol:
+            atomName = atom[0]
+            x, y, z = atom[1], atom[2], atom[3]
+            atomicNumber = symbols.get(atomName, None)
+
+            if atomicNumber is not None:
+                cjsonData['atoms']['elements']['number'].append(atomicNumber)
+                cjsonData['atoms']['coords']['3d'].extend([x, y, z])
+            else:
+                raise ValueError(f'Unknown element symbol: {atomName}')
+            
+    if cellParams:
+        unitCell = cellParams.split()[1:7]
+        if len(unitCell) == 6:
+            cjsonData['unitCell'] = {
+                'a': float(unitCell[0]),
+                'b': float(unitCell[1]),
+                'c': float(unitCell[2]),
+                'alpha': float(unitCell[3]),
+                'beta': float(unitCell[4]),
+                'gamma': float(unitCell[5])
+            }
+        else:
+            raise ValueError("Unit cell must contain exactly 6 parameters")
+        
+    # Wrtie the CJSON data to file
+    with open(filePath, 'w') as file:
+        json.dump(cjsonData, file, indent=4)
 
 def multiUnitCell(coords, padding = [0, 0, 0]):
     '''Helps write multi-mesh/struc files'''

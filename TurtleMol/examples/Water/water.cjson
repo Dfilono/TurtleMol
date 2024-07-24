@@ -1,0 +1,167 @@
+{
+  "atoms": {
+    "coords": {
+      "3d": [
+        0.7493682,
+        0.0,
+        0.4424329,
+        0.0,
+        0.0,
+        -0.1653507,
+        -0.7493682,
+        0.0,
+        0.4424329
+      ]
+    },
+    "elements": {
+      "number": [
+        1,
+        8,
+        1
+      ]
+    },
+    "formalCharges": [
+      0,
+      0,
+      0
+    ],
+    "layer": [
+      0,
+      0,
+      0
+    ]
+  },
+  "bonds": {
+    "connections": {
+      "index": [
+        0,
+        1,
+        1,
+        2
+      ]
+    },
+    "order": [
+      1,
+      1
+    ]
+  },
+  "chemicalJson": 1,
+  "layer": {
+    "enable": {
+      "Ball and Stick": [
+        true
+      ],
+      "Cartoons": [
+        true
+      ],
+      "Close Contacts": [
+        false
+      ],
+      "Crystal Lattice": [
+        true
+      ],
+      "Force": [
+        false
+      ],
+      "Labels": [
+        false
+      ],
+      "Licorice": [
+        false
+      ],
+      "Meshes": [
+        false
+      ],
+      "Non-Covalent": [
+        false
+      ],
+      "Van der Waals": [
+        false
+      ],
+      "Wireframe": [
+        false
+      ],
+      "undef": [
+        false
+      ]
+    },
+    "locked": [
+      false
+    ],
+    "settings": {
+      "Ball and Stick": [
+        "true true 0.300000 0.100000"
+      ],
+      "Cartoons": [
+        "false false false false false true false"
+      ],
+      "Labels": [
+        "2 0 0.5 255 255 255"
+      ],
+      "Wireframe": [
+        "true true 1.000000"
+      ]
+    },
+    "visible": [
+      true
+    ]
+  },
+  "name": "",
+  "properties": {
+    "fileName": "C:/Users/filon/OneDrive/Desktop/Research/Wilmer/MoleculeBuilderProject/MoleculeBuilderPackage/TurtleMol/examples/Water/water.xyz",
+    "modelView": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        -13.55983829498291
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "projection": [
+      [
+        1.1072288751602173,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        2.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.2309468984603882,
+        -4.461893558502197
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ]
+    ],
+    "totalCharge": 0,
+    "totalSpinMultiplicity": 1
+  }
+}
