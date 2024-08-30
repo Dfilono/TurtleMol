@@ -19,6 +19,7 @@ from .setAtomProp import setAtomicRadius
 from .makeStruc import makeBase, shiftPoints
 from .shiftDensity import placeMols
 from .shiftUnitCell import unitCellBox, unitCellMesh, unitCellSphere
+from .shiftHexagon import hexagonUnitCellBox, hexagonUnitCellSphere, hexagonUnitCellMesh
 
 def drawMolBox(struc, baseStruc, iparams):
     '''Utilized to place molecules in a box'''
@@ -33,9 +34,14 @@ def drawMolBox(struc, baseStruc, iparams):
     originalPoints = shiftPoints(originalPoints, box)
 
     if iparams['unitCell']:
-        filled, strucType, cellParams = unitCellBox(box, dims, iparams['unitCell'], iparams['angle'],
-                                        originalPoints, radii)
-        return filled, strucType, cellParams
+        if iparams['hexagonal'] == False:
+            filled, strucType, cellParams = unitCellBox(box, dims, iparams['unitCell'], iparams['angle'],
+                                            originalPoints, radii)
+            return filled, strucType, cellParams
+        else:
+            filled, strucType, cellParams = hexagonUnitCellBox(box, dims, iparams['unitCell'],
+                                            originalPoints, radii)
+            return filled, strucType, cellParams
 
     if iparams['density']:
         filled, strucType = placeMols(box, originalPoints, iparams['density'],
@@ -89,9 +95,14 @@ def drawMolSphere(struc, baseStruc, iparams):
     originalPoints = shiftPoints(originalPoints, sphere)
 
     if iparams['unitCell']:
-        filled, strucType, cellParams = unitCellSphere(sphere, iparams['unitCell'], iparams['angle'],
-                                        originalPoints, radii)
-        return filled, strucType, cellParams
+        if iparams['hexagonal'] == False:
+            filled, strucType, cellParams = unitCellSphere(sphere, iparams['unitCell'], iparams['angle'],
+                                            originalPoints, radii)
+            return filled, strucType, cellParams
+        else:
+            filled, strucType, cellParams = hexagonUnitCellSphere(sphere, iparams['unitCell'],
+                                            originalPoints, radii)
+            return filled, strucType, cellParams
 
     if iparams['density']:
         filled, strucType = placeMols(sphere, originalPoints, iparams['density'],
@@ -142,9 +153,14 @@ def drawMolMesh(struc, baseStruc, iparams):
     originalPoints = makeBase(struc)
 
     if iparams['unitCell']:
-        filled, strucType, cellParams = unitCellMesh(mesh, iparams['unitCell'], iparams['angle'],
-                                        originalPoints, radii)
-        return filled, strucType, cellParams
+        if iparams['hexagonal'] == False:
+            filled, strucType, cellParams = unitCellMesh(mesh, iparams['unitCell'], iparams['angle'],
+                                            originalPoints, radii)
+            return filled, strucType, cellParams
+        else:
+            filled, strucType, cellParams = hexagonUnitCellMesh(mesh, iparams['unitCell'],
+                                            originalPoints, radii)
+            return filled, strucType, cellParams
 
     if iparams['density']:
         filled, strucType = placeMols(mesh, originalPoints, iparams['density'],

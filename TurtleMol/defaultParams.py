@@ -48,7 +48,8 @@ Keywords:
         'scaleY' : None,
         'scaleZ' : None,
         'unitCell' : None,
-        'angle' : None,
+        'angle' : [90, 90, 90],
+        'hexagonal' : False,
         'globalMatrixPath' : None,
         'padding' : [0, 0, 0],
     }
