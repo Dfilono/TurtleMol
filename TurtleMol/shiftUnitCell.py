@@ -16,15 +16,26 @@ def unitCellBox(shape, dims, cellDims, cellAngles, og, radii):
     dupeCount = [int(dims[i] / cellDims[i]) for i in range(3)]
     cellParams = f'CRYST1{dupeCount[0]*cellDims[0]:9.3f}{dupeCount[1]*cellDims[1]:9.3f}{dupeCount[2]*cellDims[2]:9.3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P 1         1'
 
+    alpha = np.radians(cellAngles[0])
+    beta = np.radians(cellAngles[1])
+    gamma = np.radians(cellAngles[2])
+
+    # Define the basis vectors
+    a1 = np.array([cellDims[0], 0, 0])
+    a2 = np.array([cellDims[1] * np.cos(gamma), cellDims[1] * np.sin(gamma), 0])
+    a3 = np.array([
+        cellDims[2] * np.cos(beta), 
+        cellDims[2] * (np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma),
+        cellDims[2] * np.sqrt(1 - np.cos(beta)**2 - ((np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma))**2)
+    ])
+
     filled = []
 
     for dx in range(dupeCount[0]):
         for dy in range(dupeCount[1]):
             for dz in range(dupeCount[2]):
                 # Calculate the displacement for this duplication
-                disp = np.array([dx * cellDims[0], 
-                                 dy * cellDims[1], 
-                                 dz * cellDims[2]])
+                disp = dx*a1 + dy*a2 + dz*a3
                 
                 currentCell = []
                 
@@ -64,14 +75,25 @@ def unitCellSphere(shape, cellDims, cellAngles, og, radii):
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
     cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
 
+    alpha = np.radians(cellAngles[0])
+    beta = np.radians(cellAngles[1])
+    gamma = np.radians(cellAngles[2])
+
+    # Define the basis vectors
+    a1 = np.array([cellDims[0], 0, 0])
+    a2 = np.array([cellDims[1] * np.cos(gamma), cellDims[1] * np.sin(gamma), 0])
+    a3 = np.array([
+        cellDims[2] * np.cos(beta), 
+        cellDims[2] * (np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma),
+        cellDims[2] * np.sqrt(1 - np.cos(beta)**2 - ((np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma))**2)
+    ])
+
     filled = []
 
     for dx in range(dupeCount[0]):
         for dy in range(dupeCount[1]):
             for dz in range(dupeCount[2]):
-                disp = np.array([dx * cellDims[0], 
-                                 dy * cellDims[1], 
-                                 dz * cellDims[2]])
+                disp = dx*a1 + dy*a2 + dz*a3
                 currentCell = []
 
                 for atom in og:
@@ -106,14 +128,25 @@ def unitCellMesh(shape, cellDims, cellAngles, og, radius):
     
     cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
 
+    alpha = np.radians(cellAngles[0])
+    beta = np.radians(cellAngles[1])
+    gamma = np.radians(cellAngles[2])
+
+    # Define the basis vectors
+    a1 = np.array([cellDims[0], 0, 0])
+    a2 = np.array([cellDims[1] * np.cos(gamma), cellDims[1] * np.sin(gamma), 0])
+    a3 = np.array([
+        cellDims[2] * np.cos(beta), 
+        cellDims[2] * (np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma),
+        cellDims[2] * np.sqrt(1 - np.cos(beta)**2 - ((np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma))**2)
+    ])
+
     filled = []
 
     for dx in range(dupeCount[0]):
         for dy in range(dupeCount[1]):
             for dz in range(dupeCount[2]):
-                disp = np.array([dx * cellDims[0], 
-                                 dy * cellDims[1], 
-                                 dz * cellDims[2]]) + minBound
+                disp = disp = dx*a1 + dy*a2 + dz*a3 + minBound
                 currentCell = []
 
                 for atom in og:
