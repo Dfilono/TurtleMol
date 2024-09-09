@@ -4,6 +4,7 @@ import random
 import numpy as np
 from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree, buildKDTreeMapping
 from .makeStruc import makeBase, reCenter, randReorient
+from .surfaceNormal import placeOnSurfaceNormal, alignToNormal
 
 def atomsFillMesh(mesh, og, tol, radii, numMol):
     '''Fills mesh with single atoms'''
@@ -48,7 +49,7 @@ def atomsFillMesh(mesh, og, tol, radii, numMol):
     return filled
 
 def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc, 
-                      randOrient):
+                      randOrient, alignNormal=False, onSurface=False):
     '''Fills mesh with molecules'''
     filled = []
 
@@ -105,7 +106,11 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
                         newMol.append(atomData)
                         
                     if randOrient and len(newMol) == len(og):
-                        newMol = randReorient(newMol)
+                        newMol = randReorient(mesh, newMol)
+                    if alignNormal:
+                        newMol = alignToNormal(mesh, newMol)
+                    if onSurface:
+                        newMol = placeOnSurfaceNormal(newMol)
                     if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
                         filled.append(newMol)
 
