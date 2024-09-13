@@ -110,7 +110,7 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
                     if alignNormal:
                         newMol = alignToNormal(mesh, newMol)
                     if onSurface:
-                        newMol = placeOnSurfaceNormal(newMol)
+                        newMol = placeOnSurfaceNormal(mesh, newMol)
                     if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
                         filled.append(newMol)
 

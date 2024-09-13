@@ -176,7 +176,16 @@ def drawMolMesh(struc, baseStruc, iparams):
 
             return list(filledAtom), 'atom'
         else:
-            filledMol = moleculesFillMesh(mesh, originalPoints, tol,
+            if iparams['onSurface'] == True:
+                filledMol = moleculesFillMesh(mesh, originalPoints, tol,
+                                          radii, numMol, baseStruc, iparams['randomizeOrient'], 
+                                          onSurface=True)
+            elif iparams['alignNormal'] == True:
+                filledMol = moleculesFillMesh(mesh, originalPoints, tol,
+                                          radii, numMol, baseStruc, iparams['randomizeOrient'],
+                                          alignNormal=True)
+            else:
+                filledMol = moleculesFillMesh(mesh, originalPoints, tol,
                                           radii, numMol, baseStruc, iparams['randomizeOrient'])
             
             return list(filledMol), 'molecule'

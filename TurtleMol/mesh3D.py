@@ -3,6 +3,7 @@
 import numpy as np
 from .readWriteFiles import readMesh
 import trimesh
+import scipy.spatial
 
 class mesh3D():
     '''Defines properties of a mesh'''
@@ -20,6 +21,11 @@ class mesh3D():
         self.isWaterTight = self.mesh.is_watertight
         self.bounds = self.mesh.bounds
         self.meshOrigin = self.origin()
+        self.face_normals = self.mesh.face_normals
+        self.triangles_tree = self.mesh.triangles_tree
+        self.vertices = self.mesh.vertices
+        self.referenced_vertices = self.mesh.referenced_vertices
+        self.triangles = self.mesh.triangles
 
         self.translate()
 

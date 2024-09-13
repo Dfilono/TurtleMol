@@ -52,6 +52,8 @@ Keywords:
         'hexagonal' : False,
         'globalMatrixPath' : None,
         'padding' : [0, 0, 0],
+        'onSurface' : False,
+        'alignNormal' : False,
     }
 
     return params

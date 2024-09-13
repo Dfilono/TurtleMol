@@ -4,6 +4,7 @@ import numpy as np
 from .drawMol import drawMolMesh
 from .isOverlap import isOverlapMoleculeKDTree, buildKDTreeMapping
 from .setAtomProp import setAtomicRadius
+from .makeStruc import computeCentroid, applyGlobalTransform, applyTranslation, findMinPoint
 
 def buildMultiMesh(strucs, baseStruc, iparams):
     '''Builds meshes of molecules based on a given number of meshes and atomic structures'''
@@ -139,54 +140,3 @@ def buildMultiMesh(strucs, baseStruc, iparams):
     coords = applyTranslation(coords, transVector, 'molecule')
     return coords, 'molecule', cellParams
 
-
-def applyGlobalTransform(data, matrix):
-    '''Applies the global transformation to atom coordinates'''
-
-    # Compute original centroid
-    ogCentroid = computeCentroid(data)
-
-    # Get Transformation Vector from Matrix
-    transVector = matrix[:3, 3]
-
-    # Compute Translation Vector
-    transVector = transVector - np.array(ogCentroid)
-
-    # Apply the translation to all atoms
-    transformed = applyTranslation(data, transVector)
-    
-    return transformed
-
-def computeCentroid(atoms):
-    '''Computes the centroid of a set of atoms'''
-    coords = np.array([atom[1:4] for atom in atoms])
-    centroid = np.mean(coords, axis = 0)
-    return centroid.tolist()
-
-def applyTranslation(atoms, transVector, strucType='atom'):
-    '''Applies the translation vector to all atoms'''
-    translated = []
-    if strucType == 'atom':
-        for atom in atoms:
-            translatedCoords = (np.array(atom[1:4]) + transVector).tolist()
-            if len(atom) == 4:
-                translated.append([atom[0]] + translatedCoords)
-            elif len(atom) == 5:
-                translated.append([atom[0]] + translatedCoords + [atom[4]])
-    elif strucType == 'molecule':
-        for mol in atoms:
-            newMol = []
-            for atom in mol:
-                translatedCoords = (np.array(atom[1:4]) + transVector).tolist()
-                if len(atom) == 4:
-                    newMol.append([atom[0]] + translatedCoords)
-                elif len(atom) == 5:
-                    newMol.append([atom[0]] + translatedCoords + [atom[4]])
-            translated.append(newMol)
-    return translated
-
-def findMinPoint(mols):
-    '''Finds the minimum point of the total structure'''
-    coords = np.array([atom[1:4] for mol in mols for atom in mol])
-    minPoint = np.min(coords, axis=0)
-    return minPoint
