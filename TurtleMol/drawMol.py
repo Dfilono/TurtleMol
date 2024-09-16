@@ -45,7 +45,7 @@ def drawMolBox(struc, baseStruc, iparams):
 
     if iparams['density']:
         filled, strucType = placeMols(box, originalPoints, iparams['density'],
-                                 tol, "box", radii, iparams['randomizeOrient'])
+                                 tol, "box", radii, iparams['randomizeOrient'], iparams['rotAngles'])
         return filled, strucType
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
@@ -65,7 +65,7 @@ def drawMolBox(struc, baseStruc, iparams):
         if len(originalPoints) > 1:
             filledAtom = moleculesFillBox(numXShifts, numYShifts, numZShifts,
                                           tol, originalPoints, box, radii, baseStruc,
-                                          iparams['randomizeOrient'], numMol)
+                                          iparams['randomizeOrient'], numMol, iparams['rotAngles'])
             return list(filledAtom), "molecule"
 
     elif iparams['randFill'] == 'True' or iparams['randFill'] is True:
@@ -78,7 +78,7 @@ def drawMolBox(struc, baseStruc, iparams):
         if len(originalPoints) > 1:
             filledAtom = moleculesRandBox(numMol, iparams['maxAttempts'],
                                               originalPoints, box, radii, tol, baseStruc,
-                                              iparams['randomizeOrient'])
+                                              iparams['randomizeOrient'], iparams['rotAngles'])
             return list(filledAtom), "molecule"
 
     return "ERROR", "No atoms found"
@@ -106,7 +106,7 @@ def drawMolSphere(struc, baseStruc, iparams):
 
     if iparams['density']:
         filled, strucType = placeMols(sphere, originalPoints, iparams['density'],
-                                 tol, "sphere", radii, iparams['randomizeOrient'])
+                                 tol, "sphere", radii, iparams['randomizeOrient'], iparams['rotAngles'])
         return filled, strucType
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
@@ -125,7 +125,7 @@ def drawMolSphere(struc, baseStruc, iparams):
         if len(originalPoints) > 1:
             filledAtom = moleculeFillSphere(numShifts, sphere,
                                             originalPoints, radii, tol, baseStruc,
-                                            iparams['randomizeOrient'], numMol)
+                                            iparams['randomizeOrient'], numMol, iparams['rotAngles'])
             return list(filledAtom), "molecule"
 
     elif iparams['randFill'] == 'True' or iparams['randFill'] is True:
@@ -138,7 +138,7 @@ def drawMolSphere(struc, baseStruc, iparams):
         if len(originalPoints) > 1:
             filledAtom = moleculeRandSphere(numMol, iparams['maxAttempts'],
                                                 originalPoints, sphere, radii, tol, baseStruc,
-                                                iparams['randomizeOrient'])
+                                                iparams['randomizeOrient'], iparams['rotAngles'])
             return list(filledAtom), "molecule"
 
     return "ERROR: No atoms found"
@@ -164,7 +164,7 @@ def drawMolMesh(struc, baseStruc, iparams):
 
     if iparams['density']:
         filled, strucType = placeMols(mesh, originalPoints, iparams['density'],
-                                 tol, "mesh", radii, iparams['randomizeOrient'])
+                                 tol, "mesh", radii, iparams['randomizeOrient'], iparams['rotAngles'])
         return filled, strucType
 
     if not isinstance(numMol, int) and str(numMol).lower() != "fill":
@@ -178,15 +178,15 @@ def drawMolMesh(struc, baseStruc, iparams):
         else:
             if iparams['onSurface'] == True:
                 filledMol = moleculesFillMesh(mesh, originalPoints, tol,
-                                          radii, numMol, baseStruc, iparams['randomizeOrient'], 
+                                          radii, numMol, baseStruc, iparams['randomizeOrient'], iparams['rotAngles'],
                                           onSurface=True)
             elif iparams['alignNormal'] == True:
                 filledMol = moleculesFillMesh(mesh, originalPoints, tol,
-                                          radii, numMol, baseStruc, iparams['randomizeOrient'],
+                                          radii, numMol, baseStruc, iparams['randomizeOrient'], iparams['rotAngles'],
                                           alignNormal=True)
             else:
                 filledMol = moleculesFillMesh(mesh, originalPoints, tol,
-                                          radii, numMol, baseStruc, iparams['randomizeOrient'])
+                                          radii, numMol, baseStruc, iparams['randomizeOrient'], iparams['rotAngles'])
             
             return list(filledMol), 'molecule'
 
@@ -197,6 +197,6 @@ def drawMolMesh(struc, baseStruc, iparams):
             return list(filledAtom), 'atom'
         else:
             filledMol = moleculesRandMesh(mesh, originalPoints, tol, radii, numMol,
-                                          baseStruc, iparams['randomizeOrient'],
+                                          baseStruc, iparams['randomizeOrient'], iparams['rotAngles'],
                                           iparams['maxAttempts'])
             return list(filledMol), 'molecule'

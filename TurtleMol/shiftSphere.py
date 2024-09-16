@@ -4,7 +4,7 @@ import random
 import scipy.spatial
 import numpy as np
 from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree, buildKDTreeMapping
-from .makeStruc import makeBase, reCenter, randReorient
+from .makeStruc import makeBase, reCenter, Reorient
 
 def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
     '''Fills sphere with single atoms'''
@@ -91,7 +91,7 @@ def atomRandSphere(numMol, maxAttempts, og, sphere, radii, tol):
     return list(filled)
 
 def moleculeFillSphere(numShifts, sphere, og, radii, tol,
-                       baseStruc, randOrient, numMol):
+                       baseStruc, randOrient, numMol, rotAngles):
     '''Fills sphere with molecules'''
     filled = []
 
@@ -136,7 +136,10 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
                         break # If any atom doesn't fit, discard the whol molecule
 
                 if randOrient and len(newMol) == len(og):
-                    newMol = randReorient(newMol)
+                    newMol = Reorient(newMol, randRotate=True)
+
+                if rotAngles != [0, 0, 0] and len(newMol) == len(og):
+                    newMol = Reorient(newMol, angles=rotAngles)
 
                 if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)) and \
                     numMol > len(filled):
@@ -148,7 +151,7 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
     return filled
 
 def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
-                           baseStruc, randOrient):
+                           baseStruc, randOrient, rotAngles):
     '''Places a defined number of molecules in a sphere'''
     filled = []
     attempts = 0
@@ -194,7 +197,10 @@ def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
                 break # If any atom doesn't fit, discard the whol molecule
 
         if randOrient and len(newMol) == len(og):
-            newMol = randReorient(newMol)
+                    newMol = Reorient(newMol, randRotate=True)
+
+        if rotAngles != [0, 0, 0] and len(newMol) == len(og):
+            newMol = Reorient(newMol, angles=rotAngles)
 
         if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
             if len(newMol) == len(og):

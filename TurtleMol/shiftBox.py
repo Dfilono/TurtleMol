@@ -1,10 +1,9 @@
 '''Module places molecules in a box'''
 
 import random
-import scipy.spatial
 import numpy as np
 from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree, buildKDTreeMapping
-from .makeStruc import makeBase, reCenter, randReorient
+from .makeStruc import makeBase, reCenter, Reorient
 
 def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
     '''Fills box with single atoms'''
@@ -90,7 +89,7 @@ def atomsRandBox(numMol, maxAttempts, og, box,
     return list(filledAtom)
 
 def moleculesFillBox(x, y, z, tol, og, box, radii,
-                     baseStruc, randOrient, numMol):
+                     baseStruc, randOrient, numMol, rotAngles):
     '''Fills box with molecules'''
     filledAtom = []
 
@@ -136,7 +135,10 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
                         anyAtomOutside = True
 
                 if randOrient and len(newMol) == len(og):
-                    newMol = randReorient(newMol)
+                    newMol = Reorient(newMol, randRotate=True)
+
+                if rotAngles != [0, 0, 0] and len(newMol) == len(og):
+                    newMol = Reorient(newMol, angles=rotAngles)
 
                 if ((kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)) and
                     not anyAtomOutside and numMol > len(filledAtom)):
@@ -149,7 +151,7 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
     return filledAtom
 
 def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
-                         baseStruc, randOrient):
+                         baseStruc, randOrient, rotAngles):
     '''Places a defined number of molecules in box'''
     filledAtom = []
 
@@ -191,7 +193,10 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
                 anyAtomOutside = True
 
         if randOrient and len(newMol) == len(og):
-            newMol = randReorient(newMol)
+                    newMol = Reorient(newMol, randRotate=True)
+
+        if rotAngles != [0, 0, 0] and len(newMol) == len(og):
+            newMol = Reorient(newMol, angles=rotAngles)
 
         if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)) and not anyAtomOutside:
             filledAtom.append(newMol)

@@ -3,7 +3,7 @@
 import random
 import numpy as np
 from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree, buildKDTreeMapping
-from .makeStruc import makeBase, reCenter, randReorient
+from .makeStruc import makeBase, reCenter, Reorient
 from .surfaceNormal import placeOnSurfaceNormal, alignToNormal
 
 def atomsFillMesh(mesh, og, tol, radii, numMol):
@@ -49,7 +49,7 @@ def atomsFillMesh(mesh, og, tol, radii, numMol):
     return filled
 
 def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc, 
-                      randOrient, alignNormal=False, onSurface=False):
+                      randOrient, rotAngles, alignNormal=False, onSurface=False):
     '''Fills mesh with molecules'''
     filled = []
 
@@ -106,7 +106,9 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
                         newMol.append(atomData)
                         
                     if randOrient and len(newMol) == len(og):
-                        newMol = randReorient(mesh, newMol)
+                        newMol = Reorient(newMol, randRotate=True)
+                    if rotAngles != [0, 0, 0] and len(newMol) == len(og):
+                        newMol = Reorient(newMol, angles=rotAngles)
                     if alignNormal:
                         newMol = alignToNormal(mesh, newMol)
                     if onSurface:
@@ -116,6 +118,9 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
 
                         # Rebuild KDTree with newly added atoms
                         kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+
+                        if len(filled) >= numMol:
+                            return filled
     return filled
 
 def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
@@ -154,7 +159,7 @@ def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
     return filled
 
 def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
-                      randOrient, maxAttempts):
+                      randOrient, rotAngles, maxAttempts):
     '''Randomly places molecules in a mesh'''
     filled = []
     attempts = 0
@@ -191,7 +196,10 @@ def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
                 newMol.append(atomData)
 
         if randOrient and len(newMol) == len(og):
-            newMol = randReorient(newMol)
+            newMol = Reorient(newMol, randRotate=True)
+
+        if rotAngles != [0, 0, 0] and len(newMol) == len(og):
+            newMol = Reorient(newMol, angles=rotAngles)
 
         if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
             if len(newMol) == len(og):

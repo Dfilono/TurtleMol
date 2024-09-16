@@ -54,6 +54,7 @@ Keywords:
         'padding' : [0, 0, 0],
         'onSurface' : False,
         'alignNormal' : False,
+        'rotAngles' : [0, 0, 0],
     }
 
     return params

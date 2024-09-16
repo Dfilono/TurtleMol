@@ -77,8 +77,8 @@ def shiftPoints(points, shape):
 
     return shiftedPoints
 
-def randReorient(mol):
-    '''Randomly reorients a molecule around geometric center'''
+def Reorient(mol, randRotate=False, angles=[0,0,0]):
+    '''Reorients a molecule around geometric center'''
     if len(mol) == 0:
         return mol
 
@@ -90,9 +90,14 @@ def randReorient(mol):
 
     # Perform the rotaton
     # Generate random rotation angles in radians
-    thetaX = random.uniform(0, 2*np.pi)
-    thetaY = random.uniform(0, 2*np.pi)
-    thetaZ = random.uniform(0, 2*np.pi)
+    if randRotate:
+        thetaX = random.uniform(0, 2*np.pi)
+        thetaY = random.uniform(0, 2*np.pi)
+        thetaZ = random.uniform(0, 2*np.pi)
+    else:
+        thetaX = angles[0]
+        thetaY = angles[1]
+        thetaZ = angles[2]
 
     # Create the rotation matrix for the x-axis
     rx = np.array([[1, 0, 0],
