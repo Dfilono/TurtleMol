@@ -138,7 +138,7 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
                 if randOrient and len(newMol) == len(og):
                     newMol = Reorient(newMol, randRotate=True)
 
-                if rotAngles != [0, 0, 0] and len(newMol) == len(og):
+                if np.array(rotAngles).all() != np.array([0, 0, 0]).all() and len(newMol) == len(og):
                     newMol = Reorient(newMol, angles=rotAngles)
 
                 if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)) and \
@@ -199,7 +199,7 @@ def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
         if randOrient and len(newMol) == len(og):
                     newMol = Reorient(newMol, randRotate=True)
 
-        if rotAngles != [0, 0, 0] and len(newMol) == len(og):
+        if np.array(rotAngles).all() != np.array([0, 0, 0]).all() and len(newMol) == len(og):
             newMol = Reorient(newMol, angles=rotAngles)
 
         if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):

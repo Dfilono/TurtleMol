@@ -6,14 +6,14 @@ from .shiftBox import inBox
 from .makeStruc import calcLatticeVectors, rotateUnitCell
 
 # Box
-def unitCellBox(shape, dims, cellDims, cellAngles, og, radii, rotAngles=[0, 0, 0]):
+def unitCellBox(shape, dims, cellDims, cellAngles, og, radii, rotAngles=np.array([0, 0, 0]).all()):
     '''Duplicates unit cells to fill a given box'''
 
     # Find the atom types in the tile
     atomNames = {atom[0] for atom in og}
     totalRadius = sum(radii[str.capitalize(name)] for name in atomNames)
 
-    if rotAngles != [0, 0, 0]:
+    if np.array(rotAngles).all() != np.array([0, 0, 0]).all():
         latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
         og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
         cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
@@ -74,13 +74,13 @@ def unitCellBox(shape, dims, cellDims, cellAngles, og, radii, rotAngles=[0, 0, 0
                 filled.append(currentCell)
     return filled, "molecule", cellParams
 
-def unitCellSphere(shape, cellDims, cellAngles, og, radii, rotAngles=[0,0,0]):
+def unitCellSphere(shape, cellDims, cellAngles, og, radii, rotAngles=np.array([0, 0, 0]).all()):
     '''Duplicates unit cells to fill a given sphere'''
 
     # Box dimensions that completely contain the sphere
     boxDim = [2 * shape.radius] * 3
 
-    if rotAngles != [0, 0, 0]:
+    if np.array(rotAngles).all() != np.array([0, 0, 0]).all():
         latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
         og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
         cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
@@ -128,7 +128,7 @@ def unitCellSphere(shape, cellDims, cellAngles, og, radii, rotAngles=[0,0,0]):
                 filled.append(currentCell)
     return filled, "molecule", cellParams
 
-def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=[0,0,0]):
+def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=np.array([0, 0, 0]).all()):
     '''Duplicates unit cells to fill a given mesh'''
 
     # Find the atom types in the tile
@@ -139,7 +139,7 @@ def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=[0,0,0]):
     maxBound, minBound = shape.bounds[1], shape.bounds[0]
     boxDim = maxBound - minBound
 
-    if rotAngles != [0, 0, 0]:
+    if np.array(rotAngles).all() != np.array([0, 0, 0]).all():
         latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
         og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
         cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]

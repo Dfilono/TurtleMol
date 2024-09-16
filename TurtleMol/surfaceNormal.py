@@ -13,7 +13,7 @@ def alignToNormal(mesh, atoms):
     normals = mesh.face_normals
     zAxis = np.array([0, 0, 1])
 
-    if zAxis == normals[normalIdx[0][0]]:
+    if zAxis.all() == normals[normalIdx[0][0]].all():
         return atoms
 
     rotationMatrix = alignVectors([zAxis], [normals[normalIdx[0][0]]])
@@ -44,7 +44,7 @@ def placeOnSurfaceNormal(mesh, atoms):
     normals = mesh.face_normals
     zAxis = np.array([0, 0, 1])
 
-    if zAxis == normals[normalIdx[0][0]]:
+    if zAxis.all() == normals[normalIdx[0][0]].all():
         return atoms
 
     rotationMatrix = alignVectors([zAxis], [normals[normalIdx[0][0]]])
