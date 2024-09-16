@@ -3,6 +3,7 @@ import random
 import numpy as np
 from .Box3D import Box3d
 from .setAtomProp import setAtomicMass
+from scipy.spatial.transform import Rotation as R
 
 def makeBase(baseStruc):
     '''Convert dataframe to list of points'''
@@ -291,3 +292,73 @@ def findMinPoint(mols):
     coords = np.array([atom[1:4] for mol in mols for atom in mol])
     minPoint = np.min(coords, axis=0)
     return minPoint
+
+def calcLatticeVectors(a, b, c, alpha, beta, gamma):
+    '''Calculates the lattice vectors for a unit cell'''
+    # Convert angle from degrees to radians
+    alphaRad = np.radians(alpha)
+    betaRad = np.radians(beta)
+    gammaRad = np.radians(gamma)
+
+    # Lattice Vector a (points along x-axis)
+    aVec = np.array([a, 0, 0])
+
+    # Lattice Vector b (points along y-axis)
+    bVec = np.array([b * np.cos(gammaRad), b * np.sin(gammaRad), 0])
+
+    # Lattice Vector c (points along z-axis)
+    cX = c * np.cos(betaRad)
+    cY = c * (np.cos(alphaRad) - np.cos(betaRad) * np.cos(gammaRad)) / np.sin(gammaRad)
+    cZ = c * np.sqrt(1 - np.cos(betaRad)**2 - (cY/c)**2)
+    cVec = np.array([cX, cY, cZ])
+
+    latticeVectors = np.array([aVec, bVec, cVec])
+
+    return latticeVectors
+
+def rotateUnitCell(latticeVec, atoms, rotAngles):
+    '''Rotate unit cell lattice vectors and atoms'''
+    xAxis = [1, 0, 0]
+    yAxis = [0, 1, 0]
+    zAxis = [0, 0, 1]
+
+    atomTypes = [atom[0] for atom in atoms]
+    atomCoords = [atom[1:4] for atom in atoms]
+
+    if rotAngles[0] != 0:
+        rotX = R.from_rotvec(np.radians(rotAngles[0]) * np.array(xAxis))
+        latticeVec = rotX.apply(latticeVec)
+        atomCoords = rotX.apply(atomCoords @ latticeVec)
+    
+    if rotAngles[1] != 0:
+        rotY = R.from_rotvec(np.radians(rotAngles[1]) * np.array(yAxis))
+        latticeVec = rotY.apply(latticeVec)
+        atomCoords = rotY.apply(atomCoords @ latticeVec)
+
+    if rotAngles[2] != 0:
+        rotZ = R.from_rotvec(np.radians(rotAngles[2]) * np.array(zAxis))
+        latticeVec = rotZ.apply(latticeVec)
+        atomCoords = rotZ.apply(atomCoords @ latticeVec)
+
+    if len(atoms[0]) == 4:
+        rotatedAtoms = [atomTypes[i] + atomCoords[i] for i in range(len(atoms))]
+    elif len(atoms[0]) == 5:
+        rotatedAtoms = [atomTypes[i] + atomCoords[i] + atoms[i][-1] for i in range(len(atoms))]
+
+    a = np.linalg.norm(latticeVec[0])
+    b = np.linalg.norm(latticeVec[1])
+    c = np.linalg.norm(latticeVec[2])
+
+    alpha = np.degrees(np.acrcos(np.dot(latticeVec[1], latticeVec[2])/(b*c)))
+    beta = np.degrees(np.acrcos(np.dot(latticeVec[0], latticeVec[2])/(a*c)))
+    gamma = np.degrees(np.acrcos(np.dot(latticeVec[0], latticeVec[1])/(a*b)))
+
+    cellParams = {'a' : a,
+                  'b' : b,
+                  'c' : c,
+                  'alpha' : alpha,
+                  'beta' : beta,
+                  'gamma' : gamma}
+
+
+    return rotatedAtoms, cellParams

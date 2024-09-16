@@ -11,8 +11,11 @@ def alignToNormal(mesh, atoms):
     centroidShape = centroid.reshape((-1, 3))
     normalIdx = trimesh.proximity.nearby_faces(mesh, centroidShape)
     normals = mesh.face_normals
-    #print(normals[normalIdx[0][0]])
-    zAxis = np.array([0, 0.5, 0.5])
+    zAxis = np.array([0, 0, 1])
+
+    if zAxis == normals[normalIdx[0][0]]:
+        return atoms
+
     rotationMatrix = alignVectors([zAxis], [normals[normalIdx[0][0]]])
     
     
@@ -28,9 +31,7 @@ def alignToNormal(mesh, atoms):
             rotated.append([atomType, rotatedPoints[0], rotatedPoints[1], rotatedPoints[2]])
         elif len(atom) == 5:
             rotated.append([atomType, rotatedPoints[0], rotatedPoints[1], rotatedPoints[2], atom[-1]])
-    #print(len(rotated))
     rotatedAtoms = [tuple(atom) for atom in rotated]
-    #print(len(rotatedAtoms))
     return rotatedAtoms
 
 def placeOnSurfaceNormal(mesh, atoms):
@@ -41,7 +42,11 @@ def placeOnSurfaceNormal(mesh, atoms):
     normalIdx = trimesh.proximity.nearby_faces(mesh, centroidShape)
     nearestPoint, distance, triangleIdx = trimesh.proximity.closest_point(mesh, centroidShape)
     normals = mesh.face_normals
-    zAxis = np.array([0, 0.5, 0.5])
+    zAxis = np.array([0, 0, 1])
+
+    if zAxis == normals[normalIdx[0][0]]:
+        return atoms
+
     rotationMatrix = alignVectors([zAxis], [normals[normalIdx[0][0]]])
 
     rotatedAtoms = []
@@ -80,7 +85,6 @@ def alignVectors(v1, v2):
     v = np.cross(a, b)
     c = np.dot(a, b)
     s = np.linalg.norm(v)
-    #print(s)
     kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
     rotationMatrix = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s**2))
 

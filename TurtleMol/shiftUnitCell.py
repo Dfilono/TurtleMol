@@ -3,18 +3,21 @@
 import numpy as np
 import trimesh
 from .shiftBox import inBox
+from .makeStruc import calcLatticeVectors, rotateUnitCell
 
 # Box
-def unitCellBox(shape, dims, cellDims, cellAngles, og, radii):
+def unitCellBox(shape, dims, cellDims, cellAngles, og, radii, rotAngles=[0, 0, 0]):
     '''Duplicates unit cells to fill a given box'''
 
     # Find the atom types in the tile
     atomNames = {atom[0] for atom in og}
     totalRadius = sum(radii[str.capitalize(name)] for name in atomNames)
 
-    # Calculate how many times to duplicate the unit cell in a given dimension
-    dupeCount = [int(dims[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1{dupeCount[0]*cellDims[0]:9.3f}{dupeCount[1]*cellDims[1]:9.3f}{dupeCount[2]*cellDims[2]:9.3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P 1         1'
+    if rotAngles != [0, 0, 0]:
+        latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
+        og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
+        cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
+        cellAngles = [cellInfo['alpha'], cellInfo['beta'], cellInfo['gamma']]
 
     alpha = np.radians(cellAngles[0])
     beta = np.radians(cellAngles[1])
@@ -28,6 +31,10 @@ def unitCellBox(shape, dims, cellDims, cellAngles, og, radii):
         cellDims[2] * (np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma),
         cellDims[2] * np.sqrt(1 - np.cos(beta)**2 - ((np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma))**2)
     ])
+
+    # Calculate how many times to duplicate the unit cell in a given dimension
+    dupeCount = [int(dims[i] / cellDims[i]) for i in range(3)]
+    cellParams = f'CRYST1{dupeCount[0]*cellDims[0]:9.3f}{dupeCount[1]*cellDims[1]:9.3f}{dupeCount[2]*cellDims[2]:9.3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P 1         1'
 
     filled = []
 
@@ -67,17 +74,24 @@ def unitCellBox(shape, dims, cellDims, cellAngles, og, radii):
                 filled.append(currentCell)
     return filled, "molecule", cellParams
 
-def unitCellSphere(shape, cellDims, cellAngles, og, radii):
+def unitCellSphere(shape, cellDims, cellAngles, og, radii, rotAngles=[0,0,0]):
     '''Duplicates unit cells to fill a given sphere'''
 
     # Box dimensions that completely contain the sphere
     boxDim = [2 * shape.radius] * 3
-    dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
+
+    if rotAngles != [0, 0, 0]:
+        latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
+        og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
+        cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
+        cellAngles = [cellInfo['alpha'], cellInfo['beta'], cellInfo['gamma']]
 
     alpha = np.radians(cellAngles[0])
     beta = np.radians(cellAngles[1])
     gamma = np.radians(cellAngles[2])
+
+    dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
 
     # Define the basis vectors
     a1 = np.array([cellDims[0], 0, 0])
@@ -114,7 +128,7 @@ def unitCellSphere(shape, cellDims, cellAngles, og, radii):
                 filled.append(currentCell)
     return filled, "molecule", cellParams
 
-def unitCellMesh(shape, cellDims, cellAngles, og, radius):
+def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=[0,0,0]):
     '''Duplicates unit cells to fill a given mesh'''
 
     # Find the atom types in the tile
@@ -124,13 +138,20 @@ def unitCellMesh(shape, cellDims, cellAngles, og, radius):
     # Box dimensions that completely contain the mesh
     maxBound, minBound = shape.bounds[1], shape.bounds[0]
     boxDim = maxBound - minBound
-    dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
-    
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
+
+    if rotAngles != [0, 0, 0]:
+        latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
+        og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
+        cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
+        cellAngles = [cellInfo['alpha'], cellInfo['beta'], cellInfo['gamma']]
 
     alpha = np.radians(cellAngles[0])
     beta = np.radians(cellAngles[1])
     gamma = np.radians(cellAngles[2])
+
+    dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
+    
+    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
 
     # Define the basis vectors
     a1 = np.array([cellDims[0], 0, 0])

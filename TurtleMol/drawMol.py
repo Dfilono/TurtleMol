@@ -36,7 +36,7 @@ def drawMolBox(struc, baseStruc, iparams):
     if iparams['unitCell']:
         if iparams['hexagonal'] == False:
             filled, strucType, cellParams = unitCellBox(box, dims, iparams['unitCell'], iparams['angle'],
-                                            originalPoints, radii)
+                                            originalPoints, radii, iparams['rotAngles'])
             return filled, strucType, cellParams
         else:
             filled, strucType, cellParams = hexagonUnitCellBox(box, dims, iparams['unitCell'],
@@ -97,7 +97,7 @@ def drawMolSphere(struc, baseStruc, iparams):
     if iparams['unitCell']:
         if iparams['hexagonal'] == False:
             filled, strucType, cellParams = unitCellSphere(sphere, iparams['unitCell'], iparams['angle'],
-                                            originalPoints, radii)
+                                            originalPoints, radii, iparams['rotAngles'])
             return filled, strucType, cellParams
         else:
             filled, strucType, cellParams = hexagonUnitCellSphere(sphere, iparams['unitCell'],
@@ -155,7 +155,7 @@ def drawMolMesh(struc, baseStruc, iparams):
     if iparams['unitCell']:
         if iparams['hexagonal'] == False:
             filled, strucType, cellParams = unitCellMesh(mesh, iparams['unitCell'], iparams['angle'],
-                                            originalPoints, radii)
+                                            originalPoints, radii, iparams['rotAngles'])
             return filled, strucType, cellParams
         else:
             filled, strucType, cellParams = hexagonUnitCellMesh(mesh, iparams['unitCell'],
