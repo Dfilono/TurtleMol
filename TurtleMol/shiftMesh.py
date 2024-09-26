@@ -2,6 +2,7 @@
 
 import random
 import numpy as np
+import trimesh
 from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree, buildKDTreeMapping
 from .makeStruc import makeBase, reCenter, Reorient
 from .surfaceNormal import placeOnSurfaceNormal, alignToNormal
@@ -107,7 +108,7 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
                         
                     if randOrient and len(newMol) == len(og):
                         newMol = Reorient(newMol, randRotate=True)
-                    if np.array(rotAngles).all() != np.array([0, 0, 0]).all() and len(newMol) == len(og):
+                    if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
                         newMol = Reorient(newMol, angles=rotAngles)
                     if alignNormal:
                         newMol = alignToNormal(mesh, newMol)
@@ -198,7 +199,7 @@ def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
         if randOrient and len(newMol) == len(og):
             newMol = Reorient(newMol, randRotate=True)
 
-        if np.array(rotAngles).all() != np.array([0, 0, 0]).all() and len(newMol) == len(og):
+        if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
             newMol = Reorient(newMol, angles=rotAngles)
 
         if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):

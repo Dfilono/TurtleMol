@@ -45,7 +45,7 @@ def placeMols(shape, og, density, tol, shapeType, radii, randOrient,rotAngles):
         if randOrient and len(newMol) == len(og):
                     newMol = Reorient(newMol, randRotate=True)
 
-        if np.array(rotAngles).all() != np.array([0, 0, 0]).all() and len(newMol) == len(og):
+        if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
             newMol = Reorient(newMol, angles=rotAngles)
 
         if len(og) == 1:

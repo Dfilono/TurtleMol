@@ -137,7 +137,7 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
                 if randOrient and len(newMol) == len(og):
                     newMol = Reorient(newMol, randRotate=True)
 
-                if np.array(rotAngles).all() != np.array([0, 0, 0]) and len(newMol) == len(og):
+                if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
                     newMol = Reorient(newMol, angles=rotAngles)
 
                 if ((kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)) and
@@ -195,7 +195,7 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
         if randOrient and len(newMol) == len(og):
                     newMol = Reorient(newMol, randRotate=True)
 
-        if np.array(rotAngles).all() != np.array([0, 0, 0]).all() and len(newMol) == len(og):
+        if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
             newMol = Reorient(newMol, angles=rotAngles)
 
         if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)) and not anyAtomOutside:

@@ -13,7 +13,7 @@ def unitCellBox(shape, dims, cellDims, cellAngles, og, radii, rotAngles=np.array
     atomNames = {atom[0] for atom in og}
     totalRadius = sum(radii[str.capitalize(name)] for name in atomNames)
 
-    if np.array(rotAngles).all() != np.array([0, 0, 0]).all():
+    if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])):
         latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
         og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
         cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
@@ -80,7 +80,7 @@ def unitCellSphere(shape, cellDims, cellAngles, og, radii, rotAngles=np.array([0
     # Box dimensions that completely contain the sphere
     boxDim = [2 * shape.radius] * 3
 
-    if np.array(rotAngles).all() != np.array([0, 0, 0]).all():
+    if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])):
         latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
         og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
         cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
@@ -139,7 +139,7 @@ def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=np.array([0,
     maxBound, minBound = shape.bounds[1], shape.bounds[0]
     boxDim = maxBound - minBound
 
-    if np.array(rotAngles).all() != np.array([0, 0, 0]).all():
+    if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])):
         latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
         og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
         cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
