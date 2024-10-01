@@ -20,6 +20,7 @@ class mesh3D():
         # Mesh properties
         self.isWaterTight = self.mesh.is_watertight
         self.bounds = self.mesh.bounds
+        self.ogBounds = self.bounds
         self.meshOrigin = self.origin()
         self.face_normals = self.mesh.face_normals
         self.triangles_tree = self.mesh.triangles_tree

@@ -72,9 +72,9 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
     spacing = tol
 
     # Generate grid of points
-    gridX, gridY, gridZ = np.mgrid[minBound[0]:maxBound[0]:spacing,
-                                   minBound[1]:maxBound[1]:spacing,
-                                   minBound[2]:maxBound[2]:spacing]
+    gridX, gridY, gridZ = np.mgrid[minBound[0]:maxBound[0] + spacing:spacing,
+                                   minBound[1]:maxBound[1] + spacing:spacing,
+                                   minBound[2]:maxBound[2] + spacing:spacing]
     
     # Check each point in the grid
     for i in range(gridX.shape[0]):
