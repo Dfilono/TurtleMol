@@ -74,8 +74,9 @@ def buildKDTreeMapping(filledMolecules, radii):
         if isinstance(molecule, list):
             for atom in molecule:
                 index = len(atomCoords)
+                atomName = str.capitalize(atom[0])
                 atomCoords.append(atom[1:4])
-                indexToAtom[index] = (molID, atom[0], radii[atom[0]])
+                indexToAtom[index] = (molID, atom[0], radii[atomName])
         else:
             index = len(atomCoords)
             atomCoords.append(molecule[1:4])
