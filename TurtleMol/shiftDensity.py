@@ -2,10 +2,10 @@
 
 import numpy as np
 import scipy.spatial
-from .makeStruc import calcDistance, randReorient
+from .makeStruc import calcDistance, Reorient
 from .isOverlap import isOverlapMoleculeKDTree, isOverlapAtomKDTree, buildKDTreeMapping
 
-def placeMols(shape, og, density, tol, shapeType, radii, randOrient):
+def placeMols(shape, og, density, tol, shapeType, radii, randOrient,rotAngles):
     '''Place molecules in the grid defined by the density'''
     gridPoints = calcDistance(shape, og, density, shapeType)
 
@@ -42,8 +42,11 @@ def placeMols(shape, og, density, tol, shapeType, radii, randOrient):
             # Create KD-tree for filledAtoms
             kdTree, indexToAtom = buildKDTreeMapping(mols, radii)
 
-        if randOrient:
-            newPoint = randReorient(newPoint)
+        if randOrient and len(newMol) == len(og):
+                    newMol = Reorient(newMol, randRotate=True)
+
+        if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
+            newMol = Reorient(newMol, angles=rotAngles)
 
         if len(og) == 1:
             if (kdTree is None or not isOverlapAtomKDTree(newPoint, kdTree, indexToAtom, radii, tol)):

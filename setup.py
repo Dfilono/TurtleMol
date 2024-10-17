@@ -23,4 +23,9 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     zip_safe=False,
+    entry_points={
+        'console_scripts': [
+            'TurtleMol=TurtleMol.__main__:main',  # Assuming 'main.py' contains your 'main' function
+        ],
+    },
 )

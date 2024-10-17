@@ -1,10 +1,12 @@
 '''Module contains the main loop'''
 
 import sys
+import re
 import argparse
-from drawMol import drawMolBox, drawMolSphere, drawMolMesh
-from readWriteFiles import writeOutput, getInput, readStrucFile
-from defaultParams import defaultParams
+from .drawMol import drawMolBox, drawMolSphere, drawMolMesh
+from .readWriteFiles import writeOutput, getInput, readStrucFile, loadGlobalMatrix
+from .defaultParams import defaultParams
+from .multMesh import buildMultiMesh
 
 def parseCommandLine(dparams):
     '''Parses command line for parameters'''
@@ -83,14 +85,58 @@ def main():
         print('Please provide an initial structure')
         sys.exit()
 
+    # Check if structures and meshes are singular or plural
+    if ',' in iparams['structureFile']:
+        iparams['structureFile'] = [path.strip() for path in iparams['structureFile'].split(',')]
+
+    if iparams['mesh'] is not None and ',' in iparams['mesh']:
+        iparams['mesh'] = [path.strip() for path in iparams['mesh'].split(',')]
+
+    if isinstance(iparams['meshScale'], list) and ',' in iparams['meshScale']:
+        iparams['meshScale'] = [path.strip() for path in iparams['meshScale'].split(',')]
+
+    if iparams['scaleX'] is not None and ',' in iparams['scaleX']:
+        iparams['scaleX'] = [path.strip() for path in iparams['scaleX'].split(',')]
+
+    if iparams['scaleY'] is not None and ',' in iparams['scaleY']:
+        iparams['scaleY'] = [path.strip() for path in iparams['scaleY'].split(',')]
+
+    if iparams['scaleZ'] is not None and ',' in iparams['scaleZ']:
+        iparams['scaleZ'] = [path.strip() for path in iparams['scaleZ'].split(',')]
+
+    if iparams['globalMatrixPath'] is not None and ',' in iparams['globalMatrixPath']:
+        iparams['globalMatrixPath'] = [path.strip() for path in iparams['globalMatrixPath'].split(',')]
+
     print(iparams)
 
     # Get structure
-    struc, unitCell = readStrucFile(iparams['structureFile'])
-    print(struc)
+    if isinstance(iparams['structureFile'], str):
+        struc, unitCell = readStrucFile(iparams['structureFile'])
+        unitCells = None
+        print(struc)
+    elif isinstance(iparams['structureFile'], list):
+        struc = []
+        unitCells = []
+        for i in iparams['structureFile']:
+            strucs, unitCellTemp = readStrucFile(i)
+            struc.append(strucs)
+            unitCells.append(unitCellTemp)
 
     if unitCell:
         iparams['unitCell'] = [unitCell['a'], unitCell['b'], unitCell['c']]
+        iparams['angle'] = [unitCell['alpha'], unitCell['beta'], unitCell['gamma']]
+
+    if unitCells:
+        iparams['unitCells'] = [[cell['a'], cell['b'], cell['c']] if cell is not None else None for cell in unitCells]
+        iparams['angles'] = [[cell['alpha'], cell['beta'], cell['gamma']] if cell is not None else None for cell in unitCells]
+
+    if iparams['globalMatrixPath'] is not None and isinstance(iparams['globalMatrixPath'], list):
+        matrices = []
+        for m in iparams['globalMatrixPath']:
+            globMat = loadGlobalMatrix(m)
+            matrices.append(globMat)
+
+        iparams['globalMatrix'] = matrices
 
     if iparams['baseStrucFile']:
         baseStruc, baseUnitCell = readStrucFile(iparams['baseStrucFile'])
@@ -119,9 +165,13 @@ def main():
         else:
             outStruc, strucType = drawMolMesh(struc, baseStruc, iparams)
 
+    elif iparams['shape'].lower() == 'multimesh' and isinstance(iparams['mesh'], list):
+        assert iparams['globalMatrix'] is not None and len(iparams['globalMatrix']) == len(iparams['mesh']), 'Global transformation matrix required for each mesh'
+        outStruc, strucType, cellParams = buildMultiMesh(struc, baseStruc, iparams)
+
     if iparams['outputFile']:
         if unitCell:
-            writeOutput(outStruc, iparams['outputFile'], strucType, cellParams)
+            writeOutput(outStruc, iparams['outputFile'], strucType, cellParams, iparams['padding'])
         else:
             writeOutput(outStruc, iparams['outputFile'], strucType)
 

@@ -44,7 +44,17 @@ Keywords:
         'atomRadius' : 'AtomicRadius',
         'mesh' : None,
         'meshScale' : 1.0,
-        'unitCell' : None
+        'scaleX' : None,
+        'scaleY' : None,
+        'scaleZ' : None,
+        'unitCell' : None,
+        'angle' : [90, 90, 90],
+        'hexagonal' : False,
+        'globalMatrixPath' : None,
+        'padding' : [0, 0, 0],
+        'onSurface' : False,
+        'alignNormal' : False,
+        'rotAngles' : [0, 0, 0],
     }
 
     return params

@@ -2,8 +2,10 @@
 
 import random
 import numpy as np
+import trimesh
 from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree, buildKDTreeMapping
-from .makeStruc import makeBase, reCenter, randReorient
+from .makeStruc import makeBase, reCenter, Reorient
+from .surfaceNormal import placeOnSurfaceNormal, alignToNormal
 
 def atomsFillMesh(mesh, og, tol, radii, numMol):
     '''Fills mesh with single atoms'''
@@ -48,7 +50,7 @@ def atomsFillMesh(mesh, og, tol, radii, numMol):
     return filled
 
 def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc, 
-                      randOrient):
+                      randOrient, rotAngles, alignNormal=False, onSurface=False):
     '''Fills mesh with molecules'''
     filled = []
 
@@ -70,9 +72,9 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
     spacing = tol
 
     # Generate grid of points
-    gridX, gridY, gridZ = np.mgrid[minBound[0]:maxBound[0]:spacing,
-                                   minBound[1]:maxBound[1]:spacing,
-                                   minBound[2]:maxBound[2]:spacing]
+    gridX, gridY, gridZ = np.mgrid[minBound[0]:maxBound[0] + spacing:spacing,
+                                   minBound[1]:maxBound[1] + spacing:spacing,
+                                   minBound[2]:maxBound[2] + spacing:spacing]
     
     # Check each point in the grid
     for i in range(gridX.shape[0]):
@@ -105,12 +107,21 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
                         newMol.append(atomData)
                         
                     if randOrient and len(newMol) == len(og):
-                        newMol = randReorient(newMol)
+                        newMol = Reorient(newMol, randRotate=True)
+                    if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
+                        newMol = Reorient(newMol, angles=rotAngles)
+                    if alignNormal:
+                        newMol = alignToNormal(mesh, newMol)
+                    if onSurface:
+                        newMol = placeOnSurfaceNormal(mesh, newMol)
                     if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
                         filled.append(newMol)
 
                         # Rebuild KDTree with newly added atoms
                         kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+
+                        if len(filled) >= numMol:
+                            return filled
     return filled
 
 def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
@@ -149,7 +160,7 @@ def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
     return filled
 
 def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
-                      randOrient, maxAttempts):
+                      randOrient, rotAngles, maxAttempts):
     '''Randomly places molecules in a mesh'''
     filled = []
     attempts = 0
@@ -186,7 +197,10 @@ def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
                 newMol.append(atomData)
 
         if randOrient and len(newMol) == len(og):
-            newMol = randReorient(newMol)
+            newMol = Reorient(newMol, randRotate=True)
+
+        if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
+            newMol = Reorient(newMol, angles=rotAngles)
 
         if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
             if len(newMol) == len(og):

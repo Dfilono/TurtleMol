@@ -1,0 +1,230 @@
+{
+  "atoms": {
+    "coords": {
+      "3d": [
+        2.249,
+        1.5,
+        1.942,
+        1.5,
+        1.5,
+        1.335,
+        0.751,
+        1.5,
+        1.942
+      ],
+      "3dFractional": [
+        0.7496666666666667,
+        0.49999999999999994,
+        0.6473333333333333,
+        0.49999999999999994,
+        0.5,
+        0.44499999999999995,
+        0.2503333333333332,
+        0.49999999999999994,
+        0.6473333333333333
+      ]
+    },
+    "elements": {
+      "number": [
+        1,
+        8,
+        1
+      ]
+    },
+    "formalCharges": [
+      0,
+      0,
+      0
+    ],
+    "layer": [
+      0,
+      0,
+      0
+    ]
+  },
+  "bonds": {
+    "connections": {
+      "index": [
+        0,
+        1,
+        1,
+        2
+      ]
+    },
+    "order": [
+      1,
+      1
+    ]
+  },
+  "chemicalJson": 1,
+  "layer": {
+    "enable": {
+      "Ball and Stick": [
+        true
+      ],
+      "Cartoons": [
+        true
+      ],
+      "Close Contacts": [
+        false
+      ],
+      "Crystal Lattice": [
+        true
+      ],
+      "Force": [
+        false
+      ],
+      "Labels": [
+        false
+      ],
+      "Licorice": [
+        false
+      ],
+      "Meshes": [
+        false
+      ],
+      "Non-Covalent": [
+        false
+      ],
+      "Van der Waals": [
+        false
+      ],
+      "Wireframe": [
+        false
+      ],
+      "undef": [
+        false
+      ]
+    },
+    "locked": [
+      false
+    ],
+    "settings": {
+      "Ball and Stick": [
+        "true true 0.300000 0.100000"
+      ],
+      "Cartoons": [
+        "false false false false false true false"
+      ],
+      "Labels": [
+        "2 0 0.5 255 255 255"
+      ],
+      "Wireframe": [
+        "true true 1.000000"
+      ]
+    },
+    "visible": [
+      true
+    ]
+  },
+  "properties": {
+    "fileName": "C:/Users/filon/OneDrive/Desktop/Research/Wilmer/MoleculeBuilderProject/LAMMPS/Test/waterUnitCell.pdb",
+    "modelView": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -1.4249999523162842
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        -1.4249999523162842
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        -14.864832878112793
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "projection": [
+      [
+        1.1072288751602173,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        2.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.2309468984603882,
+        -4.461893558502197
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ]
+    ],
+    "totalCharge": 0,
+    "totalSpinMultiplicity": 1
+  },
+  "residues": [
+    {
+      "atoms": {
+        "O": 1
+      },
+      "chainId": 65,
+      "color": [
+        192,
+        208,
+        255
+      ],
+      "hetero": true,
+      "id": 1,
+      "name": "HOH",
+      "secStruct": -1
+    },
+    {
+      "atoms": {
+        "H": 2
+      },
+      "chainId": 65,
+      "color": [
+        192,
+        208,
+        255
+      ],
+      "hetero": true,
+      "id": 0,
+      "name": "HOH",
+      "secStruct": -1
+    }
+  ],
+  "unitCell": {
+    "a": 3.0,
+    "alpha": 90.0,
+    "b": 3.0,
+    "beta": 90.0,
+    "c": 3.0,
+    "cellVectors": [
+      3.0,
+      0.0,
+      0.0,
+      1.8369701987210297e-16,
+      3.0,
+      0.0,
+      1.8369701987210297e-16,
+      1.8369701987210297e-16,
+      3.0
+    ],
+    "gamma": 90.0,
+    "hallNumber": 0,
+    "spaceGroup": ""
+  }
+}

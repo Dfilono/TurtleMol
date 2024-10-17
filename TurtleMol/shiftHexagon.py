@@ -1,40 +1,21 @@
-'''This module is for replicating a unit cell if it is defined in a given pdb'''
-
 import numpy as np
-import trimesh
 from .shiftBox import inBox
-from .makeStruc import calcLatticeVectors, rotateUnitCell
 
-# Box
-def unitCellBox(shape, dims, cellDims, cellAngles, og, radii, rotAngles=np.array([0, 0, 0]).all()):
-    '''Duplicates unit cells to fill a given box'''
+def hexagonUnitCellBox(shape, dims, cellDims, og, radii):
+    '''Duplicates hexagonal unit cells to fill a given box'''
 
     # Find the atom types in the tile
     atomNames = {atom[0] for atom in og}
     totalRadius = sum(radii[str.capitalize(name)] for name in atomNames)
 
-    if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])):
-        latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
-        og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
-        cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
-        cellAngles = [cellInfo['alpha'], cellInfo['beta'], cellInfo['gamma']]
-
-    alpha = np.radians(cellAngles[0])
-    beta = np.radians(cellAngles[1])
-    gamma = np.radians(cellAngles[2])
-
-    # Define the basis vectors
-    a1 = np.array([cellDims[0], 0, 0])
-    a2 = np.array([cellDims[1] * np.cos(gamma), cellDims[1] * np.sin(gamma), 0])
-    a3 = np.array([
-        cellDims[2] * np.cos(beta), 
-        cellDims[2] * (np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma),
-        cellDims[2] * np.sqrt(1 - np.cos(beta)**2 - ((np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma))**2)
-    ])
-
     # Calculate how many times to duplicate the unit cell in a given dimension
     dupeCount = [int(dims[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1{dupeCount[0]*cellDims[0]:9.3f}{dupeCount[1]*cellDims[1]:9.3f}{dupeCount[2]*cellDims[2]:9.3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P 1         1'
+    cellParams = f'CRYST1{dupeCount[0]*cellDims[0]:9.3f}{dupeCount[1]*cellDims[1]:9.3f}{dupeCount[2]*cellDims[2]:9.3f}  90.00  90.00  120.0 P 1         1'
+
+    # Define the basis vectors for hexagonal lattice
+    a1 = np.array([cellDims[0], 0, 0])
+    a2 = np.array([cellDims[1] * np.cos(np.radians(120)), cellDims[1] * np.sin(np.radians(120)), 0])
+    a3 = np.array([0, 0, cellDims[2]])
 
     filled = []
 
@@ -74,33 +55,19 @@ def unitCellBox(shape, dims, cellDims, cellAngles, og, radii, rotAngles=np.array
                 filled.append(currentCell)
     return filled, "molecule", cellParams
 
-def unitCellSphere(shape, cellDims, cellAngles, og, radii, rotAngles=np.array([0, 0, 0]).all()):
+def hexagonUnitCellSphere(shape, cellDims, og, radii):
     '''Duplicates unit cells to fill a given sphere'''
 
     # Box dimensions that completely contain the sphere
     boxDim = [2 * shape.radius] * 3
-
-    if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])):
-        latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
-        og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
-        cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
-        cellAngles = [cellInfo['alpha'], cellInfo['beta'], cellInfo['gamma']]
-
-    alpha = np.radians(cellAngles[0])
-    beta = np.radians(cellAngles[1])
-    gamma = np.radians(cellAngles[2])
-
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
+    cellParams = f'CRYST1{dupeCount[0]*cellDims[0]:9.3f}{dupeCount[1]*cellDims[1]:9.3f}{dupeCount[2]*cellDims[2]:9.3f}  90.00  90.00  120.0 P 1         1'
 
-    # Define the basis vectors
+    # Define the basis vectors for hexagonal lattice
     a1 = np.array([cellDims[0], 0, 0])
-    a2 = np.array([cellDims[1] * np.cos(gamma), cellDims[1] * np.sin(gamma), 0])
-    a3 = np.array([
-        cellDims[2] * np.cos(beta), 
-        cellDims[2] * (np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma),
-        cellDims[2] * np.sqrt(1 - np.cos(beta)**2 - ((np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma))**2)
-    ])
+    a2 = np.array([cellDims[1] * np.cos(np.radians(120)), cellDims[1] * np.sin(np.radians(120)), 0])
+    a3 = np.array([0, 0, cellDims[2]])
+
 
     filled = []
 
@@ -128,7 +95,7 @@ def unitCellSphere(shape, cellDims, cellAngles, og, radii, rotAngles=np.array([0
                 filled.append(currentCell)
     return filled, "molecule", cellParams
 
-def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=np.array([0, 0, 0]).all()):
+def hexagonUnitCellMesh(shape, cellDims, og, radius):
     '''Duplicates unit cells to fill a given mesh'''
 
     # Find the atom types in the tile
@@ -138,29 +105,14 @@ def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=np.array([0,
     # Box dimensions that completely contain the mesh
     maxBound, minBound = shape.bounds[1], shape.bounds[0]
     boxDim = maxBound - minBound
-
-    if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])):
-        latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
-        og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
-        cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
-        cellAngles = [cellInfo['alpha'], cellInfo['beta'], cellInfo['gamma']]
-
-    alpha = np.radians(cellAngles[0])
-    beta = np.radians(cellAngles[1])
-    gamma = np.radians(cellAngles[2])
-
     dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
     
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
+    cellParams = f'CRYST1{dupeCount[0]*cellDims[0]:9.3f}{dupeCount[1]*cellDims[1]:9.3f}{dupeCount[2]*cellDims[2]:9.3f}  90.00  90.00  120.0 P 1         1'
 
-    # Define the basis vectors
+    # Define the basis vectors for hexagonal lattice
     a1 = np.array([cellDims[0], 0, 0])
-    a2 = np.array([cellDims[1] * np.cos(gamma), cellDims[1] * np.sin(gamma), 0])
-    a3 = np.array([
-        cellDims[2] * np.cos(beta), 
-        cellDims[2] * (np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma),
-        cellDims[2] * np.sqrt(1 - np.cos(beta)**2 - ((np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma))**2)
-    ])
+    a2 = np.array([cellDims[1] * np.cos(np.radians(120)), cellDims[1] * np.sin(np.radians(120)), 0])
+    a3 = np.array([0, 0, cellDims[2]])
 
     filled = []
 
