@@ -89,22 +89,22 @@ def main():
     if ',' in iparams['structureFile']:
         iparams['structureFile'] = [path.strip() for path in iparams['structureFile'].split(',')]
 
-    if ',' in iparams['mesh']:
+    if iparams['mesh'] is not None and ',' in iparams['mesh']:
         iparams['mesh'] = [path.strip() for path in iparams['mesh'].split(',')]
 
-    if ',' in iparams['meshScale']:
+    if isinstance(iparams['meshScale'], list) and ',' in iparams['meshScale']:
         iparams['meshScale'] = [path.strip() for path in iparams['meshScale'].split(',')]
 
-    if ',' in iparams['scaleX']:
+    if iparams['scaleX'] is not None and ',' in iparams['scaleX']:
         iparams['scaleX'] = [path.strip() for path in iparams['scaleX'].split(',')]
 
-    if ',' in iparams['scaleY']:
+    if iparams['scaleY'] is not None and ',' in iparams['scaleY']:
         iparams['scaleY'] = [path.strip() for path in iparams['scaleY'].split(',')]
 
-    if ',' in iparams['scaleZ']:
+    if iparams['scaleZ'] is not None and ',' in iparams['scaleZ']:
         iparams['scaleZ'] = [path.strip() for path in iparams['scaleZ'].split(',')]
 
-    if ',' in iparams['globalMatrixPath']:
+    if iparams['globalMatrixPath'] is not None and ',' in iparams['globalMatrixPath']:
         iparams['globalMatrixPath'] = [path.strip() for path in iparams['globalMatrixPath'].split(',')]
 
     print(iparams)
@@ -112,6 +112,7 @@ def main():
     # Get structure
     if isinstance(iparams['structureFile'], str):
         struc, unitCell = readStrucFile(iparams['structureFile'])
+        unitCells = None
         print(struc)
     elif isinstance(iparams['structureFile'], list):
         struc = []
