@@ -19,7 +19,7 @@ def parseCommandLine(dparams):
     parser.add_argument('-baseStruc', '--baseStrucFile', type=str,
                         help='Path to base structure file', default=dparams['baseStrucFile'])
     parser.add_argument('-s', '--shape', type=str,
-                        help="Shape (Box or Cube)", default=dparams['shape'])
+                        help="Shape (Box, Cube, Sphere, Mesh, Multimesh)", default=dparams['shape'])
     parser.add_argument('-sl', '--sideLength', type=float,
                         help="Dimensions of a cube in Angstroms", default=dparams['sideLength'])
     parser.add_argument('-xl', '--Xlen', type=float,

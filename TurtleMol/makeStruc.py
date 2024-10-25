@@ -39,8 +39,12 @@ def reCenter(struc, shape):
         shapeCenter[1] - currentCenter[1],
         shapeCenter[2] - currentCenter[2]
     )
-    newCoords = [(coord[0], coord[1] + displacement[0], coord[2] + displacement[1],
-                coord[3] + displacement[2]) for coord in struc]
+    if len(struc[0]) == 4:
+        newCoords = [(coord[0], coord[1] + displacement[0], coord[2] + displacement[1],
+                    coord[3] + displacement[2]) for coord in struc]
+    else:
+        newCoords = [(coord[0], coord[1] + displacement[0], coord[2] + displacement[1],
+                    coord[3] + displacement[2], coord[4]) for coord in struc]
 
     return newCoords
 

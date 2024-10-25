@@ -55,7 +55,7 @@ class mesh3D():
         return [0, 0, 0]
     
     def findCenter(self):
-        return self.origin
+        return self.origin()
     
     def translate(self):
         self.mesh.apply_translation(-self.bounds[0])
