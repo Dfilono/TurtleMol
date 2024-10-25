@@ -18,6 +18,7 @@ def buildMultiMesh(strucs, baseStruc, iparams):
     scaleXList = iparams['scaleX']
     scaleYList = iparams['scaleY']
     scaleZList = iparams['scaleZ']
+    rotAngleList = iparams['rotAngles']
     scaleList = []
 
     if isinstance(iparams['meshScale'], float):
@@ -37,6 +38,7 @@ def buildMultiMesh(strucs, baseStruc, iparams):
         for i in range(len(meshList)):
             iparams['mesh'] = str(meshList[i])
             iparams['meshScale'] = float(scaleList[i])
+            iparams['rotAngles'] = rotAngleList[i]
             struc = strucs[i]
             if scaleXList is not None and scaleYList is not None and scaleZList is not None:
                 iparams['scaleX'] = float(scaleXList[i]) if scaleXList[i] is not None else scaleList[i]
@@ -90,7 +92,8 @@ def buildMultiMesh(strucs, baseStruc, iparams):
             for i in range(len(meshList)):
                 iparams['mesh'] = str(meshList[i])
                 iparams['meshScale'] = float(scaleList[i])
-                struc = strucs[i]
+                iparams['rotAngles'] = rotAngleList[i]
+                struc = strucs
                 if scaleXList is not None and scaleYList is not None and scaleZList is not None:
                     iparams['scaleX'] = float(scaleXList[i]) if scaleXList[i] is not None else scaleList[i]
                     iparams['scaleY'] = float(scaleYList[i]) if scaleYList[i] is not None else scaleList[i]

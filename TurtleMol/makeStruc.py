@@ -345,17 +345,17 @@ def rotateUnitCell(latticeVec, atoms, rotAngles):
         atomCoords = rotZ.apply(atomCoords @ latticeVec)
 
     if len(atoms[0]) == 4:
-        rotatedAtoms = [atomTypes[i] + atomCoords[i] for i in range(len(atoms))]
+        rotatedAtoms = [[atomTypes[i], *atomCoords[i]] for i in range(len(atoms))]
     elif len(atoms[0]) == 5:
-        rotatedAtoms = [atomTypes[i] + atomCoords[i] + atoms[i][-1] for i in range(len(atoms))]
+        rotatedAtoms = [[atomTypes[i], *atomCoords[i], atoms[i][-1]] for i in range(len(atoms))]
 
     a = np.linalg.norm(latticeVec[0])
     b = np.linalg.norm(latticeVec[1])
     c = np.linalg.norm(latticeVec[2])
 
-    alpha = np.degrees(np.acrcos(np.dot(latticeVec[1], latticeVec[2])/(b*c)))
-    beta = np.degrees(np.acrcos(np.dot(latticeVec[0], latticeVec[2])/(a*c)))
-    gamma = np.degrees(np.acrcos(np.dot(latticeVec[0], latticeVec[1])/(a*b)))
+    alpha = np.degrees(np.arccos(np.dot(latticeVec[1], latticeVec[2])/(b*c)))
+    beta = np.degrees(np.arccos(np.dot(latticeVec[0], latticeVec[2])/(a*c)))
+    gamma = np.degrees(np.arccos(np.dot(latticeVec[0], latticeVec[1])/(a*b)))
 
     cellParams = {'a' : a,
                   'b' : b,
