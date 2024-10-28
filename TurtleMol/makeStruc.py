@@ -320,49 +320,50 @@ def calcLatticeVectors(a, b, c, alpha, beta, gamma):
 
     return latticeVectors
 
-def rotateUnitCell(latticeVec, atoms, rotAngles):
-    '''Rotate unit cell lattice vectors and atoms'''
-    xAxis = [1, 0, 0]
-    yAxis = [0, 1, 0]
-    zAxis = [0, 0, 1]
 
+def rotateUnitCell(latticeVec, atoms, rotAngles):
+    '''Rotate unit cell lattice vectors and atoms by specified rotation angles along x, y, and z.'''
+
+    # Create cumulative rotation object for specified angles on x, y, and z axes
+    rotation = R.from_euler('xyz', rotAngles, degrees=True)
+
+    # Apply rotation to lattice vectors
+    rotated_latticeVec = rotation.apply(latticeVec)
+
+    # Apply rotation to atom coordinates
     atomTypes = [atom[0] for atom in atoms]
     atomCoords = [atom[1:4] for atom in atoms]
+    rotated_atomCoords = rotation.apply(atomCoords)
 
-    if rotAngles[0] != 0:
-        rotX = R.from_rotvec(np.radians(rotAngles[0]) * np.array(xAxis))
-        latticeVec = rotX.apply(latticeVec)
-        atomCoords = rotX.apply(atomCoords @ latticeVec)
+    # Reassemble rotated atom data
+    rotatedAtoms = [[atomTypes[i], *rotated_atomCoords[i], atoms[i][-1]] for i in range(len(atoms))]
+
+    # Calculate lengths of rotated lattice vectors
+    lengths = np.linalg.norm(rotated_latticeVec, axis=1)
     
-    if rotAngles[1] != 0:
-        rotY = R.from_rotvec(np.radians(rotAngles[1]) * np.array(yAxis))
-        latticeVec = rotY.apply(latticeVec)
-        atomCoords = rotY.apply(atomCoords @ latticeVec)
+    # Identify which rotated lattice vector aligns with each primary axis
+    # Determine the primary direction (x, y, or z) based on the largest component in each vector
+    primary_axes = np.argmax(np.abs(rotated_latticeVec), axis=1)
+    axes_map = {0: 'a', 1: 'b', 2: 'c'}
+    
+    # Map lengths based on primary axis alignment
+    a = lengths[np.where(primary_axes == 0)[0][0]]
+    b = lengths[np.where(primary_axes == 1)[0][0]]
+    c = lengths[np.where(primary_axes == 2)[0][0]]
+    
+    # Calculate angles between rotated lattice vectors
+    alpha = np.degrees(np.arccos(np.dot(rotated_latticeVec[1], rotated_latticeVec[2]) / (b * c)))
+    beta = np.degrees(np.arccos(np.dot(rotated_latticeVec[0], rotated_latticeVec[2]) / (a * c)))
+    gamma = np.degrees(np.arccos(np.dot(rotated_latticeVec[0], rotated_latticeVec[1]) / (a * b)))
 
-    if rotAngles[2] != 0:
-        rotZ = R.from_rotvec(np.radians(rotAngles[2]) * np.array(zAxis))
-        latticeVec = rotZ.apply(latticeVec)
-        atomCoords = rotZ.apply(atomCoords @ latticeVec)
-
-    if len(atoms[0]) == 4:
-        rotatedAtoms = [[atomTypes[i], *atomCoords[i]] for i in range(len(atoms))]
-    elif len(atoms[0]) == 5:
-        rotatedAtoms = [[atomTypes[i], *atomCoords[i], atoms[i][-1]] for i in range(len(atoms))]
-
-    a = np.linalg.norm(latticeVec[0])
-    b = np.linalg.norm(latticeVec[1])
-    c = np.linalg.norm(latticeVec[2])
-
-    alpha = np.degrees(np.arccos(np.dot(latticeVec[1], latticeVec[2])/(b*c)))
-    beta = np.degrees(np.arccos(np.dot(latticeVec[0], latticeVec[2])/(a*c)))
-    gamma = np.degrees(np.arccos(np.dot(latticeVec[0], latticeVec[1])/(a*b)))
-
-    cellParams = {'a' : a,
-                  'b' : b,
-                  'c' : c,
-                  'alpha' : alpha,
-                  'beta' : beta,
-                  'gamma' : gamma}
-
+    # Collect the new cell parameters
+    cellParams = {
+        'a': a,
+        'b': b,
+        'c': c,
+        'alpha': alpha,
+        'beta': beta,
+        'gamma': gamma
+    }
 
     return rotatedAtoms, cellParams

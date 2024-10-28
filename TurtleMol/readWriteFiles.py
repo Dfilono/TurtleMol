@@ -180,7 +180,7 @@ def writePdb(data, filePath, cellParams=None):
                 ))
 
                 atomNum += 1
-            resNum += 1
+            resNum += 0
         pdbFile.write("END\n")
 
 def writeXYZ(data, filePath, strucType):

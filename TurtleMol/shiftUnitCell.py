@@ -137,19 +137,23 @@ def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=np.array([0,
 
     # Box dimensions that completely contain the mesh
     maxBound, minBound = shape.bounds[1], shape.bounds[0]
+    print(cellDims)
+    print(cellAngles)
     boxDim = maxBound - minBound
-
+    print(minBound, maxBound)
     if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])):
         latticeVec = calcLatticeVectors(cellDims[0], cellDims[1], cellDims[2], cellAngles[0], cellAngles[1], cellAngles[2])
         og, cellInfo = rotateUnitCell(latticeVec, og, rotAngles)
         cellDims = [cellInfo['a'], cellInfo['b'], cellInfo['c']]
+        print(cellDims)
         cellAngles = [cellInfo['alpha'], cellInfo['beta'], cellInfo['gamma']]
+        print(cellAngles)
 
     alpha = np.radians(cellAngles[0])
     beta = np.radians(cellAngles[1])
     gamma = np.radians(cellAngles[2])
 
-    dupeCount = [int(boxDim[i] / cellDims[i]) for i in range(3)]
+    dupeCount = [int(np.ceil(boxDim[i] / cellDims[i])) + 5 for i in range(3)]
     
     cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
 
@@ -167,7 +171,7 @@ def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=np.array([0,
     for dx in range(dupeCount[0]):
         for dy in range(dupeCount[1]):
             for dz in range(dupeCount[2]):
-                disp = disp = dx*a1 + dy*a2 + dz*a3 + minBound
+                disp = dx*a1 + dy*a2 + dz*a3 + minBound
                 currentCell = []
 
                 for atom in og:

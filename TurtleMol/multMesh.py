@@ -110,6 +110,7 @@ def buildMultiMesh(strucs, baseStruc, iparams):
                     matrix = np.dot(iparams['globalMatrix'][i], scalingMatrix)
                 else:
                     matrix = iparams['globalMatrix'][i] * scaleList[i]
+                    print(matrix)
 
                 if iparams['unitCell']:
                     tol = 0
