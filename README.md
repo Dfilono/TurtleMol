@@ -33,7 +33,6 @@ the intial state of molecular strcutres that are ready for optimization via quam
 
 Generating intial structure files for calculations can be a tedious process, one that TurtleMol aims to fix. 
 Large structures can be generated quickly, and are very tunable based on the need of the user! 
-Currently only basic shapes such as boxes and spheres are generatable, but more complex meshes are in the works!
 
 ## Approach
 
@@ -46,15 +45,14 @@ Molecules can also be placed randomly instead of in a grid, allowing for a more 
 
 ## Current Features
 
-- Generate a box or sphere of molecules
-- Generate a box or sphere of molecules around an existing molecular structure
+- Generate a box, sphere, or mesh of molecules
+- Generate a box, sphere, or mesh of molecules around an existing molecular structure
 - Fill a volume, or place a specfied number of molecules in space
 - Randomly orient molecules to better represent an equilibrium structure
-- Read/Write structures from XYZ and PDB formats
-
-## Features in Progress
-
-- Generate structures based on meshes defined from outside software/packagaes such as Blender
+- Orient molecules to align with nearest normal surface vectors of a mesh
+- Place molecules along the surface of a mesh
+- Make supercell structure using unit cell parameters a, b, c, alpha, beta, gamma
+- Read/Write structures from XYZ, PDB, cjson formats
 
 ## Installation
 
