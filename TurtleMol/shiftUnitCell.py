@@ -153,9 +153,9 @@ def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=np.array([0,
     beta = np.radians(cellAngles[1])
     gamma = np.radians(cellAngles[2])
 
-    dupeCount = [int(np.ceil(boxDim[i] / cellDims[i])) + 5 for i in range(3)]
+    dupeCount = [int(np.ceil(boxDim[i] / cellDims[i])) for i in range(3)]
     
-    cellParams = f'CRYST1    {dupeCount[0]*cellDims[0]: .3f}    {dupeCount[1]*cellDims[1]: .3f}    {dupeCount[2]*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
+    cellParams = f'CRYST1    {(dupeCount[0])*cellDims[0]: .3f}    {(dupeCount[1])*cellDims[1]: .3f}    {(dupeCount[2])*cellDims[2]: .3f}  {cellAngles[0]:0.2f}  {cellAngles[1]:0.2f}  {cellAngles[2]:0.2f} P1          1'
 
     # Define the basis vectors
     a1 = np.array([cellDims[0], 0, 0])
@@ -170,7 +170,7 @@ def unitCellMesh(shape, cellDims, cellAngles, og, radius, rotAngles=np.array([0,
 
     for dx in range(dupeCount[0]):
         for dy in range(dupeCount[1]):
-            for dz in range(dupeCount[2]):
+            for dz in range(dupeCount[2] + 5):
                 disp = dx*a1 + dy*a2 + dz*a3 + minBound
                 currentCell = []
 
