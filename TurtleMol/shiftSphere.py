@@ -27,9 +27,9 @@ def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
                     atomType = atom[0]
 
                     # Calculate the coordiantes within the sphere
-                    x = (sphere.xCoord - sphere.radius) + relX + xShifts
-                    y = (sphere.yCoord - sphere.radius) + relY + yShifts
-                    z = (sphere.zCoord - sphere.radius) + relZ + zShifts
+                    x = (sphere.xCoord - sphere.radius) + relX + xShifts*tol
+                    y = (sphere.yCoord - sphere.radius) + relY + yShifts*tol
+                    z = (sphere.zCoord - sphere.radius) + relZ + zShifts*tol
 
                     # Adjust for atomic radii
                     atomRadius = radii.get(atomType, 0.0) # Get the radius for the atom type
@@ -118,9 +118,9 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
                     atomType = atom[0]
 
                     # Calculate the coordiantes within the sphere
-                    x = (sphere.xCoord - sphere.radius) + relX + xShifts
-                    y = (sphere.yCoord - sphere.radius) + relY + yShifts
-                    z = (sphere.zCoord - sphere.radius) + relZ + zShifts
+                    x = (sphere.xCoord - sphere.radius) + relX + xShifts*tol
+                    y = (sphere.yCoord - sphere.radius) + relY + yShifts*tol
+                    z = (sphere.zCoord - sphere.radius) + relZ + zShifts*tol
 
                     # Adjust for atomic radii
                     atomRadius = radii.get(atomType, 0.0) # Get the radius for the atom type

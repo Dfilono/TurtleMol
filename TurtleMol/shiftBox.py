@@ -20,9 +20,9 @@ def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
             for xShift in range(x):
                 for atom in og:
                     # Calculate the shift for each tile and new point
-                    newX = box.xCoord + atom[1] + xShift
-                    newY = box.yCoord + atom[2] + yShift
-                    newZ = box.zCoord + atom[3] + zShift
+                    newX = box.xCoord + atom[1] + xShift*tol
+                    newY = box.yCoord + atom[2] + yShift*tol
+                    newZ = box.zCoord + atom[3] + zShift*tol
 
                     # Adjust for atomic radiss
                     newXMin = newX - radii[atom[0]]
@@ -110,9 +110,9 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
 
                 for atom in og:
                     # Calculate the shift for each tile and new point
-                    newX = box.xCoord + atom[1] + xShift
-                    newY = box.yCoord + atom[2] + yShift
-                    newZ = box.zCoord + atom[3] + zShift
+                    newX = box.xCoord + atom[1] + xShift*tol
+                    newY = box.yCoord + atom[2] + yShift*tol
+                    newZ = box.zCoord + atom[3] + zShift*tol
 
                     # Adjust for atomic radiss
                     newXMin = newX - radii[atom[0]]
