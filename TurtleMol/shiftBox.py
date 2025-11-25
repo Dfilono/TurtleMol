@@ -19,6 +19,7 @@ def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
         for yShift in range(y):
             for xShift in range(x):
                 for atom in og:
+                    newMol = []
                     # Calculate the shift for each tile and new point
                     newX = box.xCoord + atom[1] + xShift*tol
                     newY = box.yCoord + atom[2] + yShift*tol
@@ -41,7 +42,8 @@ def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
 
                         if (kdTree is None or not isOverlapAtomKDTree(newAtom, kdTree, indexToAtom, radii, tol)) and \
                             numMol > len(filledAtom):
-                            filledAtom.append(newAtom)
+                            newMol.append(newAtom)
+                            filledAtom.append(newMol)
 
                             # Rebuild KDTree with newly added atoms
                             kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
@@ -62,6 +64,7 @@ def atomsRandBox(numMol, maxAttempts, og, box,
     attempts = 0
 
     while len(filledAtom) < numMol and attempts < maxAttempts:
+        newMol = []
         for atom in og:
             # Calculate the shift for each tile and new point
             newX = atom[1] + random.uniform(0, box.length)
@@ -82,7 +85,8 @@ def atomsRandBox(numMol, maxAttempts, og, box,
                     newAtom = (atom[0], newX, newY, newZ)
 
                 if (kdTree is None or not isOverlapAtomKDTree(newAtom, kdTree, indexToAtom, radii, tol)):
-                    filledAtom.append(newAtom)
+                    newMol.append(newAtom)
+                    filledAtom.append(newMol)
 
                     # Rebuild KDTree with newly added atoms
                     kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)

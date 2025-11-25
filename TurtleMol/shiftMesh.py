@@ -33,6 +33,7 @@ def atomsFillMesh(mesh, og, tol, radii, numMol):
     for x in np.nditer(gridX):
         for y in np.nditer(gridY):
             for z in np.nditer(gridZ):
+                newMol = []
                 for atom in og:
                     # Construct atom data
                     atomData = [atom[0], x, y, z]
@@ -41,8 +42,8 @@ def atomsFillMesh(mesh, og, tol, radii, numMol):
                     point = [x, y, z]
                     if mesh.isInside(point) and \
                         (kdTree is None or not isOverlapAtomKDTree(atomData, kdTree, indexToAtom, radii, tol)):
-
-                        filled.append(atomData)
+                        newMol.append(atomData)
+                        filled.append(newMol)
 
                         # Rebuild KDTree with newly added atoms
                         kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
@@ -140,6 +141,7 @@ def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
     minBound, maxBound = bounds[0], bounds[1]
 
     while len(filled) < numMol and attempts <= maxAttempts:
+        newMol = []
         for atom in og:
             x = random.uniform(minBound[0], maxBound[0])
             y = random.uniform(minBound[1], maxBound[1])
@@ -155,7 +157,8 @@ def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
                     atomData = (atomType, atomPoint[0], atomPoint[1], atomPoint[2], atom[4])
 
                 if (kdTree is None or not isOverlapAtomKDTree(atomData, kdTree, indexToAtom, radii, tol)):
-                    filled.append(atomData)
+                    newMol.append(atomData)
+                    filled.append(newMol)
 
                     # Rebuild KDTree with newly added atoms
                     kdTree, indexToAtom = buildKDTreeMapping(filled, radii)

@@ -46,7 +46,6 @@ def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
                             numMol > len(filled):
                             newMol.append(newAtom)
                             filled.append(newMol)
-                            print(len(filled))
 
                             # Rebuild KDTree with newly added atoms
                             kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
@@ -66,6 +65,7 @@ def atomRandSphere(numMol, maxAttempts, og, sphere, radii, tol):
 
     while len(filled) < numMol and attempts <= maxAttempts:
         for atom in og:
+            newMol = []
 
             # Calculate the shift for each tile and new point
             newX = atom[1] + random.uniform((sphere.xCoord - sphere.radius),
@@ -87,7 +87,8 @@ def atomRandSphere(numMol, maxAttempts, og, sphere, radii, tol):
                     newAtom = (atom[0], newX, newY, newZ)
 
                 if (kdTree is None or not isOverlapAtomKDTree(newAtom, kdTree, indexToAtom, radii, tol)):
-                    filled.append(newAtom)
+                    newMol.append(newAtom)
+                    filled.append(newMol)
 
                     # Rebuild KDTree with newly added atoms
                     kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
