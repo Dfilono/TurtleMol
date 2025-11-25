@@ -19,6 +19,7 @@ def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
     for zShifts in range(numShifts):
         for yShifts in range(numShifts):
             for xShifts in range(numShifts):
+                newMol = []
                 for atom in og:
                     # Calculate the relative position of each atom within the molecule
                     relX = atom[1]
@@ -43,10 +44,15 @@ def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
 
                         if (kdTree is None or not isOverlapAtomKDTree(newAtom, kdTree, indexToAtom, radii, tol)) and \
                             numMol > len(filled):
-                            filled.append(newAtom)
+                            newMol.append(newAtom)
+                            filled.append(newMol)
+                            print(len(filled))
 
                             # Rebuild KDTree with newly added atoms
                             kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+
+                        if len(filled) >= numMol:
+                            return filled
 
     return filled
 
@@ -85,6 +91,10 @@ def atomRandSphere(numMol, maxAttempts, og, sphere, radii, tol):
 
                     # Rebuild KDTree with newly added atoms
                     kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+
+                
+                if len(filled) >= numMol:
+                    return filled
 
         attempts += 1
 
@@ -148,6 +158,11 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
 
                         # Rebuild KDTree with newly added atoms
                         kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+
+                
+                if len(filled) >= numMol:
+                    return filled
+                
     return filled
 
 def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
@@ -208,6 +223,10 @@ def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
 
                 # Rebuild KDTree with newly added atoms
                 kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+
+        
+        if len(filled) >= numMol:
+            return filled
 
         attempts += 1
 

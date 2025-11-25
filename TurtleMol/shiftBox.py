@@ -46,6 +46,9 @@ def atomsFillBox(x, y, z, tol, og, box, radii, numMol):
                             # Rebuild KDTree with newly added atoms
                             kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
 
+                        if len(filledAtom) >= numMol:
+                            return filledAtom
+
     return filledAtom
 
 def atomsRandBox(numMol, maxAttempts, og, box,
@@ -83,6 +86,9 @@ def atomsRandBox(numMol, maxAttempts, og, box,
 
                     # Rebuild KDTree with newly added atoms
                     kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
+
+                if len(filledAtom) >= numMol:
+                        return filledAtom
 
         attempts += 1
 
@@ -148,6 +154,9 @@ def moleculesFillBox(x, y, z, tol, og, box, radii,
                     # Rebuild KDTree with newly added atoms
                     kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
 
+                if len(filledAtom) >= numMol:
+                     return filledAtom
+
     return filledAtom
 
 def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
@@ -203,6 +212,10 @@ def moleculesRandBox(numMol, maxAttempts, og, box, radii, tol,
 
             # Rebuild KDTree with newly added atoms
             kdTree, indexToAtom = buildKDTreeMapping(filledAtom, radii)
+
+        if len(filledAtom) >= numMol:
+            return filledAtom
+
         attempts += 1
 
     return list(filledAtom)

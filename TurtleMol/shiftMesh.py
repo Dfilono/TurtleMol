@@ -46,6 +46,9 @@ def atomsFillMesh(mesh, og, tol, radii, numMol):
 
                         # Rebuild KDTree with newly added atoms
                         kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+
+                    if len(filled) >= numMol:
+                        return filled
     
     return filled
 
@@ -120,8 +123,8 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
                         # Rebuild KDTree with newly added atoms
                         kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
 
-                        if len(filled) >= numMol:
-                            return filled
+                    if len(filled) >= numMol:
+                        return filled
     return filled
 
 def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
@@ -156,6 +159,10 @@ def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
 
                     # Rebuild KDTree with newly added atoms
                     kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+
+                if len(filled) >= numMol:
+                    return filled
+
         attempts += 1
     return filled
 
@@ -208,6 +215,9 @@ def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
 
                 # Rebuild KDTree with newly added atoms
                 kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+
+        if len(filled) >= numMol:
+            return filled
 
         attempts += 1
     return list(filled)
