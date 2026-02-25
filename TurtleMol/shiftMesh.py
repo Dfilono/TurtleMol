@@ -2,54 +2,58 @@
 
 import random
 import numpy as np
-import trimesh
-from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree, buildKDTreeMapping
 from .makeStruc import makeBase, reCenter, Reorient
 from .surfaceNormal import placeOnSurfaceNormal, alignToNormal
+from. treeManager import PendingKDManager
 
 def atomsFillMesh(mesh, og, tol, radii, numMol):
     '''Fills mesh with single atoms'''
     filled = []
 
     if str(numMol).lower() == 'fill':
-        numMol = 10000000000000
+        numMol = 10**100
 
     # Create KD-tree for filledAtoms
-    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+    manager = PendingKDManager(radii, rebuildRate=500)
 
     # Determine bounds of mesh
     bounds = mesh.bounds
     minBound, maxBound = bounds[0], bounds[1]
-
-    # Determine spacing between molecules
-    spacing = tol
+    print(minBound, maxBound)
 
     # Generate grid of points
-    gridX, gridY, gridZ = np.mgrid[minBound[0]:maxBound[0]:spacing,
-                                   minBound[1]:maxBound[1]:spacing,
-                                   minBound[2]:maxBound[2]:spacing]
+    xs = np.arange(minBound[0], maxBound[0], tol)
+    ys = np.arange(minBound[1], maxBound[1], tol)
+    zs = np.arange(minBound[2], maxBound[2], tol)
+
+    X, Y, Z = np.meshgrid(xs, ys, zs, indexing="ij")
+    points = np.stack([X.ravel(), Y.ravel(), Z.ravel()], axis=1).astype(np.float64)
+
+    # Vectorized inside test
+    # Depending on mesh wrapper
+    # if mesh.meshBound is a trimesh object: mesh.meshBound.contains(points)
+    # if mesh itself is trimesh: mesh.contains(points)
+    mask = mesh.isInsideMany(points)
+    insidePoints = points[mask]
+    if insidePoints.shape[0] == 0:
+        return filled
+    
+    atomTemplate = og[0] # pick the first atom type as the one we're placing
+    atomType = atomTemplate[0]
+    extra = atomTemplate[4:] # handles optional fields
 
     # Check each point in the grid
-    for x in np.nditer(gridX):
-        for y in np.nditer(gridY):
-            for z in np.nditer(gridZ):
-                newMol = []
-                for atom in og:
-                    # Construct atom data
-                    atomData = [atom[0], x, y, z]
-                    if len(atom) == 5:
-                            atomData.append(atom[4])
-                    point = [x, y, z]
-                    if mesh.isInside(point) and \
-                        (kdTree is None or not isOverlapAtomKDTree(atomData, kdTree, indexToAtom, radii, tol)):
-                        newMol.append(atomData)
-                        filled.append(newMol)
+    for (x, y, z) in insidePoints:
+        if len(filled) >= numMol:
+            break
 
-                        # Rebuild KDTree with newly added atoms
-                        kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+        newAtom = (atomType, float(x), float(y), float(z), *extra)
+        newMol = [newAtom]
 
-                    if len(filled) >= numMol:
-                        return filled
+        if not manager.overlapsMolecule(newMol, tol):
+            filled.append(newMol)
+            manager.addMolecule(newMol)
+            manager.maybeRebuild()
     
     return filled
 
@@ -59,73 +63,71 @@ def moleculesFillMesh(mesh, og, tol, radii, numMol, baseStruc,
     filled = []
 
     if str(numMol).lower() == 'fill':
-        numMol = 10000000000000
+        numMol = 10**100
+
+    # Use pending-buffer KD manager
+    manager = PendingKDManager(radii, rebuildRate=500)
 
     if baseStruc is not None:
         base = makeBase(baseStruc)
         filled.append(reCenter(base, mesh))
-
-    # Create KD-tree for filledAtoms
-    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+        manager.addMolecule(base)
+        manager.maybeRebuild(force=True) #ensure the base is comitted
 
     # Determine bounds of mesh
     bounds = mesh.bounds
     minBound, maxBound = bounds[0], bounds[1]
 
-    # Determine spacing between molecules
-    spacing = tol
+    xs = np.arange(minBound[0], maxBound[0], tol)
+    ys = np.arange(minBound[1], maxBound[1], tol)
+    zs = np.arange(minBound[2], maxBound[2], tol)
 
-    # Generate grid of points
-    gridX, gridY, gridZ = np.mgrid[minBound[0]:maxBound[0] + spacing:spacing,
-                                   minBound[1]:maxBound[1] + spacing:spacing,
-                                   minBound[2]:maxBound[2] + spacing:spacing]
+    X, Y, Z = np.meshgrid(xs, ys, zs, indexing="ij")
+    anchors = np.stack([X.ravel(), Y.ravel(), Z.ravel()], axis=1).astype(np.float64)
+
+    ogXYZ = np.array([[a[1], a[2], a[3]] for a in og], dtype=float)
+    center = ogXYZ.mean(axis=0)
+
+    ogRel = []
+    for a in og:
+        if len(a) == 4:
+            ogRel.append((a[0], float(a[1] - center[0]), float(a[2] - center[1]), float(a[3] - center[2])))
+        else:
+            ogRel.append((a[0], float(a[1]-center[0]), float(a[2]-center[1]), float(a[3]-center[2]), a[4]))
     
-    # Check each point in the grid
-    for i in range(gridX.shape[0]):
-        for j in range(gridY.shape[1]):
-            for k in range(gridZ.shape[2]):
-                x = gridX[i, j, k]
-                y = gridY[i, j, k]
-                z = gridZ[i, j, k]
+    offsets = np.array([[a[1], a[2], a[3]] for a in ogRel], dtype=np.float64)
+    atomTypes = [a[0] for a in ogRel]
+    extras = [a[4] if len(a) == 5 else None for a in ogRel]
 
-                # Check if entire molecule can be placed
-                molValid = True
-                newMol = []
-                for atom in og:
-                    # Construct atom data
-                    atomType, relX, relY, relZ = atom[:4]
-                    atomPoint = [x + relX, y + relY, z + relZ]
+    for ax, ay, az in anchors:
+        if len(filled) >= numMol:
+            break
 
-                    if not mesh.isInside(atomPoint):
-                        molValid = False
-                        break
-                
-                if molValid:
-                    for atom in og:
-                        atomType, relX, relY, relZ = atom[:4]
-                        if len(atom) == 4:
-                            atomData = (atomType, float(x + relX), float(y + relY), float(z + relZ))
-                        if len(atom) == 5:
-                            atomData = (atomType, float(x + relX), float(y + relY), float(z + relZ), atom[4])
+        points = offsets + np.array([ax, ay, az], dtype=np.float64)
 
-                        newMol.append(atomData)
-                        
-                    if randOrient and len(newMol) == len(og):
-                        newMol = Reorient(newMol, randRotate=True)
-                    if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
-                        newMol = Reorient(newMol, angles=rotAngles)
-                    if alignNormal:
-                        newMol = alignToNormal(mesh, newMol)
-                    if onSurface:
-                        newMol = placeOnSurfaceNormal(mesh, newMol)
-                    if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
-                        filled.append(newMol)
+        if not np.all(mesh.isInsideMany(points)):
+            continue
 
-                        # Rebuild KDTree with newly added atoms
-                        kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+        newMol = []
+        for (x, y, z), t, ex in zip(points, atomTypes, extras):
+            if ex is None:
+                newMol.append((t, float(x), float(y), float(z)))
+            else:
+                newMol.append((t, float(x), float(y), float(z), ex))
+        if randOrient:
+            newMol = Reorient(newMol, randRotate=True)
+        if not np.allclose(np.array(rotAngles), np.array([0,0,0])):
+            newMol = Reorient(newMol, angles=rotAngles)
+        if alignNormal:
+            newMol = alignToNormal(mesh, newMol)
+        if onSurface:
+            newMol = placeOnSurfaceNormal(mesh, newMol)
 
-                    if len(filled) >= numMol:
-                        return filled
+        if not manager.overlapsMolecule(newMol, tol):
+            filled.append(newMol)
+            manager.addMolecule(newMol)
+            manager.maybeRebuild()
+    
     return filled
 
 def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
@@ -133,8 +135,8 @@ def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
     filled = []
     attempts = 0
 
-    # Create KD-tree for filledAtoms
-    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+    # Use pending-buffer KD manager
+    manager = PendingKDManager(radii, rebuildRate=500)
 
     # Determine bounds of mesh
     bounds = mesh.bounds
@@ -156,12 +158,13 @@ def atomsRandMesh(mesh, og, tol, radii, numMol, maxAttempts):
                 elif len(atom) == 5:
                     atomData = (atomType, atomPoint[0], atomPoint[1], atomPoint[2], atom[4])
 
-                if (kdTree is None or not isOverlapAtomKDTree(atomData, kdTree, indexToAtom, radii, tol)):
-                    newMol.append(atomData)
+                newMol.append(atomData)
+                if (numMol > len(filled) and not manager.overlapsMolecule(newMol, tol)):
                     filled.append(newMol)
 
                     # Rebuild KDTree with newly added atoms
-                    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+                    manager.addMolecule(newMol)
+                    manager.maybeRebuild() 
 
                 if len(filled) >= numMol:
                     return filled
@@ -175,36 +178,52 @@ def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
     filled = []
     attempts = 0
 
+    # Use pending-buffer KD manager
+    manager = PendingKDManager(radii, rebuildRate=500)
+
     if baseStruc is not None:
         base = makeBase(baseStruc)
         filled.append(reCenter(base, mesh))
+        manager.addMolecule(base)
+        manager.maybeRebuild(force=True) #ensure the base is comitted
 
-    # Create KD-tree for filledAtoms
-    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+    # ensure og is relative offsets around 0
+    ogXYZ = np.array([[a[1], a[2], a[3]] for a in og], dtype=np.float64)
+    center = ogXYZ.mean(axis=0)
+
+    ogRel = []
+    for a in og:
+        if len(a) == 4:
+            ogRel.append((a[0], float(a[1]-center[0]), float(a[2]-center[1]), float(a[3]-center[2])))
+        else:
+            ogRel.append((a[0], float(a[1]-center[0]), float(a[2]-center[1]), float(a[3]-center[2]), a[4]))
 
     # Determine bounds of mesh
     bounds = mesh.bounds
     minBound, maxBound = bounds[0], bounds[1]
 
+    offsets = np.array([[a[1], a[2], a[3]] for a in ogRel], dtype=np.float64)
+    atomTypes = [a[0] for a in ogRel]
+    extras = [a[4] if len(a) == 5 else None for a in ogRel]
+
     while len(filled) < numMol and attempts <= maxAttempts:
         newMol = []
 
-        x = random.uniform(minBound[0], maxBound[0])
-        y = random.uniform(minBound[1], maxBound[1])
-        z = random.uniform(minBound[2], maxBound[2])
+        ax = random.uniform(minBound[0], maxBound[0])
+        ay = random.uniform(minBound[1], maxBound[1])
+        az = random.uniform(minBound[2], maxBound[2])
 
-        for atom in og:
-            atomType, xRel, yRel, zRel = atom[:4]
-            atomPoint = [x + xRel, y + yRel, z + zRel]
+        points = offsets + np.array([ax, ay, az], dtype=np.float64)
 
-            if mesh.isInside(atomPoint):
-                if len(atom) == 4:
-                    atomData = (atomType, atomPoint[0], atomPoint[1], atomPoint[2])
+        if not np.all(mesh.isInsideMany(points)):
+            attempts += 1
+            continue
 
-                elif len(atom) == 5:
-                    atomData = (atomType, atomPoint[0], atomPoint[1], atomPoint[2], atom[4])
-
-                newMol.append(atomData)
+        for (x, y, z), t, ex in zip(points, atomTypes, extras):
+            if ex is None:
+                newMol.append((t, float(x), float(y), float(z)))
+            else:
+                newMol.append((t, float(x), float(y), float(z), ex))
 
         if randOrient and len(newMol) == len(og):
             newMol = Reorient(newMol, randRotate=True)
@@ -212,12 +231,12 @@ def moleculesRandMesh(mesh, og, tol, radii, numMol, baseStruc,
         if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
             newMol = Reorient(newMol, angles=rotAngles)
 
-        if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
-            if len(newMol) == len(og):
-                filled.append(newMol)
+        if (numMol > len(filled) and not manager.overlapsMolecule(newMol, tol)):
+            filled.append(newMol)
 
-                # Rebuild KDTree with newly added atoms
-                kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+            # Rebuild KDTree with newly added atoms
+            manager.addMolecule(newMol)
+            manager.maybeRebuild()
 
         if len(filled) >= numMol:
             return filled

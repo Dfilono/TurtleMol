@@ -4,6 +4,7 @@ import numpy as np
 import scipy.spatial
 from .makeStruc import calcDistance, Reorient
 from .isOverlap import isOverlapMoleculeKDTree, isOverlapAtomKDTree, buildKDTreeMapping
+from .treeManager import PendingKDManager
 
 def placeMols(shape, og, density, tol, shapeType, radii, randOrient,rotAngles):
     '''Place molecules in the grid defined by the density'''
@@ -19,10 +20,10 @@ def placeMols(shape, og, density, tol, shapeType, radii, randOrient,rotAngles):
         '''Translate molecules to a new grid point'''
         atomLabels = [atom[0] for atom in coords]
         pdbInfo = [atom[4] if len(atom) == 5 else None for atom in coords]
-        xyzCoords = np.array([atom[1:4] for atom in coords])
+        xyzCoords = np.array([atom[1:4] for atom in coords], dtype=np.float64)
 
         centroid = calcCentroid(xyzCoords)
-        transVec = np.array(target) - centroid
+        transVec = np.array(target, dtype=np.float64) - centroid
         translatedXYZ = xyzCoords + transVec
 
         transMol = [[label] + coord.tolist() + ([info] if info is not None else [])
@@ -30,39 +31,29 @@ def placeMols(shape, og, density, tol, shapeType, radii, randOrient,rotAngles):
         
         return transMol
 
-    strucType = 'molecule'
+    strucType = 'atom' if len(og) == 1 else 'molecule'
     mols = []
+
+    manager = PendingKDManager(radii, rebuildRate=500)
 
     for point in gridPoints:
         newPoint = translateMol(og, point)
 
+        if randOrient and len(newPoint) == len(og):
+            newPoint = Reorient(newPoint, randRotate=True)
+
+        if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newPoint) == len(og):
+            newPoint = Reorient(newPoint, angles=rotAngles)
+
         if len(mols) == 0:
             mols.append(newPoint)
+            manager.addMolecule(newPoint)
+            manager.maybeRebuild(force=True)
+            continue
 
-            # Create KD-tree for filledAtoms
-            kdTree, indexToAtom = buildKDTreeMapping(mols, radii)
-
-        if randOrient and len(newMol) == len(og):
-                    newMol = Reorient(newMol, randRotate=True)
-
-        if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
-            newMol = Reorient(newMol, angles=rotAngles)
-
-        if len(og) == 1:
-            if (kdTree is None or not isOverlapAtomKDTree(newPoint, kdTree, indexToAtom, radii, tol)):
-                mols.append(newPoint)
-
-                # Rebuild KDTree with newly added atoms
-                kdTree, indexToAtom = buildKDTreeMapping(mols, radii)
-
-                strucType = "atom"
-        else:
-            if (kdTree is None or not isOverlapMoleculeKDTree(newPoint, kdTree, indexToAtom, radii, tol)):
-                mols.append(newPoint)
-
-                # Rebuild KDTree with newly added atoms
-                kdTree, indexToAtom = buildKDTreeMapping(mols, radii)
-
-                strucType = "molecule"
+        if not manager.overlapsMolecule(newPoint, tol):
+            mols.append(newPoint)
+            manager.addMolecule(newPoint)
+            manager.maybeRebuild()
     
     return mols, strucType
