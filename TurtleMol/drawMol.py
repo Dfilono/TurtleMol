@@ -31,8 +31,6 @@ def drawMolBox(struc, baseStruc, iparams):
 
     originalPoints = makeBase(struc)
 
-    originalPoints = shiftPoints(originalPoints, box)
-
     if iparams['unitCell']:
         if iparams['hexagonal'] == False:
             filled, strucType, cellParams = unitCellBox(box, dims, iparams['unitCell'], iparams['angle'],
@@ -42,6 +40,8 @@ def drawMolBox(struc, baseStruc, iparams):
             filled, strucType, cellParams = hexagonUnitCellBox(box, dims, iparams['unitCell'],
                                             originalPoints, radii)
             return filled, strucType, cellParams
+        
+    originalPoints = shiftPoints(originalPoints, box)
 
     if iparams['density']:
         filled, strucType = placeMols(box, originalPoints, iparams['density'],

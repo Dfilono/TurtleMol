@@ -18,7 +18,7 @@ class PendingKDManager:
 
     def _atomsXYZR(self, mol):
         xyz = np.array([[a[1], a[2], a[3]] for a in mol], dtype=np.float64)
-        r = np.array([self.radii[a[0]] for a in mol], dtype=np.float64)
+        r = np.array([self.radii[a[0].title()] for a in mol], dtype=np.float64)
 
         return xyz, r
     

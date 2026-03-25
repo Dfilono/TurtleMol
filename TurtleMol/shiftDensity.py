@@ -3,7 +3,6 @@
 import numpy as np
 import scipy.spatial
 from .makeStruc import calcDistance, Reorient
-from .isOverlap import isOverlapMoleculeKDTree, isOverlapAtomKDTree, buildKDTreeMapping
 from .treeManager import PendingKDManager
 
 def placeMols(shape, og, density, tol, shapeType, radii, randOrient,rotAngles):
