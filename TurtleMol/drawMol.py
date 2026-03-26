@@ -21,7 +21,7 @@ from .shiftDensity import placeMols
 from .shiftUnitCell import unitCellBox, unitCellMesh, unitCellSphere
 from .shiftHexagon import hexagonUnitCellBox, hexagonUnitCellSphere, hexagonUnitCellMesh
 
-def drawMolBox(struc, baseStruc, iparams):
+def drawMolBox(struc, baseStruc, iparams, conect=None):
     '''Utilized to place molecules in a box'''
     dims = drawBox(iparams)
     box = Box3d(0, 0, 0, dims)
@@ -33,9 +33,14 @@ def drawMolBox(struc, baseStruc, iparams):
 
     if iparams['unitCell']:
         if iparams['hexagonal'] == False:
-            filled, strucType, cellParams = unitCellBox(box, dims, iparams['unitCell'], iparams['angle'],
+            if conect:
+                filled, strucType, cellParams, newConect = unitCellBox(box, dims, iparams['unitCell'], iparams['angle'],
+                                            originalPoints, radii, iparams['rotAngles'], conect=conect)
+                return filled, strucType, cellParams, newConect
+            else:
+                filled, strucType, cellParams, newConect = unitCellBox(box, dims, iparams['unitCell'], iparams['angle'],
                                             originalPoints, radii, iparams['rotAngles'])
-            return filled, strucType, cellParams
+                return filled, strucType, cellParams
         else:
             filled, strucType, cellParams = hexagonUnitCellBox(box, dims, iparams['unitCell'],
                                             originalPoints, radii)

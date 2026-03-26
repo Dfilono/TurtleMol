@@ -31,7 +31,7 @@ class PendingKDManager:
 
         for atom in mol:
             p = np.array([atom[1], atom[2], atom[3]], dtype=np.float64)
-            pr = float(self.radii[atom[0]])
+            pr = float(self.radii[atom[0].title()])
 
             # Check against comitted KDTree
             if self.kdTree is not None:

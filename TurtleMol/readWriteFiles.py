@@ -10,6 +10,7 @@ import json
 import numpy as np
 import pandas as pd
 import trimesh
+from collections import defaultdict
 
 def getInput(filePath):
     '''Reads input file if provided'''
@@ -26,14 +27,14 @@ def readStrucFile(filePath):
     # Reads XYZ
     if str(filePath[-3:]).lower() == 'xyz':
         return pd.read_csv(filePath, delim_whitespace=True,
-                           skiprows=2, names=["Atom", "X", "Y", "Z"]), None
+                           skiprows=2, names=["Atom", "X", "Y", "Z"]), None, None
     # Reads PDB
     if str(filePath[-3:]).lower() == 'pdb':
         return readPdb(filePath)
     
     # Reads CJSON
     if str(filePath[-5:]).lower() == 'cjson':
-        return readCJSON(filePath)
+        return readCJSON(filePath), None
 
     return f"ERROR: Issue generating file to {filePath}"
 
@@ -41,6 +42,7 @@ def readPdb(filePath):
     '''Reads structure file if a pdb'''
     data = []
     unitCell = None
+    conect = defaultdict(set)
     symbols = getElementData('AtomicMass')
 
     with open(filePath, 'r', encoding = 'utf-8') as pdbFile:
@@ -58,6 +60,7 @@ def readPdb(filePath):
 
             elif line.startswith('ATOM') or line.startswith('HETATM'):
                 # Parse relevant fields from the PDB format
+                serial = int(line[6:11].strip())
                 atomName = line[12:16].strip()
                 element = line[76:78].strip()
 
@@ -73,11 +76,31 @@ def readPdb(filePath):
                 residueName = line[17:20].strip()
                 residueSeq = int(line[22:26].strip())
 
-                data.append([element, x, y, z, residueName, residueSeq])
+                data.append([serial, element, x, y, z, residueName, residueSeq])
+            
+            elif line.startswith('CONECT'):
+                try:
+                    src_str = line[6:11].strip()
+                    if not src_str:
+                        continue
+                    src = int(src_str)
+                except ValueError:
+                    continue
+                
+                for start in (11, 16, 21, 26):
+                    dst_str = line[start:start+5].strip()
+                    if not dst_str:
+                        continue
+                    try:
+                        dst = int(dst_str)
+                    except ValueError:
+                        continue
+                    conect[src].add(dst)
+                    conect[dst].add(src)
 
-    df = pd.DataFrame(data, columns=['Atom', 'X', 'Y', 'Z', 'Residue', 'ResidueSeq'])
+    df = pd.DataFrame(data, columns=['Serial','Atom', 'X', 'Y', 'Z', 'Residue', 'ResidueSeq'])
 
-    return df, unitCell
+    return df, unitCell, conect
 
 def readCJSON(filepath):
     '''Reads Structure from cjson file'''
@@ -119,7 +142,7 @@ def readMesh(filePath):
     mesh = trimesh.load(filePath)
     return mesh
 
-def writeOutput(data, filePath, strucType, cellParams=None, padding=[0, 0, 0]):
+def writeOutput(data, filePath, strucType, cellParams=None, conect=None, padding=[0, 0, 0]):
     '''Writes data to output file'''
     try:
         # Writes XYZ
@@ -127,9 +150,9 @@ def writeOutput(data, filePath, strucType, cellParams=None, padding=[0, 0, 0]):
             writeXYZ(data, filePath, strucType)
         # Writes PDB
         elif str(filePath[-3:]).lower() == 'pdb':
-            if cellParams != None:
+            if cellParams != None and conect != None:
                 if isinstance(cellParams, str):
-                    writePdb(data, filePath, cellParams)
+                    writePdb(data, filePath, cellParams, conect=conect)
                 else:
                     newCellParams = multiUnitCell(data, padding)
                     writePdb(data, filePath, newCellParams)
@@ -139,7 +162,7 @@ def writeOutput(data, filePath, strucType, cellParams=None, padding=[0, 0, 0]):
         elif str(filePath[-5:]).lower() == 'cjson':
             if cellParams !=None:
                 if isinstance(cellParams, str):
-                    writeCJSON(data, filePath, cellParams)
+                    writeCJSON(data, filePath, cellParams, conect)
                 else:
                     newCellParams = multiUnitCell(data, padding)
                     writeCJSON(data, filePath, newCellParams)
@@ -148,11 +171,11 @@ def writeOutput(data, filePath, strucType, cellParams=None, padding=[0, 0, 0]):
     except KeyError:
         print(f"Filetype {filePath[-3:]} not supported\n")
 
-def writePdb(data, filePath, cellParams=None):
+def writePdb(data, filePath, cellParams=None, conect=None):
     '''Writes a pdb file from results'''
     template = (
         "HETATM{atomNum:5d} {atomType:>2}   {residueName:>3} A{resNum: >4d}"
-        "    {x: >8.3f}{y: >8.2f}{z: >8.3f}{occupancy: >6.2f}{tempFactor: >6.2f}"
+        "    {x: >8.3f}{y: >8.3f}{z: >8.3f}{occupancy: >6.2f}{tempFactor: >6.2f}"
         "          {element:>2}\n"
         )
 
@@ -164,13 +187,16 @@ def writePdb(data, filePath, cellParams=None):
         if cell != None:
             pdbFile.write(cell + '\n')
 
+        serialMap = {}
+        flatIdx = 1
+
         for mol in data:
             for atom in mol:
                 pdbFile.write(template.format(
                    atomNum = atomNum,
                    atomType = atom[0].upper(),
                    element = atom[0].capitalize(),
-                   residueName = atom[4],
+                   residueName = atom[4] if len(atom) > 4 else "MOL",
                    resNum = resNum,
                    x = atom[1],
                    y = atom[2],
@@ -179,8 +205,39 @@ def writePdb(data, filePath, cellParams=None):
                    tempFactor = 0.00, # Default value
                 ))
 
+                serialMap[flatIdx] = atomNum
                 atomNum += 1
+                flatIdx += 1
             resNum += 0
+
+        if conect != None:
+            print("Hello")
+            writtenPairs = set()
+
+            for src in sorted(conect):
+                if src not in serialMap:
+                    continue
+
+                srcOut = serialMap[src]
+                neighbors = []
+
+                for dst in sorted(conect[src]):
+                    if dst not in serialMap:
+                        continue
+
+                    pair = tuple(sorted((srcOut, serialMap[dst])))
+                    if pair in writtenPairs:
+                        continue
+
+                    writtenPairs.add(pair)
+                    neighbors.append(serialMap[dst])
+
+                # PDB CONECT lines allow up to 4 neighbors per line
+                for i in range(0, len(neighbors), 4):
+                    chunk = neighbors[i:i+4]
+                    pdbFile.write(
+                        f"CONECT{srcOut:5d}" + "".join(f"{n:5d}" for n in chunk) + "\n"
+                    )
         pdbFile.write("END\n")
 
 def writeXYZ(data, filePath, strucType):
