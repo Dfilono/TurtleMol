@@ -94,6 +94,9 @@ Distributed under the MIT License. See [LICENSE](https://github.com/Dfilono/Turt
 
 ## Documentation
 
-Documentation is in progress.
+The complete user guide and Python API reference live in [`docs/`](docs/index.rst).
+Build the HTML site locally with:
+
+    python -m sphinx -W -b html docs docs/_build/html
 
 <img src="https://github.com/Dfilono/TurtleMol/blob/main/docs/images/logo.png">
