@@ -32,10 +32,12 @@ def testMoleculeRandomPlace():
         if name not in iparamsCube:
             iparamsCube[name] = dparams[name]
 
-    struc, unitCell = readStrucFile(iparamsSphere['structureFile'])
+    struc, unitCell, connectivity = readStrucFile(iparamsSphere['structureFile'])
 
     if iparamsSphere['baseStrucFile']:
-        baseStruc, baseUnitCell = readStrucFile(iparamsSphere['baseStrucFile'])
+        baseStruc, baseUnitCell, baseConnectivity = readStrucFile(
+            iparamsSphere['baseStrucFile']
+        )
     else:
         baseStruc = None
 
