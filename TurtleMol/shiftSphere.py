@@ -3,8 +3,8 @@
 import random
 import scipy.spatial
 import numpy as np
-from .isOverlap import isOverlapAtomKDTree, isOverlapMoleculeKDTree, buildKDTreeMapping
 from .makeStruc import makeBase, reCenter, Reorient
+from .treeManager import PendingKDManager
 
 def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
     '''Fills sphere with single atoms'''
@@ -14,11 +14,12 @@ def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
         numMol = 10000000000000
 
     # Create KD-tree for filledAtoms
-    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+    manager = PendingKDManager(radii, rebuildRate=500)
 
     for zShifts in range(numShifts):
         for yShifts in range(numShifts):
             for xShifts in range(numShifts):
+                newMol = []
                 for atom in og:
                     # Calculate the relative position of each atom within the molecule
                     relX = atom[1]
@@ -27,9 +28,9 @@ def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
                     atomType = atom[0]
 
                     # Calculate the coordiantes within the sphere
-                    x = (sphere.xCoord - sphere.radius) + relX + xShifts
-                    y = (sphere.yCoord - sphere.radius) + relY + yShifts
-                    z = (sphere.zCoord - sphere.radius) + relZ + zShifts
+                    x = (sphere.xCoord - sphere.radius) + relX + xShifts*tol
+                    y = (sphere.yCoord - sphere.radius) + relY + yShifts*tol
+                    z = (sphere.zCoord - sphere.radius) + relZ + zShifts*tol
 
                     # Adjust for atomic radii
                     atomRadius = radii.get(atomType, 0.0) # Get the radius for the atom type
@@ -41,12 +42,17 @@ def atomFillSphere(numShifts, sphere, og, radii, tol, numMol):
                         else:
                             newAtom = (atom[0], x, y, z)
 
-                        if (kdTree is None or not isOverlapAtomKDTree(newAtom, kdTree, indexToAtom, radii, tol)) and \
-                            numMol > len(filled):
-                            filled.append(newAtom)
+                        newMol.append(newAtom)
+
+                        if (numMol > len(filled) and not manager.overlapsMolecule(newMol, tol)):
+                            filled.append(newMol)
 
                             # Rebuild KDTree with newly added atoms
-                            kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+                            manager.addMolecule(newMol)
+                            manager.maybeRebuild() 
+
+                        if len(filled) >= numMol:
+                            return filled
 
     return filled
 
@@ -56,9 +62,10 @@ def atomRandSphere(numMol, maxAttempts, og, sphere, radii, tol):
     attempts = 0
 
     # Create KD-tree for filledAtoms
-    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+    manager = PendingKDManager(radii, rebuildRate=500)
 
     while len(filled) < numMol and attempts <= maxAttempts:
+        newMol = []
         for atom in og:
 
             # Calculate the shift for each tile and new point
@@ -79,12 +86,19 @@ def atomRandSphere(numMol, maxAttempts, og, sphere, radii, tol):
                     newAtom = (atom[0], newX, newY, newZ, atom[4])
                 else:
                     newAtom = (atom[0], newX, newY, newZ)
+                
+                newMol.append(newAtom)
 
-                if (kdTree is None or not isOverlapAtomKDTree(newAtom, kdTree, indexToAtom, radii, tol)):
-                    filled.append(newAtom)
+                if (numMol > len(filled) and not manager.overlapsMolecule(newMol, tol)):
+                    filled.append(newMol)
 
                     # Rebuild KDTree with newly added atoms
-                    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+                    manager.addMolecule(newMol)
+                    manager.maybeRebuild()
+
+                
+                if len(filled) >= numMol:
+                    return filled
 
         attempts += 1
 
@@ -98,12 +112,14 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
     if str(numMol).lower() == 'fill':
         numMol = 10000000000000
 
+    # Use pending-buffer KD manager
+    manager = PendingKDManager(radii, rebuildRate=500)
+
     if baseStruc is not None:
         base = makeBase(baseStruc)
         filled.append(reCenter(base, sphere))
-
-    # Create KD-tree for filledAtoms
-    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+        manager.addMolecule(base)
+        manager.maybeRebuild(force=True) #ensure the base is comitted
 
     for zShifts in range(numShifts):
         for yShifts in range(numShifts):
@@ -118,9 +134,9 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
                     atomType = atom[0]
 
                     # Calculate the coordiantes within the sphere
-                    x = (sphere.xCoord - sphere.radius) + relX + xShifts
-                    y = (sphere.yCoord - sphere.radius) + relY + yShifts
-                    z = (sphere.zCoord - sphere.radius) + relZ + zShifts
+                    x = (sphere.xCoord - sphere.radius) + relX + xShifts*tol
+                    y = (sphere.yCoord - sphere.radius) + relY + yShifts*tol
+                    z = (sphere.zCoord - sphere.radius) + relZ + zShifts*tol
 
                     # Adjust for atomic radii
                     atomRadius = radii.get(atomType, 0.0) # Get the radius for the atom type
@@ -141,13 +157,18 @@ def moleculeFillSphere(numShifts, sphere, og, radii, tol,
                 if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
                     newMol = Reorient(newMol, angles=rotAngles)
 
-                if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)) and \
-                    numMol > len(filled):
+                if (numMol > len(filled) and not manager.overlapsMolecule(newMol, tol)):
                     if len(newMol) == len(og):
                         filled.append(newMol)
 
                         # Rebuild KDTree with newly added atoms
-                        kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+                        manager.addMolecule(newMol)
+                        manager.maybeRebuild()
+
+                
+                if len(filled) >= numMol:
+                    return filled
+                
     return filled
 
 def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
@@ -156,12 +177,14 @@ def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
     filled = []
     attempts = 0
 
+    # Use pending-buffer KD manager
+    manager = PendingKDManager(radii, rebuildRate=500)
+
     if baseStruc is not None:
         base = makeBase(baseStruc)
         filled.append(reCenter(base, sphere))
-
-    # Create KD-tree for filledAtoms
-    kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+        manager.addMolecule(base)
+        manager.maybeRebuild(force=True) #ensure the base is comitted
 
     while len(filled) < numMol and attempts <= maxAttempts:
         newMol = []
@@ -189,25 +212,28 @@ def moleculeRandSphere(numMol, maxAttempts, og, sphere, radii, tol,
             # Check if the new atom fits within the sphere
             if sphere.containsPoints(newX, newY, newZ, atomRadius):
                 if len(atom) == 5:
-                    newAtom = (atom[0], newX, newY, newX, atom[4])
+                    newAtom = (atom[0], newX, newY, newZ, atom[4])
                 else:
                     newAtom = (atom[0], newX, newY, newZ)
                 newMol.append(newAtom)
-            else:
-                break # If any atom doesn't fit, discard the whol molecule
 
-        if randOrient and len(newMol) == len(og):
+                if randOrient and len(newMol) == len(og):
                     newMol = Reorient(newMol, randRotate=True)
 
-        if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
-            newMol = Reorient(newMol, angles=rotAngles)
+                if not np.allclose(np.array(rotAngles), np.array([0, 0, 0])) and len(newMol) == len(og):
+                    newMol = Reorient(newMol, angles=rotAngles)
 
-        if (kdTree is None or not isOverlapMoleculeKDTree(newMol, kdTree, indexToAtom, radii, tol)):
-            if len(newMol) == len(og):
-                filled.append(newMol)
+                if (numMol > len(filled) and not manager.overlapsMolecule(newMol, tol)):
+                    if len(newMol) == len(og):
+                        filled.append(newMol)
 
-                # Rebuild KDTree with newly added atoms
-                kdTree, indexToAtom = buildKDTreeMapping(filled, radii)
+                        # Rebuild KDTree with newly added atoms
+                        manager.addMolecule(newMol)
+                        manager.maybeRebuild()
+
+        
+        if len(filled) >= numMol:
+            return filled
 
         attempts += 1
 

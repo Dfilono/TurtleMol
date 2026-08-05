@@ -19,7 +19,7 @@ def parseCommandLine(dparams):
     parser.add_argument('-baseStruc', '--baseStrucFile', type=str,
                         help='Path to base structure file', default=dparams['baseStrucFile'])
     parser.add_argument('-s', '--shape', type=str,
-                        help="Shape (Box or Cube)", default=dparams['shape'])
+                        help="Shape (Box, Cube, Sphere, Mesh, Multimesh)", default=dparams['shape'])
     parser.add_argument('-sl', '--sideLength', type=float,
                         help="Dimensions of a cube in Angstroms", default=dparams['sideLength'])
     parser.add_argument('-xl', '--Xlen', type=float,
@@ -111,7 +111,7 @@ def main():
 
     # Get structure
     if isinstance(iparams['structureFile'], str):
-        struc, unitCell = readStrucFile(iparams['structureFile'])
+        struc, unitCell, conect = readStrucFile(iparams['structureFile'])
         unitCells = None
         print(struc)
     elif isinstance(iparams['structureFile'], list):
@@ -147,7 +147,7 @@ def main():
         # Generate the new structure
 
         if unitCell:
-            outStruc, strucType, cellParams = drawMolBox(struc, baseStruc, iparams)
+            outStruc, strucType, cellParams, newConect = drawMolBox(struc, baseStruc, iparams, conect=conect)
         else:
             outStruc, strucType = drawMolBox(struc, baseStruc, iparams)
 
@@ -171,7 +171,7 @@ def main():
 
     if iparams['outputFile']:
         if unitCell:
-            writeOutput(outStruc, iparams['outputFile'], strucType, cellParams, iparams['padding'])
+            writeOutput(outStruc, iparams['outputFile'], strucType, cellParams, newConect, iparams['padding'])
         else:
             writeOutput(outStruc, iparams['outputFile'], strucType)
 

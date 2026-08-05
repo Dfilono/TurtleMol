@@ -1,62 +1,81 @@
-Input Parameters
-================
+Input files and parameters
+==========================
 
-The inputs for TurtleMol can be entered via the command line or an input file. Not all 
-parameters need to entered, TurtleMol will rely on default values we have predefined. Some of those 
-default values SHOULD be changed to ensure they meet the user's system, 
-and those will be marked in the following list of parameters. The units for all lengths
-are in Angstroms.
+An input file is UTF-8 text containing one ``key=value`` pair per line. Key
+names are case-sensitive. Do not add comments or blank lines: every line is
+parsed as an assignment.
 
-- shape: The shape of the object you would like to generate
-    - Current options: cube, box, sphere
-    - Default: box
-- sideLength: The length of all sides in a cube
-    - Default: 1.0
-- XLen: The length of a non-cubical box (distance in the x-direction)
-    - Default: 1.0
-- YLen: The width of a non-cubical box (distance in the y-direction)
-    - Default: 1.0
-- ZLen: The height of a non-cubical box (distance in the z-direction)
-    - Default: 1.0
-- numMolecules: The number of molecules to place in the given volume
-    - Current options: 
-        - fill: A special parameter to fill the volume with maximum amount of molecules
-        - Any integer
-    - Default: fill
-- tol: The minimum distance between two molecules in the space
-    - Default: 1.0
-- structureFile: The path to the XYZ or PDB file where your system is defined. This is REQUIRED
-- baseStrucFile: The path to the XYZ or PDB file of an additional structure you want at the center of the new system
-    - Default: None
-- randomizeOrient: A boolean term that randomly orients the new molecules in the volume
-    - Options: True, False
-    - Default: False
-- randFill: A boolean term that places molecules randomly in the volume rather than in a grid-like fashion. Only works when density or number of molecules is defined.
-    - Options: True, False
-    - Default: False
-- density: Define the denisty of the system, and Turtle will calculate the number of molecules to place
-    - Default: None
-- atomRadius: Choose what type of radius you want the atoms to have
-    - Options: AtomicRadius, CovalentRadius, VanDerWaalsRadius
+.. code-block:: text
 
-Important parameters to keep in mind include denisty and atomRadius. Results may be unphysical for low denisty molecular systems 
-if not specifically defined.
+   shape=sphere
+   radius=15.0
+   tol=0.5
+   randomizeOrient=True
+   numMolecules=fill
+   structureFile=water.xyz
+   outputFile=water-sphere.pdb
 
-To build an input file, simply write a .txt file with the parameter=value. For example:
+Run it with ``TurtleMol --inputFile run.txt``.
 
-.. code-block::
+Parameter reference
+-------------------
 
-    shape=sphere
-    radius=5.0
-    tol=0.5
-    randomizeOrient=True
-    numMolecules=fill
-    structureFile=path/to/file.txt
+.. list-table::
+   :header-rows: 1
+   :widths: 22 18 60
 
-Spaces between parameters are not allowed, spaces may be placed around the = sign. 
+   * - Key
+     - Default
+     - Description
+   * - ``shape``
+     - ``box``
+     - ``box``, ``cube``, ``sphere``, ``mesh``, or ``multimesh``.
+   * - ``structureFile`` / ``outputFile``
+     - required / none
+     - Input tile and output structure paths.
+   * - ``sideLength``
+     - ``1.0``
+     - Cube edge length in Å.
+   * - ``Xlen``, ``Ylen``, ``Zlen``
+     - ``1.0``
+     - Box dimensions in Å.
+   * - ``radius`` / ``sphereCenter``
+     - ``1.0`` / ``[0,0,0]``
+     - Sphere radius and center. Set list-valued options through Python; the
+       text input parser does not deserialize comma-separated lists.
+   * - ``numMolecules``
+     - ``1``
+     - Integer copy count or ``fill``.
+   * - ``tol``
+     - ``1.0``
+     - Minimum separation for overlap checks, in Å.
+   * - ``density``
+     - none
+     - Target density in g/mL. Overrides count-based placement.
+   * - ``randomizeOrient`` / ``randFill``
+     - ``False``
+     - Randomize molecular orientations / positions.
+   * - ``maxAttempts``
+     - ``10000``
+     - Attempt limit for random placement.
+   * - ``atomRadius``
+     - ``AtomicRadius``
+     - Element radius used in overlap checks.
+   * - ``baseStrucFile`` / ``baseStrucCenter``
+     - none / ``[0,0,0]``
+     - Non-repeated structure and its desired center.
+   * - ``mesh`` / ``meshScale``
+     - none / ``1.0``
+     - Mesh path and uniform scale.
+   * - ``unitCell`` / ``angle``
+     - none / ``[90,90,90]``
+     - Cell lengths and angles, normally read from input.
+   * - ``hexagonal`` / ``rotAngles``
+     - ``False`` / ``[0,0,0]``
+     - Hexagonal packing and fixed tile rotation.
+   * - ``onSurface`` / ``alignNormal``
+     - ``False``
+     - Mesh surface placement and face-normal alignment.
 
-To run TurtleMol, open command line and input the following:
-
-.. code-block::
-
-    python TurtleMol -i ./path/to/input/file.txt
+``scaleX``, ``scaleY``, ``scaleZ``, and ``padding`` are experimental.
+``globalMatrixPath`` supplies transforms for multi-mesh generation.

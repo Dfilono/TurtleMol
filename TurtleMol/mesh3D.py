@@ -31,20 +31,42 @@ class mesh3D():
         self.translate()
 
         # Scaled mesh
-        self.meshBound = self.mesh.apply_scale((1.1, 1.1, 1))
+        self.meshBound = self.mesh.copy()
+        self.meshBound.apply_scale((1.1, 1.1, 1))
 
     def isInside(self, point):
         '''Check if point is inside the mesh or on the boundary'''
         # Checks if the point is inside the mesh
         inside = self.meshBound.contains([point])[0]
+        if inside:
+            return True
 
         # Check if the point is on the boundary of the mesh
         # We will get the closest point on the mesh to our point and check if they are the same
-        closestPoint, distance, _ = trimesh.proximity.closest_point(self.mesh, [point])
+        _, distance, _ = trimesh.proximity.closest_point(self.mesh, [point])
         onBound = np.isclose(distance[0], 0, atol=1e-3)
 
         return inside or onBound
     
+    def isInsideMany(self, points):
+        '''
+        Vectorized version of isInside for points shape (N, 3). Returns boolean mask shape (N,)
+        '''
+        points = np.asarray(points, dtype=np.float64)
+        inside = self.meshBound.contains(points)
+
+        if not np.any(~inside):
+            return inside
+        
+        outsideIdx = np.where(~inside)[0]
+        outsidePoints = points[outsideIdx]
+
+        _, dist, _ = trimesh.proximity.closest_point(self.mesh, outsidePoints)
+        onBound = np.isclose(dist, 0.0, atol=1e-3)
+
+        inside[outsideIdx] = onBound
+        return inside
+
     def volume(self):
         return self.mesh.volume
     
@@ -55,7 +77,7 @@ class mesh3D():
         return [0, 0, 0]
     
     def findCenter(self):
-        return self.origin
+        return self.origin()
     
     def translate(self):
         self.mesh.apply_translation(-self.bounds[0])

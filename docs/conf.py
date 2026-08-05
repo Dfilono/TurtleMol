@@ -1,30 +1,26 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+'''Sphinx configuration for TurtleMol.'''
 
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 project = 'TurtleMol'
 copyright = '2023, Dominick Filonowich'
 author = 'Dominick Filonowich'
-html_title = 'TurtleMol'
-html_logo = './images/logo.png'
-release = '0.1.0'
 
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+try:
+    from TurtleMol import __version__
+except ImportError:
+    __version__ = 'development'
 
-extensions = []
-
+release = __version__
+version = __version__
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
+autodoc_member_order = 'bysource'
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
-
-
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
 html_theme = 'alabaster'
+html_title = 'TurtleMol'
+html_logo = 'images/logo.png'
 html_static_path = ['_static']

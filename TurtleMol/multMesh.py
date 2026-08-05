@@ -2,9 +2,9 @@
 
 import numpy as np
 from .drawMol import drawMolMesh
-from .isOverlap import isOverlapMoleculeKDTree, buildKDTreeMapping
 from .setAtomProp import setAtomicRadius
-from .makeStruc import computeCentroid, applyGlobalTransform, applyTranslation, findMinPoint
+from .makeStruc import applyGlobalTransform, applyTranslation, findMinPoint
+from .treeManager import PendingKDManager
 
 def buildMultiMesh(strucs, baseStruc, iparams):
     '''Builds meshes of molecules based on a given number of meshes and atomic structures'''
@@ -18,6 +18,7 @@ def buildMultiMesh(strucs, baseStruc, iparams):
     scaleXList = iparams['scaleX']
     scaleYList = iparams['scaleY']
     scaleZList = iparams['scaleZ']
+    rotAngleList = iparams['rotAngles']
     scaleList = []
 
     if isinstance(iparams['meshScale'], float):
@@ -29,7 +30,55 @@ def buildMultiMesh(strucs, baseStruc, iparams):
     radii = setAtomicRadius(iparams['atomRadius'])
 
     # Create KD-tree for filledAtoms
-    kdTree, indexToAtom = buildKDTreeMapping(coords, radii)
+    manager = PendingKDManager(radii, rebuildRate=500)
+
+    def _matrixForIndex(i):
+        '''Build per-mesh global matrix including optional per-axis scaling'''
+        if scaleXList is not None and scaleYList is not None and scaleZList is not None:
+            iparams['scaleX'] = float(scaleXList[i]) if scaleXList[i] is not None else scaleList[i]
+            iparams['scaleY'] = float(scaleYList[i]) if scaleYList[i] is not None else scaleList[i]
+            iparams['scaleZ'] = float(scaleZList[i]) if scaleZList[i] is not None else scaleList[i]
+
+            scaleFactors = np.array([iparams['scaleX'], iparams['scaleY'], iparams['scalyZ']], dtype=float)
+
+            scalingMatrix = np.eye(4, dtype=float)
+            scalingMatrix[0,0] = scaleFactors[0]
+            scalingMatrix[1,1] = scaleFactors[1]
+            scalingMatrix[2,2] = scaleFactors[2]
+
+            return np.dot(iparams['globalMatrix'][i], scalingMatrix)
+        else:
+            return iparams['globalMatrix'][i] * scaleList[i]
+ 
+    def _flattenAndCapitalize(coord):
+        '''Coord is list of molecules; flatten to list of atoms, capitalize types'''
+        allAtoms = []
+        for mol in coord:
+            for atom in mol:
+                if len(atom) == 4:
+                    allAtoms.append((atom[0].capitalize(), atom[1], atom[2], atom[3]))
+                elif len(atom) == 5:
+                    allAtoms.append((atom[0].capitalize(), atom[1], atom[2], atom[3], atom[4]))
+                else:
+                    # Unexpected atom format; keep as-is but ensure type capitalization if possible
+                    allAtoms.append(atom)
+        return allAtoms
+    
+    def _tryAddStruc(allMolMesh, tol):
+        """Overlap gate + commit to manager"""
+        if tol is None or tol <= 0:
+            coords.append(allMolMesh)
+            manager.addMolecule(allMolMesh)
+            manager.maybeRebuild()
+            return True
+        
+        if not manager.overlapsMolecule(allMolMesh, tol):
+            coords.append(allMolMesh)
+            manager.addMolecule(allMolMesh)
+            manager.maybeRebuild()
+            return True
+        
+        return False
 
     if isinstance(iparams['structureFile'], list):
         assert len(strucs) == len(meshList), "If more than one structure, the number of structures needs to be the same as the number of meshes"
@@ -37,24 +86,11 @@ def buildMultiMesh(strucs, baseStruc, iparams):
         for i in range(len(meshList)):
             iparams['mesh'] = str(meshList[i])
             iparams['meshScale'] = float(scaleList[i])
+            iparams['rotAngles'] = rotAngleList[i]
+
             struc = strucs[i]
-            if scaleXList is not None and scaleYList is not None and scaleZList is not None:
-                iparams['scaleX'] = float(scaleXList[i]) if scaleXList[i] is not None else scaleList[i]
-                iparams['scaleY'] = float(scaleYList[i]) if scaleYList[i] is not None else scaleList[i]
-                iparams['scaleZ'] = float(scaleZList[i]) if scaleZList[i] is not None else scaleList[i]
-            
-                scaleFactors = np.array([iparams['scaleX'], iparams['scaleY'], iparams['scaleZ']])
+            matrix = _matrixForIndex(i)
 
-                # Create scaling matrix
-                scalingMatrix = np.eye(4)
-                scalingMatrix[0, 0] = scaleFactors[0]
-                scalingMatrix[1, 1] = scaleFactors[1]
-                scalingMatrix[2, 2] = scaleFactors[2]
-
-                matrix = np.dot(iparams['globalMatrix'][i], scalingMatrix)
-            else:
-                matrix = iparams['globalMatrix'][i] * scaleList[i]
-            
             if iparams['unitCells'][i] is not None:
                 tol = 0
                 iparams['unitCell'] = [iparams['unitCells'][i][0], iparams['unitCells'][i][1], iparams['unitCells'][i][2]]
@@ -67,46 +103,20 @@ def buildMultiMesh(strucs, baseStruc, iparams):
                 coord, strucType = drawMolMesh(struc, baseStruc, iparams)
                 cellParams.append(None)
 
-            allMolMesh = []
-            for mol in coord:
-                newMol = []
-                for atom in mol:
-                    if len(atom) == 4:
-                        atomData = (atom[0].capitalize(), atom[1], atom[2], atom[3])
-                    if len(atom) == 5:
-                        atomData = (atom[0].capitalize(), atom[1], atom[2], atom[3], atom[4])
-                    newMol.append(atomData)
-                allMolMesh.extend(newMol)
+            allMolMesh = _flattenAndCapitalize(coord)
+            allMolMesh = applyGlobalTransform(all, matrix)
 
-            allMolMesh = applyGlobalTransform(allMolMesh, matrix)
-            if (kdTree is None or not isOverlapMoleculeKDTree(allMolMesh, kdTree, indexToAtom, radii, tol)):
-                coords.append(allMolMesh)
-                # Rebuild KDTree with newly added atoms
-                kdTree, indexToAtom = buildKDTreeMapping(coords, radii)
-            
+            _tryAddStruc(allMolMesh, tol)
             strucTypes.append(strucType)
 
     elif isinstance(iparams['structureFile'], str):
             for i in range(len(meshList)):
                 iparams['mesh'] = str(meshList[i])
                 iparams['meshScale'] = float(scaleList[i])
-                struc = strucs[i]
-                if scaleXList is not None and scaleYList is not None and scaleZList is not None:
-                    iparams['scaleX'] = float(scaleXList[i]) if scaleXList[i] is not None else scaleList[i]
-                    iparams['scaleY'] = float(scaleYList[i]) if scaleYList[i] is not None else scaleList[i]
-                    iparams['scaleZ'] = float(scaleZList[i]) if scaleZList[i] is not None else scaleList[i]
+                iparams['rotAngles'] = rotAngleList[i]
 
-                    scaleFactors = np.array([iparams['scaleX'], iparams['scaleY'], iparams['scaleZ']])
-
-                    # Create scaling matrix
-                    scalingMatrix = np.eye(4)
-                    scalingMatrix[0, 0] = scaleFactors[0]
-                    scalingMatrix[1, 1] = scaleFactors[1]
-                    scalingMatrix[2, 2] = scaleFactors[2]
-
-                    matrix = np.dot(iparams['globalMatrix'][i], scalingMatrix)
-                else:
-                    matrix = iparams['globalMatrix'][i] * scaleList[i]
+                struc = strucs
+                matrix = _matrixForIndex(i)
 
                 if iparams['unitCell']:
                     tol = 0
@@ -117,26 +127,14 @@ def buildMultiMesh(strucs, baseStruc, iparams):
                     coord, strucType = drawMolMesh(strucs, baseStruc, iparams)
                     cellParams = None
 
-                allMolMesh = []
-                for mol in coord:
-                    newMol = []
-                    for atom in mol:
-                        if len(atom) == 4:
-                            atomData = (atom[0].capitalize(), atom[1], atom[2], atom[3])
-                        if len(atom) == 5:
-                            atomData = (atom[0].capitalize(), atom[1], atom[2], atom[3], atom[4])
-                        newMol.append(atomData)
-                    allMolMesh.extend(newMol)
-
+                allMolMesh = _flattenAndCapitalize(coord)
                 allMolMesh = applyGlobalTransform(allMolMesh, matrix)
-                if (kdTree is None or not isOverlapMoleculeKDTree(allMolMesh, kdTree, indexToAtom, radii, tol)):
-                    coords.append(allMolMesh)
 
-                    # Rebuild KDTree with newly added atoms
-                    kdTree, indexToAtom = buildKDTreeMapping(coords, radii)
+                _tryAddStruc(allMolMesh, tol)
                 strucTypes.append(strucType)
 
     transVector = np.array([0, 0, 0]) - findMinPoint(coords)
     coords = applyTranslation(coords, transVector, 'molecule')
+
     return coords, 'molecule', cellParams
 
