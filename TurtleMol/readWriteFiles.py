@@ -26,7 +26,7 @@ def readStrucFile(filePath):
     '''Reads structure file'''
     # Reads XYZ
     if str(filePath[-3:]).lower() == 'xyz':
-        return pd.read_csv(filePath, delim_whitespace=True,
+        return pd.read_csv(filePath, sep=r'\s+',
                            skiprows=2, names=["Atom", "X", "Y", "Z"]), None, None
     # Reads PDB
     if str(filePath[-3:]).lower() == 'pdb':
