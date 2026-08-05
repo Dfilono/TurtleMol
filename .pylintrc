@@ -16,4 +16,6 @@ method-rgx=(([a-z][a-zA-Z0-9]*)|([A-Z][a-zA-Z0-9]+))$
 module-rgx=(([a-z][a-z0-9]*)|([A-Z][a-zA-Z0-9]+))$
 
 [MASTER]
+fail-under=7.0
+persistent=no
 ignore-patterns=(.)*_test\.py,test_(.)*\.py

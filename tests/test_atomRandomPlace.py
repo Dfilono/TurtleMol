@@ -32,10 +32,10 @@ def testRandomPlace():
         if name not in iparamsCube:
             iparamsCube[name] = dparams[name]
 
-    struc, unitCell = readStrucFile(iparamsSphere['structureFile'])
+    struc, unitCell, connectivity = readStrucFile(iparamsSphere['structureFile'])
 
     if iparamsSphere['baseStrucFile']:
-        baseStruc = readStrucFile(iparamsSphere['baseStrucFile'])
+        baseStruc, _, _ = readStrucFile(iparamsSphere['baseStrucFile'])
     else:
         baseStruc = None
 

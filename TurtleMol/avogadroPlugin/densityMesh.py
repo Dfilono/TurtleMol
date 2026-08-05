@@ -104,7 +104,7 @@ def runCommand():
 
     strucIO = io.StringIO(iparams['structureFile'])
 
-    struc = pd.read_csv(strucIO, delim_whitespace=',',
+    struc = pd.read_csv(strucIO, sep=r'\s+',
                             skiprows=2, names=["Atom", "X", "Y", "Z"])
     
 
