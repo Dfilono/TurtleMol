@@ -82,9 +82,23 @@ We have a lot of wishlist features that can be seen [HERE](https://github.com/Df
 
 ## Citation
 
-If you find this code helpful, please consider referencing it! We don't currently have a released article to cite,
-but any reference to our work helps acknowledge the effort put into developing and maintaining this code base, 
-provides support for further development!
+If you find this code helpful, please consider citing it!
+
+```
+@article{
+doi:10.26434/chemrxiv-2025-r4806,
+author = {Dominick Filonowich  and Geoffrey Hutchison  and Christopher Wilmer },
+title = {TurtleMol: Flexible Generation of Complex Molecular Systems for Computational Chemistry},
+journal = {ChemRxiv},
+volume = {2025},
+number = {1128},
+pages = {},
+year = {2025},
+doi = {10.26434/chemrxiv-2025-r4806},
+URL = {https://chemrxiv.org/doi/abs/10.26434/chemrxiv-2025-r4806},
+eprint = {https://chemrxiv.org/doi/pdf/10.26434/chemrxiv-2025-r4806},
+abstract = {TurtleMol is an open-source Python package that aims to help users generate large, complex molec- ular systems. In the current version, users can generate systems by filling volumes defined by basic geometric shapes (e.g. cube, sphere), or by shapes of arbitrary gemoetries defined meshes created in other software (such as Blender, SOLIDWORKS, AutoDeskInventor). Volumes can be filled by user- defined patterns of atoms (e.g., a water molecule or unit-cell of quartz) that tile the specified volume. Several options are available for filling a system: (1) the tiles at fixed spacing, (2) the tiles at fixed density, and (3) tiles positioned/oriented randomly. TurtleMol does not optimize atomic positions in any way. The package is freely available on GitHub at https://github.com/Dfilono/TurtleMol}}
+```
 
 ## License
 
